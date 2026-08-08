@@ -1,0 +1,33 @@
+Objective
+
+Build an Android app (Kotlin) that consumes a public API and allows:
+* Display a list of products loaded from the network
+* Add/remove items from favourites and persist them in a local database
+* Display a list of products marked as favourites
+* Display a user profile screen showing the number of favourite items
+
+API to use
+Base URL: https://fakestoreapi.com
+* Product list: https://fakestoreapi.com/products
+* User profile: https://fakestoreapi.com/users/8
+
+Minimum functional requirements:
+* Screen with access to: product list and user profile
+* Button to mark/unmark as favourite
+* Favourites screen showing saved products
+* Favourites must persist after closing and reopening the app
+
+Technical requirements
+* Kotlin + Coroutines
+* Local persistence
+* Basic state management: loading / error / content
+* UI: Compose
+* Unit tests
+
+
+Fundamental criteria:
+* Code quality and clarity
+* Structure and separation of concerns -> Clean Architecture & MVI
+* State and error management
+* Android instrumentation tests
+* Modularisation
