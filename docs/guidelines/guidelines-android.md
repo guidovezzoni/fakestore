@@ -306,3 +306,214 @@ When verifying features on-device via adb and UIAutomator, Jetpack Compose requi
 - **Never estimate coordinates from screenshots** — display scaling makes pixel mapping unreliable. Always use bounds from `uiautomator dump`.
 - **Keyboard shifts dialog bounds**: When the keyboard appears, dialog elements move up. Dismiss the keyboard or re-dump before tapping dialog buttons.
 - **Confirm/Cancel buttons in Compose dialogs**: The `TextView` with "Confirm"/"Cancel" text is not clickable. Find the clickable `View` parent encompassing that text area.
+
+## Detekt
+
+Static analysis via [Detekt](https://detekt.dev/) with the [Compose rules plugin](https://github.com/mrmans0n/compose-rules).
+
+### Gradle setup
+
+Apply the plugin in the root `build.gradle.kts` (without `apply`), then apply it in the module and add the Compose rules plugin as a `detektPlugins` dependency:
+
+```kotlin
+// root build.gradle.kts
+plugins {
+    alias(libs.plugins.detekt) apply false
+}
+
+// app/build.gradle.kts
+plugins {
+    alias(libs.plugins.detekt)
+}
+
+dependencies {
+    detektPlugins(libs.detekt.compose.rules)
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    baseline = file("detekt-baseline.xml")
+}
+```
+
+### Configuration file
+
+Place the configuration at `config/detekt/detekt.yml`. Only settings that are stricter than Detekt's defaults are listed — everything else is left to the built-in defaults (enabled via `buildUponDefaultConfig = true`):
+
+```yaml
+build:
+  maxIssues: 0
+
+style:
+  UnusedImports:
+    active: true
+  WildcardImport:
+    active: true
+
+Compose:
+  active: true
+```
+
+Key decisions:
+- `maxIssues: 0` — zero tolerance; any violation fails the build.
+- `UnusedImports` and `WildcardImport` are inactive in Detekt's defaults; explicitly enabled here.
+- `Compose: active: true` enables all rules from the `detekt-compose-rules` plugin, which are off by default.
+- A `detekt-baseline.xml` can be generated to suppress pre-existing issues when adopting Detekt on a legacy codebase.
+
+## Kover
+
+Code coverage via [Kover](https://kotlin.github.io/kotlinx-kover/).
+
+### Gradle setup
+
+Apply the plugin in the root `build.gradle.kts` (without `apply`), then apply it in the module and configure the `kover` block:
+
+```kotlin
+// root build.gradle.kts
+plugins {
+    alias(libs.plugins.kover) apply false
+}
+
+// app/build.gradle.kts
+plugins {
+    alias(libs.plugins.kover)
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "*.BuildConfig",
+                    "*.ComposableSingletons*",
+                    "*_Factory*",
+                    "*_HiltModules*",
+                    "*_Impl",
+                    "*_MembersInjector",
+                    "hilt_aggregated_deps.*",
+                    "dagger.hilt.*",
+                    "*.Hilt_*",
+                    "*.di.*",
+                    "*.database.*Dao_Impl*",
+                    "*.database.AppDatabase*",
+                    "*.ui.theme.*",
+                    "*.ui.screens.*",       // composable screens — tested via Compose UI tests
+                    "*.YourApplication",    // replace with your Application class
+                    "*.MainActivity",
+                )
+                annotatedBy(
+                    "androidx.compose.ui.tooling.preview.Preview",
+                    "androidx.compose.runtime.Composable",
+                    "dagger.hilt.android.lifecycle.HiltViewModel",
+                )
+            }
+        }
+        verify {
+            rule {
+                minBound(95)
+            }
+        }
+    }
+}
+```
+
+Key decisions:
+- Generated and DI glue classes (Hilt, Room DAO implementations, `_Factory`, `_Impl`) are excluded — they are not unit-testable and skew coverage metrics.
+- `@Composable` and `@Preview` annotated code is excluded; composables are covered by separate Compose UI tests.
+- `@HiltViewModel` annotated classes are excluded from the annotation filter because their constructor is generated; the ViewModel logic itself is tested via `UiIntent`/`UiState` assertions.
+- The minimum bound is **95%**; lower it only with a documented rationale.
+- Update `*.YourApplication` and `*.MainActivity` to match your actual package and class names.
+
+## Fastlane
+
+Automated build and release via [Fastlane](https://fastlane.tools/).
+
+### Setup
+
+`Gemfile` at the project root:
+
+```ruby
+source "https://rubygems.org"
+
+gem "fastlane"
+```
+
+`fastlane/Appfile`:
+
+```ruby
+json_key_file(ENV["PLAY_STORE_JSON_KEY_FILE"] || "play-store-key.json")
+package_name("com.your.package")   # replace with your application ID
+```
+
+- The Play Store JSON key path is read from the environment variable `PLAY_STORE_JSON_KEY_FILE`, falling back to `play-store-key.json` in the project root. Never commit the key file; add it to `.gitignore`.
+
+### Fastfile
+
+```ruby
+default_platform(:android)
+
+platform :android do
+  desc "Run unit tests, detekt, and lint"
+  lane :test do
+    gradle(
+      task: "check",
+      flags: "--console=plain --stacktrace"
+    )
+  end
+
+  desc "Build debug APK"
+  lane :build do
+    gradle(
+      task: "assembleDebug",
+      flags: "--console=plain --stacktrace"
+    )
+  end
+
+  desc "Build release AAB and upload to Play Store internal track"
+  lane :beta do
+    gradle(
+      task: "bundleRelease",
+      flags: "--console=plain --stacktrace"
+    )
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_apk: true
+    )
+  end
+
+  desc "Build release AAB and upload to Play Store production track"
+  lane :deploy do
+    gradle(
+      task: "bundleRelease",
+      flags: "--console=plain --stacktrace"
+    )
+    upload_to_play_store(
+      track: "production",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_apk: true
+    )
+  end
+end
+```
+
+### Lanes
+
+| Lane | Command | Purpose |
+|------|---------|---------|
+| `test` | `bundle exec fastlane test` | Runs `./gradlew check` (unit tests + detekt + lint) |
+| `build` | `bundle exec fastlane build` | Builds a debug APK |
+| `beta` | `bundle exec fastlane beta` | Builds release AAB and uploads to Play Store **internal** track |
+| `deploy` | `bundle exec fastlane deploy` | Builds release AAB and uploads to Play Store **production** track |
+
+Key decisions:
+- Metadata, images, and screenshots are skipped on upload — manage store listing assets separately.
+- `--console=plain` keeps Gradle output readable in CI logs; `--stacktrace` aids debugging.
+- The `beta` / `deploy` lanes upload only an AAB (`skip_upload_apk: true`), which is the required format for Play Store submissions.
