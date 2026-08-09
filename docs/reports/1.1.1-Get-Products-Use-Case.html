@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report: 1.1.1 — Get Products Use Case</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .report-header h1 { font-size: 1.75rem; color: #1e293b; }
+    .report-meta {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;
+    }
+    .report-meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem; margin-bottom: 1rem;
+    }
+    .report-section header h2 { font-size: 1.25rem; color: #1e293b; }
+    .report-section header time { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+    .section-source { font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 0.75rem; }
+
+    h3 { font-size: 1.05rem; color: #334155; margin: 1rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code {
+      background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 3px;
+      font-size: 0.875em;
+      font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+    .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef9c3; color: #854d0e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+
+    .outcome { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; }
+    .outcome-passed { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+    .outcome-failed { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <h1>1.1.1 — Get Products Use Case</h1>
+    <div class="report-meta">
+      <span><strong>Story:</strong> 1.1.1</span>
+      <span><strong>Branch:</strong> feature/1.1.1-get-products-use-case</span>
+      <span><strong>Created:</strong> 2026-08-09</span>
+    </div>
+  </div>
+
+  <main id="report-sections">
+  <section class="report-section" data-source="open_user_story" data-timestamp="2026-08-09T00:00:00Z">
+    <header>
+      <h2>Story Opened for Development</h2>
+      <time datetime="2026-08-09T00:00:00Z">2026-08-09</time>
+    </header>
+    <p class="section-source">Source: open_user_story</p>
+
+    <h3>Story State</h3>
+    <p>User story <code>1.1.1 — Get Products Use Case</code> was opened for development and moved to <strong>WIP</strong> (Work in Progress) state. Feature branch <code>feature/1.1.1-get-products-use-case</code> was created from <code>main</code>.</p>
+
+    <h3>Story Refinement Summary</h3>
+    <p>The story has been refined with comprehensive technical specifications covering API integration, domain modelling, architecture, testing, and compliance:</p>
+
+    <h4>API Endpoint Documentation</h4>
+    <ul>
+      <li>Endpoint: <code>GET https://fakestoreapi.com/products</code></li>
+      <li>Response: 20-product JSON array</li>
+      <li>Fields: <code>id</code>, <code>title</code>, <code>price</code>, <code>description</code>, <code>category</code>, <code>image</code>, <code>rating</code></li>
+    </ul>
+
+    <h4>Domain and DTO Models</h4>
+    <ul>
+      <li><strong>Product Domain Model:</strong> Core entity with <code>id</code>, <code>title</code>, <code>price</code>, <code>description</code>, <code>category</code>, <code>image</code>, <code>rating</code></li>
+      <li><strong>ProductDto:</strong> API response DTO with matching fields</li>
+      <li><strong>RatingDto:</strong> Nested rating object with <code>rate</code> and <code>count</code> fields</li>
+    </ul>
+
+    <h4>Architecture Contracts</h4>
+    <ul>
+      <li><strong>Repository Interface:</strong> Contract in <code>:domain</code> layer defining <code>getProducts()</code> return type</li>
+      <li><strong>Repository Implementation:</strong> In <code>:data</code> layer, handling API calls and DTO-to-domain mapping</li>
+      <li><strong>Use Case:</strong> In <code>:domain</code> layer, business logic orchestration</li>
+    </ul>
+
+    <h4>Module Structure</h4>
+    <p>Files to create/modify across three new modules:</p>
+    <ul>
+      <li><strong>:core</strong> module — HTTP client, interceptors, network configuration</li>
+      <li><strong>:domain</strong> module — Product model, repository interface, use case</li>
+      <li><strong>:data</strong> module — API service, repository implementation, DTO models, mappers</li>
+    </ul>
+
+    <h4>Testing Requirements</h4>
+    <ul>
+      <li>Mapper tests — DTO to domain transformation validation</li>
+      <li>Repository tests — HTTP client mocking, success/error scenarios</li>
+      <li>Use case tests — business logic, dependency injection verification</li>
+    </ul>
+
+    <h4>Security Analysis</h4>
+    <ul>
+      <li>HTTPS enforcement — all API calls use secure HTTPS</li>
+      <li>No cleartext fallback — HTTP requests explicitly blocked</li>
+      <li>Debug-only logging — sensitive data logging restricted to debug builds</li>
+    </ul>
+
+    <h4>Performance Analysis</h4>
+    <ul>
+      <li>Asynchronous calls via coroutines — network requests never block main thread</li>
+      <li>No caching concern at current scale — 20 products retrieved in single call</li>
+    </ul>
+
+    <h4>GDPR and Privacy</h4>
+    <ul>
+      <li>No PII in product catalogue data — public product information only</li>
+      <li>No local persistence of user data — responses not stored persistently</li>
+    </ul>
+
+    <h3>Assumptions</h3>
+    <p>Seven key assumptions documented for review:</p>
+    <ol>
+      <li>Fake Store API remains stable and publicly accessible without authentication</li>
+      <li>Product catalogue contains only standard retail product data</li>
+      <li>Rating object structure (rate, count) remains constant</li>
+      <li>Network calls should be non-blocking and offloaded from main thread</li>
+      <li>Single request-response cycle sufficient for this feature scope</li>
+      <li>Error handling strategy prioritizes user-facing error messages</li>
+      <li>Locale-independent strings (e.g. error messages) use English base language</li>
+    </ol>
+
+    <h3>Acceptance Criteria</h3>
+    <p>Expanded from 6 to 14 items covering functional requirements, architecture compliance, quality gates, and deployment readiness:</p>
+    <ol>
+      <li>HTTP client configured in :core module with HTTPS enforcement</li>
+      <li>Product DTO and RatingDto defined in :data module</li>
+      <li>Product domain model defined in :domain module</li>
+      <li>Mapper (DTO → domain) implemented and tested in :data module</li>
+      <li>Repository interface defined in :domain module</li>
+      <li>Repository implementation in :data module, calling API and mapping responses</li>
+      <li>Use case implemented in :domain module orchestrating repository calls</li>
+      <li>Unit tests: mapper, repository, and use case with 95%+ coverage</li>
+      <li>No cleartext HTTP requests; HTTPS-only configuration verified</li>
+      <li>Detekt static analysis passes without warnings</li>
+      <li>Kover code coverage meets 95% minimum threshold</li>
+      <li>All strings extracted to strings.xml (UK English base)</li>
+      <li>All new classes and functions documented with KDoc comments</li>
+      <li>Definition of Done (13-point checklist) verified</li>
+    </ol>
+
+    <h3>Definition of Done</h3>
+    <p>13-point checklist for story completion:</p>
+    <ol>
+      <li>Feature branch created from main</li>
+      <li>All code changes committed with clear, descriptive messages</li>
+      <li>Unit tests written and passing (mapper, repository, use case)</li>
+      <li>Code coverage meets or exceeds 95%</li>
+      <li>Detekt static analysis passes; baseline updated if necessary</li>
+      <li>Kover coverage verification passed</li>
+      <li>All user-facing strings extracted to strings.xml</li>
+      <li>KDoc comments added to public API (models, interfaces, use cases)</li>
+      <li>Architecture layer boundaries enforced (domain does not reference DTOs or data types)</li>
+      <li>HTTPS enforcement configured; no HTTP fallback</li>
+      <li>Error handling implemented and tested</li>
+      <li>Code review completed and approved</li>
+      <li>Pull request merged to main</li>
+    </ol>
+
+    <div class="outcome outcome-passed">
+      Story opened successfully. Feature branch created and story refined with complete technical specifications. Ready for implementation.
+    </div>
+  </section>
+  </main>
+
+</body>
+</html>
