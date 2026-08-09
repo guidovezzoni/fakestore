@@ -59,4 +59,4 @@ bundle exec fastlane deploy  # Upload to Play Store production track
 ## Improvements & Clarifications
 
 1. REST API does not support pagination, it should be added as  ti currently limits the scalability.
-2. Requirements specify persistence for favourites but not for products, the app doesn't appear to be offline first. Accepted but should be clarified with Product/ 
+2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product. 

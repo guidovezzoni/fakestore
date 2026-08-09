@@ -4,6 +4,7 @@
 - All dependencies managed via `gradle/libs.versions.toml`
 - Use version references (e.g., `version.ref = "kotlin"`)
 - Group related dependencies logically
+- **Convention plugins**: When the project has multiple Gradle modules, use a `build-logic` composite build with convention plugins to centralise shared build configuration (compileSdk, minSdk, Java/Kotlin compile options, detekt, kover). Each module should apply a convention plugin rather than duplicating configuration inline. Define at minimum an Android library plugin and a pure Kotlin (JVM) library plugin.
 
 ## Android Specific
 
@@ -57,6 +58,8 @@ app/src/main/java/<package-name>/
     │   └── EntityMapper.kt
     └── database/
 ```
+
+- **Preserve meaningful domain concepts as value objects**: When an API response contains a nested object that represents a coherent domain concept (e.g. a rating with a score and count, an address with street and city), model it as a separate value object in the domain layer rather than flattening its fields into the parent entity. Flattening dissolves concept boundaries, making the model harder to reason about and extend. The DTO layer mirrors the API shape; the domain layer mirrors the business meaning.
 
 - **Clean Architecture layer boundaries**: The domain layer must not import or reference any data-layer types (DTOs, database entities, network models). Violations include domain repository interfaces returning DTOs, or mappers living in `domain/mapper/`.
   - **Repository interfaces** (in `domain/repository/`) must declare return types using only domain models.
