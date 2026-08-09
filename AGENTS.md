@@ -1,4 +1,4 @@
-Added# AGENTS.md
+# AGENTS.md
 
 This file contains guidelines and commands for agentic coding agents working in this repository.
 
@@ -25,7 +25,51 @@ For git operations and commit conventions: @docs/guidelines/guidelines-git.md
 
 Read the following file immediately as it's relevant to all workflows: @docs/guidelines/guidelines-process.md
 
-
 ## Project Overview
 
-(TO BE COMPLETED)
+FakeStore is a native Android application built with Kotlin and Jetpack Compose. It serves as an interview/demo project that consumes the [Fake Store API](https://fakestoreapi.com/) to display e-commerce product data.
+
+### Tech Stack
+
+- **Language:** Kotlin 2.2
+- **UI:** Jetpack Compose with Material 3
+- **Architecture:** MVI (Model-View-Intent) with Clean Architecture layers (data / domain / ui)
+- **Build system:** Gradle (Kotlin DSL) with version catalog (`gradle/libs.versions.toml`)
+- **Min SDK:** 24 — **Target SDK:** 37
+- **Static analysis:** Detekt 2.x with Compose rules plugin
+- **Code coverage:** Kover (95% minimum bound)
+- **CI / Release:** Fastlane (test, build, beta, deploy lanes)
+
+### Package Structure
+
+```
+com.guidovezzoni.fakestore/
+├── di/              # Dependency injection modules
+├── ui/
+│   ├── screens/     # Feature screen composables
+│   ├── viewmodel/   # MVI ViewModels
+│   ├── state/       # UiState data classes
+│   ├── intent/      # UiIntent sealed classes
+│   ├── effect/      # UiEffect sealed classes
+│   └── theme/       # Material 3 theme (Color, Theme, Type)
+├── domain/
+│   ├── usecase/     # Business logic use cases
+│   └── repository/  # Repository interfaces (domain models only)
+└── data/
+    ├── repository/  # Repository implementations
+    └── mapper/      # DTO → domain mappers
+```
+
+### Key Commands
+
+| Task | Command |
+|------|---------|
+| Clean build | `./gradlew clean` |
+| Debug build | `./gradlew assembleDebug` |
+| Unit tests | `./gradlew test` |
+| Static analysis | `./gradlew detektDebug` |
+| Full check (tests + detekt + lint) | `./gradlew check` |
+| Coverage report | `./gradlew koverHtmlReportDebug` |
+| Compose UI tests | `./gradlew connectedDebugAndroidTest` |
+| Fastlane test lane | `bundle exec fastlane test` |
+| Fastlane debug build | `bundle exec fastlane build` |
