@@ -7,5 +7,15 @@ naming:
       - 'Composable'
 
 style:
+  UnusedPrivateFunction:
+    ignoreAnnotated:
+      - 'Preview'
   MagicNumber:
     ignorePropertyDeclaration: true
+  UnusedImport:
+    active: true
+  WildcardImport:
+    active: true
+
+Compose:
+  active: true

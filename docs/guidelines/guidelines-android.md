@@ -311,6 +311,16 @@ When verifying features on-device via adb and UIAutomator, Jetpack Compose requi
 
 Static analysis via [Detekt](https://detekt.dev/) with the [Compose rules plugin](https://github.com/mrmans0n/compose-rules).
 
+### Running detekt
+
+Always use the variant-specific tasks instead of the plain `detekt` task:
+
+```bash
+./gradlew detektDebug    # or detektRelease
+```
+
+The variant tasks (`detektDebug`, `detektRelease`) run with **type resolution** — they compile the code first and analyse it with the full classpath, enabling deeper rules such as `UnusedImport` and `UnusedPrivateFunction`. The plain `detekt` task runs without type resolution and misses these issues.
+
 ### Gradle setup
 
 Apply the plugin in the root `build.gradle.kts` (without `apply`), then apply it in the module and add the Compose rules plugin as a `detektPlugins` dependency:
@@ -342,11 +352,21 @@ detekt {
 Place the configuration at `config/detekt/detekt.yml`. Only settings that are stricter than Detekt's defaults are listed — everything else is left to the built-in defaults (enabled via `buildUponDefaultConfig = true`):
 
 ```yaml
-build:
-  maxIssues: 0
+config:
+  warningsAsErrors: true
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
 
 style:
-  UnusedImports:
+  UnusedPrivateFunction:
+    ignoreAnnotated:
+      - 'Preview'
+  MagicNumber:
+    ignorePropertyDeclaration: true
+  UnusedImport:
     active: true
   WildcardImport:
     active: true
@@ -356,8 +376,11 @@ Compose:
 ```
 
 Key decisions:
-- `maxIssues: 0` — zero tolerance; any violation fails the build.
-- `UnusedImports` and `WildcardImport` are inactive in Detekt's defaults; explicitly enabled here.
+- `warningsAsErrors: true` — zero tolerance; any violation fails the build. (Detekt 2.x replaced the 1.x `build: maxIssues: 0` key with this setting.)
+- `FunctionNaming: ignoreAnnotated: ['Composable']` — Composable functions use PascalCase by convention, which would otherwise violate the default `[a-z][a-zA-Z0-9]*` naming pattern.
+- `UnusedPrivateFunction: ignoreAnnotated: ['Preview']` — `@Preview` composables are private by convention but only invoked by the IDE tooling, not by runtime code. Without this exclusion, type-resolution tasks (`detektDebug`) flag them as unused.
+- `MagicNumber: ignorePropertyDeclaration: true` — allows numeric literals in property declarations (e.g. `val Purple80 = Color(0xFFD0BCFF)`) without flagging them as magic numbers.
+- `UnusedImport` and `WildcardImport` are inactive in Detekt's defaults; explicitly enabled here.
 - `Compose: active: true` enables all rules from the `detekt-compose-rules` plugin, which are off by default.
 - A `detekt-baseline.xml` can be generated to suppress pre-existing issues when adopting Detekt on a legacy codebase.
 
