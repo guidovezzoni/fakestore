@@ -50,6 +50,32 @@ detekt {
 
 kover {
     reports {
+        filters {
+            excludes {
+                classes(
+                    "*.BuildConfig",
+                    "*.ComposableSingletons*",
+                    "*_Factory*",
+                    "*_HiltModules*",
+                    "*_Impl",
+                    "*_MembersInjector",
+                    "hilt_aggregated_deps.*",
+                    "dagger.hilt.*",
+                    "*.Hilt_*",
+                    "*.di.*",
+                    "*.database.*Dao_Impl*",
+                    "*.database.AppDatabase*",
+                    "*.ui.theme.*",
+                    "*.ui.screens.*",
+                    "*.MainActivity",
+                )
+                annotatedBy(
+                    "androidx.compose.ui.tooling.preview.Preview",
+                    "androidx.compose.runtime.Composable",
+                    "dagger.hilt.android.lifecycle.HiltViewModel",
+                )
+            }
+        }
         verify {
             rule {
                 minBound(95)
