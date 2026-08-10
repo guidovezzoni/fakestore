@@ -60,14 +60,15 @@ bundle exec fastlane beta    # Upload to Play Store internal track
 bundle exec fastlane deploy  # Upload to Play Store production track
 ```
 
-## Improvements & Clarifications
+## Product Clarifications
 
-1. REST API does not support pagination, it should be added as  ti currently limits the scalability.
+1. REST API does not support pagination, it should be added as  it currently limits the app scalability.
 2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product. 
 
+## Technical Improvements
 
-## This story improvements:
+1. kover currently excludes also by annotatedBy, however the annotatedBy filter excludes the entire annotated class, excluding code that genuinely might need unit test, this needs to be reviewed and replaced by a more accurate exclusion.
 
-1. build-logic/build.gradle.kts dependencies is not using the version catalog
-2. Check kover exclusions
-3. Reduce plugins definition configuration - KISS
+## Process Improvements
+
+1. PRs are fairly big, this is a tradeoff due to the size of the project and the time available, in normal situations PRs should be sized in such a way that can be easily reviewed by peers.

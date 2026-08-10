@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:9.3.1")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10")
-    implementation("dev.detekt:detekt-gradle-plugin:2.0.0-alpha.6")
-    implementation("org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin:0.9.9")
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.detekt.gradle.plugin)
+    implementation(libs.kover.gradle.plugin)
 }
 
 gradlePlugin {

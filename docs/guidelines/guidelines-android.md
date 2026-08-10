@@ -5,6 +5,17 @@
 - Use version references (e.g., `version.ref = "kotlin"`)
 - Group related dependencies logically
 - **Convention plugins**: When the project has multiple Gradle modules, use a `build-logic` composite build with convention plugins to centralise shared build configuration (compileSdk, minSdk, Java/Kotlin compile options, detekt, kover). Each module should apply a convention plugin rather than duplicating configuration inline. Define at minimum an Android library plugin and a pure Kotlin (JVM) library plugin.
+  - **Version catalog in build-logic**: The `build-logic` composite build must share the root version catalog. Declare it in `build-logic/settings.gradle.kts`:
+    ```kotlin
+    dependencyResolutionManagement {
+        versionCatalogs {
+            create("libs") {
+                from(files("../gradle/libs.versions.toml"))
+            }
+        }
+    }
+    ```
+    Plugin artifacts declared as `dependencies` in `build-logic/build.gradle.kts` must be added as `[libraries]` entries in `libs.versions.toml` and referenced via `libs.*` — never as hardcoded strings with inline versions.
 
 ## Android Specific
 
