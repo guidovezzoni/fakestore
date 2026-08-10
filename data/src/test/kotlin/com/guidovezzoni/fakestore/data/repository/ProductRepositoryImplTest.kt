@@ -17,7 +17,7 @@ class ProductRepositoryImplTest {
     private val repository = ProductRepositoryImpl(apiService)
 
     @Test
-    fun `GIVEN a mocked ApiService getProducts returns a list of ProductDto WHEN ProductRepositoryImpl getProducts is called THEN it returns the mapped List of Product`() = runTest {
+    fun `GIVEN ApiService returns ProductDto list WHEN called THEN returns mapped domain models`() = runTest {
         val ratingDto = RatingDto(rate = 3.9, count = 120)
         val productDto = ProductDto(
             id = 1,
@@ -37,7 +37,7 @@ class ProductRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN a mocked ApiService getProducts throws an IOException WHEN ProductRepositoryImpl getProducts is called THEN the exception propagates unchanged`() = runTest {
+    fun `GIVEN ApiService throws IOException WHEN getProducts called THEN exception propagates unchanged`() = runTest {
         val expectedException = IOException("Network error")
         coEvery { apiService.getProducts() } throws expectedException
 

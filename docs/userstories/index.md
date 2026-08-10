@@ -5,7 +5,7 @@
 ### Feature 1.1 — Data Layer & Analytics Setup
 | # | Story | Role |
 |---|-------|------|
-| [1.1.1](1.1.1-Get-Products-Use-Case-WIP.md) | Get Products Use Case | Developer |
+| [1.1.1](1.1.1-Get-Products-Use-Case-DONE.md) | Get Products Use Case | Developer |
 | [1.1.2](1.1.2-Analytics-Client-Setup.md) | Analytics Client Setup | Developer |
 | [1.1.3](1.1.3-Hilt-Dependency-Injection.md) | Hilt Dependency Injection | Developer |
 

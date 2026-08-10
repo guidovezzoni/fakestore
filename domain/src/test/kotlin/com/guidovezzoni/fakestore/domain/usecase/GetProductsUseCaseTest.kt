@@ -17,7 +17,7 @@ class GetProductsUseCaseTest {
     private val useCase = GetProductsUseCase(repository)
 
     @Test
-    fun `GIVEN a mocked ProductRepository getProducts returns a product list WHEN GetProductsUseCase is invoked and collected THEN it emits exactly one Result success with that list and the Flow completes`() = runTest {
+    fun `GIVEN repository returns products WHEN use case invoked THEN emits Result success`() = runTest {
         val products = listOf(
             Product(
                 id = 1,
@@ -39,7 +39,7 @@ class GetProductsUseCaseTest {
     }
 
     @Test
-    fun `GIVEN a mocked ProductRepository getProducts throws an exception WHEN GetProductsUseCase is invoked and collected THEN it emits exactly one Result failure wrapping that exception no exception escapes and the Flow completes`() = runTest {
+    fun `GIVEN repository throws exception WHEN use case invoked THEN emits Result failure`() = runTest {
         val expectedException = RuntimeException("Network error")
         coEvery { repository.getProducts() } throws expectedException
 

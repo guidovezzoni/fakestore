@@ -9,7 +9,7 @@ import org.junit.Test
 
 class ProductMapperTest {
     @Test
-    fun `GIVEN a ProductDto with a nested RatingDto WHEN ProductMapper maps it THEN every field is correctly mapped including RatingDto to Rating`() {
+    fun `GIVEN ProductDto with nested RatingDto WHEN mapped THEN all fields map correctly including Rating`() {
         val ratingDto = RatingDto(rate = 3.9, count = 120)
         val productDto = ProductDto(
             id = 1,
