@@ -126,6 +126,49 @@
         </li>
       </ul>
     </section>
+
+    <section class="report-section" data-source="propose_change" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Change Proposed</h2>
+        <time datetime="2026-08-10T00:00:00Z">August 10, 2026</time>
+      </header>
+      <p class="section-source">Source: propose_change</p>
+
+      <h3>Exploration Findings</h3>
+      <ul>
+        <li><code>:core</code> module contains only <code>network/NetworkClient.kt</code>, applies <code>fakestore.android.library</code></li>
+        <li>MockK already in version catalog but not yet a <code>:core</code> test dependency</li>
+        <li>No existing analytics/logging code anywhere in the codebase</li>
+        <li><code>:app</code> has no DI container yet (confirms DI wiring out of scope)</li>
+        <li>Pattern reference from story 1.1.1 (GetProductsUseCase) used for structural consistency</li>
+      </ul>
+
+      <h3>Questions Asked and Answers</h3>
+      <ol>
+        <li><strong>No-op class?</strong> → No separate no-op. Empty registry = silent no-op.</li>
+        <li><strong>Logcat testing strategy?</strong> → Both: extract pure formatter function + mockkStatic(Log::class)</li>
+        <li><strong>Thread safety?</strong> → CopyOnWriteArrayList (read-heavy/write-rare pattern)</li>
+        <li><strong>Default debug provider registration?</strong> → Deferred to caller (story 1.1.3 DI wiring)</li>
+        <li><strong>Package name?</strong> → <code>com.guidovezzoni.fakestore.core.analytics</code> (parallel to <code>core.network</code>)</li>
+      </ol>
+
+      <h3>Artifacts Created</h3>
+      <ul>
+        <li><code>openspec/changes/analytics-client-setup/proposal.md</code> — Why/What/Capabilities/Impact</li>
+        <li><code>openspec/changes/analytics-client-setup/design.md</code> — Context, Goals/Non-Goals, 5 key decisions, Risks</li>
+        <li><code>openspec/changes/analytics-client-setup/specs/analytics-client/spec.md</code> — 5 requirements with GIVEN/WHEN/THEN scenarios</li>
+        <li><code>openspec/changes/analytics-client-setup/tasks.md</code> — 5 sections: 2 prerequisites, 2 BDD groups (8 test tasks, 4 impl tasks), 1 verification</li>
+      </ul>
+
+      <h3>Key Design Decisions</h3>
+      <ul>
+        <li><code>AnalyticsProvider</code> is an interface (not abstract class) for maximum SDK adapter flexibility</li>
+        <li><code>AnalyticsClient</code> is a plain class with <code>CopyOnWriteArrayList</code> registry</li>
+        <li>No <code>NoOpAnalyticsProvider</code> — empty registry is the no-op path</li>
+        <li>Debug provider extracts pure formatter for testability</li>
+        <li><code>mockkStatic(Log::class)</code> verifies Logcat integration without Robolectric</li>
+      </ul>
+    </section>
   </main>
 
 </body>
