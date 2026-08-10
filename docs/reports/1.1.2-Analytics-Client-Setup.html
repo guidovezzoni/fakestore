@@ -225,6 +225,107 @@
 
       <div class="outcome outcome-passed">All acceptance criteria met. Implementation complete in 1 cycle.</div>
     </section>
+
+    <section class="report-section" data-source="verify_user_story" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Verification &amp; Archive</h2>
+        <time datetime="2026-08-10T00:00:00Z">August 10, 2026</time>
+      </header>
+      <p class="section-source">Source: verify_user_story</p>
+
+      <h3>Verification Gates</h3>
+
+      <h4>OpenSpec Verification <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>16/16 tasks complete</li>
+        <li>All 5 requirements implemented and verified</li>
+        <li>All design decisions followed</li>
+        <li>One non-blocking suggestion: missing EOF newline in <code>AnalyticsProvider.kt</code></li>
+      </ul>
+
+      <h4>TODO Scan <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>No TODOs found under <code>core/src/</code></li>
+      </ul>
+
+      <h4>Security Review <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>No critical or high-severity findings</li>
+        <li>Design note for story 1.1.3: register <code>DebugAnalyticsProvider</code> in debug builds only</li>
+      </ul>
+
+      <h4>Clean Build <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><code>./gradlew check</code> succeeded (exit code 0)</li>
+        <li>Detekt MaxLineLength exclusion added to config to support GIVEN/WHEN/THEN naming convention in test directories</li>
+      </ul>
+
+      <h4>Unit Tests <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>All tests passed as part of <code>./gradlew check</code></li>
+        <li>7 new unit tests in analytics package</li>
+      </ul>
+
+      <h4>Code Coverage <span class="badge badge-pass">PASS</span></h4>
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Coverage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Instructions</td><td>100.00%</td></tr>
+          <tr><td>Branches</td><td>N/A (0 branches instrumented)</td></tr>
+          <tr><td>Lines</td><td>100.00%</td></tr>
+          <tr><td>Methods</td><td>100.00%</td></tr>
+          <tr><td>Classes</td><td>100.00%</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Test File Coverage <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><code>AnalyticsClientTest.kt</code> present and complete</li>
+        <li><code>DebugAnalyticsProviderTest.kt</code> present and complete</li>
+        <li><code>AnalyticsProvider.kt</code> is an interface (N/A)</li>
+      </ul>
+
+      <h4>Compose Preview Coverage <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>No composables in scope for this story (N/A)</li>
+      </ul>
+
+      <h4>On-Device Tests <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>1 instrumented test passed</li>
+        <li>App launched without crashing on device <code>2C091JEGR07097</code></li>
+      </ul>
+
+      <h4>Definition of Done <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>KDoc added to <code>AnalyticsProvider.kt</code>, <code>AnalyticsClient.kt</code>, and <code>DebugAnalyticsProvider.kt</code></li>
+        <li>Documentation includes purpose, parameter constraints, snake_case convention, and thread-safety guarantees</li>
+      </ul>
+
+      <h3>Archive &amp; Sync</h3>
+
+      <h4>Archival <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><strong>Archive location:</strong> <code>openspec/changes/archive/2026-08-10-analytics-client-setup/</code></li>
+        <li><strong>Story file renamed:</strong> <code>docs/userstories/1.1.2-Analytics-Client-Setup-DONE.md</code></li>
+      </ul>
+
+      <h4>Spec Sync <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>Analytics-client main spec created at <code>openspec/specs/analytics-client/spec.md</code></li>
+        <li>5 requirements synced from proposal/design artifacts</li>
+      </ul>
+
+      <h4>Documentation Sync <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><strong>README.md:</strong> Already accurately reflected the analytics changes; no updates needed</li>
+        <li><strong>AGENTS.md:</strong> Already accurately reflected the analytics changes; no updates needed</li>
+      </ul>
+
+      <div class="outcome outcome-passed">Verification Complete — Story 1.1.2 is PASSED and ready for archive.</div>
+    </section>
   </main>
 
 </body>
