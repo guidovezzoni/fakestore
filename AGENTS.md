@@ -50,9 +50,10 @@ fakestore/
 │   └── src/main/kotlin/
 │       ├── AndroidLibraryConventionPlugin.kt   # fakestore.android.library
 │       └── KotlinLibraryConventionPlugin.kt    # fakestore.kotlin.library
-├── core/                       # Network client (Retrofit/OkHttp), BuildConfig.BASE_URL
+├── core/                       # Network client (Retrofit/OkHttp), BuildConfig.BASE_URL; analytics abstraction
 │   └── src/main/kotlin/com/guidovezzoni/fakestore/core/
-│       └── network/NetworkClient.kt
+│       ├── network/NetworkClient.kt
+│       └── analytics/          # AnalyticsProvider (interface), AnalyticsClient (dispatcher), DebugAnalyticsProvider
 ├── domain/                     # Pure Kotlin — no Android dependencies
 │   └── src/main/kotlin/com/guidovezzoni/fakestore/domain/
 │       ├── model/              # Product, Rating

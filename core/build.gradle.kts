@@ -18,4 +18,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.kotlinx.serialization.converter)
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
 }
