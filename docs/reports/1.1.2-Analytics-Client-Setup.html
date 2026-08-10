@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report: 1.1.2 — Analytics Client Setup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .report-header h1 { font-size: 1.75rem; color: #1e293b; }
+    .report-meta {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;
+    }
+    .report-meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem; margin-bottom: 1rem;
+    }
+    .report-section header h2 { font-size: 1.25rem; color: #1e293b; }
+    .report-section header time { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+    .section-source { font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 0.75rem; }
+
+    h3 { font-size: 1.05rem; color: #334155; margin: 1rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code {
+      background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 3px;
+      font-size: 0.875em;
+      font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+    .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef9c3; color: #854d0e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+
+    .outcome { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; }
+    .outcome-passed { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+    .outcome-failed { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <h1>1.1.2 — Analytics Client Setup</h1>
+    <div class="report-meta">
+      <span><strong>Story:</strong> 1.1.2</span>
+      <span><strong>Branch:</strong> feature/1.1.2-analytics-client-setup</span>
+      <span><strong>Created:</strong> August 10, 2026</span>
+    </div>
+  </div>
+
+  <main id="report-sections">
+    <section class="report-section" data-source="open_user_story" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Story Opened</h2>
+        <time datetime="2026-08-10T00:00:00Z">August 10, 2026</time>
+      </header>
+      <p class="section-source">Source: open_user_story</p>
+
+      <p>User story 1.1.2 was opened for development. Feature branch <code>feature/1.1.2-analytics-client-setup</code> created.</p>
+
+      <h3>Story Refinement Summary</h3>
+      <ul>
+        <li>Defined <code>AnalyticsClient</code> interface contract in <code>:core</code> with <code>logEvent</code> method</li>
+        <li>Specified two implementations:
+          <ul>
+            <li>Debug implementation (Logcat output)</li>
+            <li>No-op implementation (silent discard)</li>
+          </ul>
+        </li>
+        <li>Identified downstream consumer stories: 1.2.4, 2.1.3, 2.2.3, 3.1.4</li>
+        <li>Documented security concerns:
+          <ul>
+            <li>PII leakage via event parameters</li>
+            <li>Debug logging on production builds</li>
+          </ul>
+        </li>
+        <li>Documented GDPR concerns:
+          <ul>
+            <li>No PII in event parameters</li>
+            <li>Consent required when real SDK is added</li>
+          </ul>
+        </li>
+        <li>Expanded Definition of Done: increased from 3 to 12 items</li>
+        <li>Scoped out of this story:
+          <ul>
+            <li>DI wiring (story 1.1.3)</li>
+            <li>Real SDK integration</li>
+            <li>Consent management</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section class="report-section" data-source="propose_change" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Change Proposed</h2>
+        <time datetime="2026-08-10T00:00:00Z">August 10, 2026</time>
+      </header>
+      <p class="section-source">Source: propose_change</p>
+
+      <h3>Exploration Findings</h3>
+      <ul>
+        <li><code>:core</code> module contains only <code>network/NetworkClient.kt</code>, applies <code>fakestore.android.library</code></li>
+        <li>MockK already in version catalog but not yet a <code>:core</code> test dependency</li>
+        <li>No existing analytics/logging code anywhere in the codebase</li>
+        <li><code>:app</code> has no DI container yet (confirms DI wiring out of scope)</li>
+        <li>Pattern reference from story 1.1.1 (GetProductsUseCase) used for structural consistency</li>
+      </ul>
+
+      <h3>Questions Asked and Answers</h3>
+      <ol>
+        <li><strong>No-op class?</strong> → No separate no-op. Empty registry = silent no-op.</li>
+        <li><strong>Logcat testing strategy?</strong> → Both: extract pure formatter function + mockkStatic(Log::class)</li>
+        <li><strong>Thread safety?</strong> → CopyOnWriteArrayList (read-heavy/write-rare pattern)</li>
+        <li><strong>Default debug provider registration?</strong> → Deferred to caller (story 1.1.3 DI wiring)</li>
+        <li><strong>Package name?</strong> → <code>com.guidovezzoni.fakestore.core.analytics</code> (parallel to <code>core.network</code>)</li>
+      </ol>
+
+      <h3>Artifacts Created</h3>
+      <ul>
+        <li><code>openspec/changes/analytics-client-setup/proposal.md</code> — Why/What/Capabilities/Impact</li>
+        <li><code>openspec/changes/analytics-client-setup/design.md</code> — Context, Goals/Non-Goals, 5 key decisions, Risks</li>
+        <li><code>openspec/changes/analytics-client-setup/specs/analytics-client/spec.md</code> — 5 requirements with GIVEN/WHEN/THEN scenarios</li>
+        <li><code>openspec/changes/analytics-client-setup/tasks.md</code> — 5 sections: 2 prerequisites, 2 BDD groups (8 test tasks, 4 impl tasks), 1 verification</li>
+      </ul>
+
+      <h3>Key Design Decisions</h3>
+      <ul>
+        <li><code>AnalyticsProvider</code> is an interface (not abstract class) for maximum SDK adapter flexibility</li>
+        <li><code>AnalyticsClient</code> is a plain class with <code>CopyOnWriteArrayList</code> registry</li>
+        <li>No <code>NoOpAnalyticsProvider</code> — empty registry is the no-op path</li>
+        <li>Debug provider extracts pure formatter for testability</li>
+        <li><code>mockkStatic(Log::class)</code> verifies Logcat integration without Robolectric</li>
+      </ul>
+    </section>
+    <section class="report-section" data-source="apply_changes" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Changes Applied</h2>
+        <time datetime="2026-08-10T00:00:00Z">August 10, 2026</time>
+      </header>
+      <p class="section-source">Source: apply_changes</p>
+
+      <h3>Implementation Summary</h3>
+      <p>All 16 tasks across 5 sections were implemented in a single pass with no iteration cycles needed. Sub-agent orchestration was used: Sections 1 and 2 ran with Haiku; Sections 3, 4, and 5 ran with Sonnet.</p>
+
+      <h3>Files Delivered</h3>
+      <table>
+        <thead><tr><th>File</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td><code>core/build.gradle.kts</code></td><td>Modified — added <code>testImplementation(libs.mockk)</code></td></tr>
+          <tr><td><code>core/src/main/kotlin/.../analytics/AnalyticsProvider.kt</code></td><td>New — interface with <code>logEvent(name, params)</code></td></tr>
+          <tr><td><code>core/src/main/kotlin/.../analytics/AnalyticsClient.kt</code></td><td>New — dispatcher using <code>CopyOnWriteArrayList</code></td></tr>
+          <tr><td><code>core/src/main/kotlin/.../analytics/DebugAnalyticsProvider.kt</code></td><td>New — Logcat provider with extracted <code>formatLogMessage</code></td></tr>
+          <tr><td><code>core/src/test/.../analytics/AnalyticsClientTest.kt</code></td><td>New — 3 unit tests (BDD)</td></tr>
+          <tr><td><code>core/src/test/.../analytics/DebugAnalyticsProviderTest.kt</code></td><td>New — 4 unit tests (BDD): 2 formatter + 2 <code>mockkStatic</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>BDD Cycles</h3>
+      <table>
+        <thead><tr><th>Section</th><th>RED</th><th>GREEN</th></tr></thead>
+        <tbody>
+          <tr><td>3 — AnalyticsClient (3 tests)</td><td>Confirmed — unresolved reference <code>AnalyticsClient</code></td><td>Confirmed — all 3 tests pass</td></tr>
+          <tr><td>4 — DebugAnalyticsProvider formatter (2 tests)</td><td>Confirmed — unresolved <code>formatLogMessage</code></td><td>Confirmed — both pass</td></tr>
+          <tr><td>4 — DebugAnalyticsProvider Log.d (2 tests)</td><td>Confirmed — unresolved <code>DebugAnalyticsProvider</code></td><td>Confirmed — both pass, <code>mockkStatic</code> worked without Robolectric</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Verification Results</h3>
+      <ul>
+        <li><span class="badge badge-pass">PASS</span> <code>./gradlew detektDebug</code> — zero violations, no fixes needed</li>
+        <li><span class="badge badge-pass">PASS</span> <code>./gradlew test</code> — all 7 new tests pass</li>
+        <li><span class="badge badge-pass">PASS</span> <code>./gradlew :core:koverVerify</code> — 100% line coverage on analytics package (above 95% minimum)</li>
+        <li><span class="badge badge-pass">PASS</span> <code>./gradlew connectedDebugAndroidTest</code> — all instrumented tests pass on device</li>
+      </ul>
+
+      <h3>TODOs</h3>
+      <p><strong>ACKNOWLEDGED (1):</strong> <code>app/src/main/res/xml/data_extraction_rules.xml:8</code> — Android boilerplate comment in backup rules template; unrelated to analytics.</p>
+      <p>No RESOLVE NOW TODOs were found.</p>
+
+      <h3>Security Review</h3>
+      <p><span class="badge badge-pass">PASS</span> No findings. Two design-level notes for story 1.1.3: (1) register <code>DebugAnalyticsProvider</code> in debug builds only; (2) add KDoc to <code>AnalyticsProvider</code> clarifying params must not contain PII.</p>
+
+      <h3>Documentation</h3>
+      <ul>
+        <li><strong>README.md</strong> — Updated <code>:core</code> bullet to include analytics abstraction.</li>
+        <li><strong>AGENTS.md</strong> — Updated module structure tree to include <code>analytics/</code> package.</li>
+      </ul>
+
+      <div class="outcome outcome-passed">All acceptance criteria met. Implementation complete in 1 cycle.</div>
+    </section>
+
+    <section class="report-section" data-source="verify_user_story" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Verification &amp; Archive</h2>
+        <time datetime="2026-08-10T00:00:00Z">August 10, 2026</time>
+      </header>
+      <p class="section-source">Source: verify_user_story</p>
+
+      <h3>Verification Gates</h3>
+
+      <h4>OpenSpec Verification <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>16/16 tasks complete</li>
+        <li>All 5 requirements implemented and verified</li>
+        <li>All design decisions followed</li>
+        <li>One non-blocking suggestion: missing EOF newline in <code>AnalyticsProvider.kt</code></li>
+      </ul>
+
+      <h4>TODO Scan <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>No TODOs found under <code>core/src/</code></li>
+      </ul>
+
+      <h4>Security Review <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>No critical or high-severity findings</li>
+        <li>Design note for story 1.1.3: register <code>DebugAnalyticsProvider</code> in debug builds only</li>
+      </ul>
+
+      <h4>Clean Build <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><code>./gradlew check</code> succeeded (exit code 0)</li>
+        <li>Detekt MaxLineLength exclusion added to config to support GIVEN/WHEN/THEN naming convention in test directories</li>
+      </ul>
+
+      <h4>Unit Tests <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>All tests passed as part of <code>./gradlew check</code></li>
+        <li>7 new unit tests in analytics package</li>
+      </ul>
+
+      <h4>Code Coverage <span class="badge badge-pass">PASS</span></h4>
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Coverage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Instructions</td><td>100.00%</td></tr>
+          <tr><td>Branches</td><td>N/A (0 branches instrumented)</td></tr>
+          <tr><td>Lines</td><td>100.00%</td></tr>
+          <tr><td>Methods</td><td>100.00%</td></tr>
+          <tr><td>Classes</td><td>100.00%</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Test File Coverage <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><code>AnalyticsClientTest.kt</code> present and complete</li>
+        <li><code>DebugAnalyticsProviderTest.kt</code> present and complete</li>
+        <li><code>AnalyticsProvider.kt</code> is an interface (N/A)</li>
+      </ul>
+
+      <h4>Compose Preview Coverage <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>No composables in scope for this story (N/A)</li>
+      </ul>
+
+      <h4>On-Device Tests <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>1 instrumented test passed</li>
+        <li>App launched without crashing on device <code>2C091JEGR07097</code></li>
+      </ul>
+
+      <h4>Definition of Done <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>KDoc added to <code>AnalyticsProvider.kt</code>, <code>AnalyticsClient.kt</code>, and <code>DebugAnalyticsProvider.kt</code></li>
+        <li>Documentation includes purpose, parameter constraints, snake_case convention, and thread-safety guarantees</li>
+      </ul>
+
+      <h3>Archive &amp; Sync</h3>
+
+      <h4>Archival <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><strong>Archive location:</strong> <code>openspec/changes/archive/2026-08-10-analytics-client-setup/</code></li>
+        <li><strong>Story file renamed:</strong> <code>docs/userstories/1.1.2-Analytics-Client-Setup-DONE.md</code></li>
+      </ul>
+
+      <h4>Spec Sync <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li>Analytics-client main spec created at <code>openspec/specs/analytics-client/spec.md</code></li>
+        <li>5 requirements synced from proposal/design artifacts</li>
+      </ul>
+
+      <h4>Documentation Sync <span class="badge badge-pass">PASS</span></h4>
+      <ul>
+        <li><strong>README.md:</strong> Already accurately reflected the analytics changes; no updates needed</li>
+        <li><strong>AGENTS.md:</strong> Already accurately reflected the analytics changes; no updates needed</li>
+      </ul>
+
+      <div class="outcome outcome-passed">Verification Complete — Story 1.1.2 is PASSED and ready for archive.</div>
+    </section>
+  </main>
+
+</body>
+</html>

@@ -44,7 +44,7 @@ cd fakestore
 The project uses a multi-module Clean Architecture with four Gradle modules:
 
 - **build-logic/** — Convention plugins (`fakestore.android.library`, `fakestore.kotlin.library`) centralising Detekt, Kover, and compile configuration
-- **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`
+- **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`; analytics abstraction (`AnalyticsProvider` interface, `AnalyticsClient` dispatcher, `DebugAnalyticsProvider`)
 - **:domain** — Domain models (`Product`, `Rating`), repository interface (`ProductRepository`), use cases (`GetProductsUseCase`) — pure Kotlin, no Android dependencies
 - **:data** — DTOs (`ProductDto`, `RatingDto`), mapper, `ApiService`, `ProductRepositoryImpl`
 - **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation
