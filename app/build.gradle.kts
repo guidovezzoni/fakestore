@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kover)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -18,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.guidovezzoni.fakestore.HiltTestRunner"
     }
 
     buildTypes {
@@ -33,6 +35,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -68,6 +71,7 @@ kover {
                     "*.ui.theme.*",
                     "*.ui.screens.*",
                     "*.MainActivity",
+                    "*.FakeStoreApplication",
                 )
                 annotatedBy(
                     "androidx.compose.ui.tooling.preview.Preview",
@@ -94,11 +98,21 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(project(":core"))
+    implementation(project(":data"))
+    implementation(project(":domain"))
+    implementation(libs.hilt.android)
+    implementation(libs.retrofit)
+    ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

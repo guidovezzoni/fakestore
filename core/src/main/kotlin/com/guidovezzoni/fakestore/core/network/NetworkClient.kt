@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 private const val CONNECT_TIMEOUT_SECONDS = 10L
 private const val READ_TIMEOUT_SECONDS = 30L
 
-object NetworkClient {
+class NetworkClient {
     private val json = Json { ignoreUnknownKeys = true }
 
     private val okHttpClient = OkHttpClient.Builder()

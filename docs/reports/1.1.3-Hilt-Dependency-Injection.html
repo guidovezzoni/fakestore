@@ -272,6 +272,71 @@
         Change proposed successfully. All SDD artifacts created with BDD-structured tasks. Ready for implementation.
       </div>
     </section>
+    <section class="report-section" data-source="apply_changes" data-timestamp="2026-08-10T12:00:00Z">
+      <header>
+        <h2>Changes Applied</h2>
+        <time datetime="2026-08-10T12:00:00Z">2026-08-10</time>
+      </header>
+      <p class="section-source">Source: apply_changes</p>
+
+      <h3>Implementation Summary</h3>
+      <p>All 27 tasks across 8 sections were implemented via sub-agent orchestration. Sections 1–6 were executed on JVM; sections 7–8 required a connected Android device (Pixel 6a, Android 16).</p>
+
+      <h3>Section-by-Section Results</h3>
+      <table>
+        <tr><th>Section</th><th>Tasks</th><th>Model</th><th>Status</th><th>Notes</th></tr>
+        <tr><td><strong>§1</strong> Build Configuration</td><td>5</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>KSP <code>2.2.10-2.0.2</code> and Hilt <code>2.60</code> confirmed; <code>android.disallowKotlinSourceSets=false</code> added to <code>gradle.properties</code> for KSP/AGP compatibility</td></tr>
+        <tr><td><strong>§2</strong> NetworkClient Conversion</td><td>2</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>BDD RED→GREEN: <code>object</code> → <code>class</code>; <code>NetworkClientTest</code> updated</td></tr>
+        <tr><td><strong>§3</strong> Network Provisioning</td><td>2</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>BDD RED→GREEN; Retrofit added as explicit <code>implementation</code> dep in <code>:app</code> (not transitively available from <code>:core</code>)</td></tr>
+        <tr><td><strong>§4</strong> Analytics Provisioning</td><td>3</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>BDD RED→GREEN; reflection used for provider-count assertion (avoids <code>android.util.Log</code> crash on JVM); <code>buildConfig = true</code> added to <code>buildFeatures</code></td></tr>
+        <tr><td><strong>§5</strong> Data Layer Provisioning</td><td>4</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>BDD RED→GREEN; <code>kotlinx-coroutines-test</code> added; test name shortened to avoid 255-char Linux filename limit</td></tr>
+        <tr><td><strong>§6</strong> App &amp; Entry-Point Integration</td><td>4</td><td>Haiku</td><td><span class="badge badge-pass">PASS</span></td><td><code>FakeStoreApplication</code>, <code>@AndroidEntryPoint</code> on <code>MainActivity</code>, manifest update, Kover exclude added</td></tr>
+        <tr><td><strong>§7</strong> Dependency Graph Assembly</td><td>4</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>BDD RED→GREEN on-device; <code>HiltTestRunner</code> created; backtick test name converted to underscores for DEX minSdk 24 compatibility; graph assembled with no missing/duplicate/circular bindings</td></tr>
+        <tr><td><strong>§8</strong> Final Verification</td><td>6</td><td>Sonnet</td><td><span class="badge badge-pass">PASS</span></td><td>All checks passed; see verification detail below</td></tr>
+      </table>
+
+      <h3>Verification Results</h3>
+      <table>
+        <tr><th>Check</th><th>Result</th><th>Detail</th></tr>
+        <tr><td><code>./gradlew assembleDebug</code></td><td><span class="badge badge-pass">PASS</span></td><td>110 tasks (22 executed, 88 up-to-date)</td></tr>
+        <tr><td><code>./gradlew test</code></td><td><span class="badge badge-pass">PASS</span></td><td>20 unit tests, 0 failures — all pre-existing and new module tests pass</td></tr>
+        <tr><td><code>./gradlew detektDebug</code></td><td><span class="badge badge-pass">PASS</span></td><td>No violations</td></tr>
+        <tr><td><code>./gradlew koverVerify</code></td><td><span class="badge badge-pass">PASS</span></td><td>95% minimum bound met across <code>:app</code>, <code>:core</code>, <code>:domain</code>, <code>:data</code></td></tr>
+        <tr><td><code>./gradlew connectedDebugAndroidTest</code></td><td><span class="badge badge-pass">PASS</span></td><td>2 instrumented tests on Pixel 6a (Android 16) — <code>HiltDependencyGraphTest</code> + pre-existing <code>ExampleInstrumentedTest</code></td></tr>
+        <tr><td>Acceptance criteria cross-check</td><td><span class="badge badge-pass">PASS</span></td><td>All 12 acceptance criteria verified</td></tr>
+      </table>
+
+      <h3>Iteration Cycles</h3>
+      <p>Each BDD section required exactly 1 RED→GREEN cycle. No section required a retry. Minor remediation items encountered during implementation (not requiring additional task cycles):</p>
+      <ul>
+        <li><code>gradle.properties</code>: added <code>android.disallowKotlinSourceSets=false</code> for KSP/AGP compatibility</li>
+        <li><code>app/build.gradle.kts</code>: added explicit <code>implementation(libs.retrofit)</code> (not transitively exported from <code>:core</code>)</li>
+        <li><code>app/build.gradle.kts</code>: enabled <code>buildConfig = true</code> in <code>buildFeatures</code></li>
+        <li>Test method names: shortened one test name to avoid Linux 255-char filename limit; converted backtick-spaced name in instrumented test to underscore form for DEX minSdk 24 compatibility</li>
+      </ul>
+
+      <h3>TODOs</h3>
+      <p>No <code>TODO</code> comments were found in any source file under <code>app/src/</code>, <code>core/src/</code>, <code>domain/src/</code>, or <code>data/src/</code>. No RESOLVE NOW or ACKNOWLEDGED TODOs to report.</p>
+
+      <h3>Security Review</h3>
+      <p><span class="badge badge-pass">PASS</span> — No high-confidence security vulnerabilities identified. 0 fix cycles required. Key items reviewed:</p>
+      <ul>
+        <li><code>DebugAnalyticsProvider</code> registration gated by <code>BuildConfig.DEBUG</code> (compile-time <code>static final boolean = false</code> in release; dead branch eliminated by R8/ProGuard)</li>
+        <li>All networking over HTTPS; OkHttp default TLS; no bypass introduced</li>
+        <li>No hardcoded credentials or API keys</li>
+        <li>Hilt 2.60 and KSP versions pinned in version catalog</li>
+      </ul>
+
+      <h3>Documentation Updates</h3>
+      <ul>
+        <li><strong>README.md</strong> — updated: added Hilt 2.60 + KSP to the Tech Stack section; updated <code>:app</code> module description to list <code>NetworkModule</code>, <code>AnalyticsModule</code>, <code>DataModule</code>, and <code>FakeStoreApplication</code></li>
+        <li><strong>AGENTS.md</strong> — updated: added Hilt 2.60 + KSP 2.2.10-2.0.2 entry to Tech Stack, with entry points noted</li>
+      </ul>
+
+      <div class="outcome outcome-passed">
+        All 27 tasks complete. 20 unit tests and 2 instrumented tests passing. Security review clean. Hilt dependency graph verified end-to-end on device. Ready for verification and archival.
+      </div>
+    </section>
   </main>
 
 </body>
