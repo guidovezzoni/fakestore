@@ -8,6 +8,7 @@ A native Android app built with Kotlin and Jetpack Compose that consumes the [Fa
 - **MVI architecture** (Model-View-Intent) with Clean Architecture layers
 - **Multi-module**: `build-logic` (convention plugins), `:core`, `:domain`, `:data`, `:app`
 - **Networking**: Retrofit + OkHttp + kotlinx-serialization
+- **Dependency Injection**: Hilt (Dagger-Hilt 2.60) + KSP; modules in `:app/di/`
 - **Detekt** for static analysis (with Compose rules)
 - **Kover** for code coverage (95% minimum)
 - **Fastlane** for build and release automation
@@ -47,7 +48,7 @@ The project uses a multi-module Clean Architecture with four Gradle modules:
 - **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`; analytics abstraction (`AnalyticsProvider` interface, `AnalyticsClient` dispatcher, `DebugAnalyticsProvider`)
 - **:domain** — Domain models (`Product`, `Rating`), repository interface (`ProductRepository`), use cases (`GetProductsUseCase`) — pure Kotlin, no Android dependencies
 - **:data** — DTOs (`ProductDto`, `RatingDto`), mapper, `ApiService`, `ProductRepositoryImpl`
-- **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation
+- **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation; Hilt DI modules (`NetworkModule`, `AnalyticsModule`, `DataModule`), `FakeStoreApplication` (`@HiltAndroidApp`)
 
 ## Build & Release
 
