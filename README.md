@@ -6,6 +6,8 @@ A native Android app built with Kotlin and Jetpack Compose that consumes the [Fa
 
 - **Kotlin 2.2** with Jetpack Compose and Material 3
 - **MVI architecture** (Model-View-Intent) with Clean Architecture layers
+- **Multi-module**: `build-logic` (convention plugins), `:core`, `:domain`, `:data`, `:app`
+- **Networking**: Retrofit + OkHttp + kotlinx-serialization
 - **Detekt** for static analysis (with Compose rules)
 - **Kover** for code coverage (95% minimum)
 - **Fastlane** for build and release automation
@@ -39,11 +41,13 @@ cd fakestore
 
 ## Project Structure
 
-The app follows **Clean Architecture** with three layers:
+The project uses a multi-module Clean Architecture with four Gradle modules:
 
-- **data/** — API clients, DTOs, repository implementations, and mappers
-- **domain/** — Use cases and repository interfaces (pure Kotlin, no Android dependencies)
-- **ui/** — Composable screens, ViewModels (MVI), theme, and navigation
+- **build-logic/** — Convention plugins (`fakestore.android.library`, `fakestore.kotlin.library`) centralising Detekt, Kover, and compile configuration
+- **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`
+- **:domain** — Domain models (`Product`, `Rating`), repository interface (`ProductRepository`), use cases (`GetProductsUseCase`) — pure Kotlin, no Android dependencies
+- **:data** — DTOs (`ProductDto`, `RatingDto`), mapper, `ApiService`, `ProductRepositoryImpl`
+- **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation
 
 ## Build & Release
 
@@ -56,7 +60,15 @@ bundle exec fastlane beta    # Upload to Play Store internal track
 bundle exec fastlane deploy  # Upload to Play Store production track
 ```
 
-## Improvements & Clarifications
+## Product Clarifications
 
-1. REST API does not support pagination, it should be added as  ti currently limits the scalability.
-2. Requirements specify persistence for favourites but not for products, the app doesn't appear to be offline first. Accepted but should be clarified with Product/ 
+1. REST API does not support pagination, it should be added as  it currently limits the app scalability.
+2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product. 
+
+## Technical Improvements
+
+1. kover currently excludes also by annotatedBy, however the annotatedBy filter excludes the entire annotated class, excluding code that genuinely might need unit test, this needs to be reviewed and replaced by a more accurate exclusion.
+
+## Process Improvements
+
+1. PRs are fairly big, this is a tradeoff due to the size of the project and the time available, in normal situations PRs should be sized in such a way that can be easily reviewed by peers.

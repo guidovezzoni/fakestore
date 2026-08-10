@@ -34,30 +34,46 @@ FakeStore is a native Android application built with Kotlin and Jetpack Compose.
 - **Language:** Kotlin 2.2
 - **UI:** Jetpack Compose with Material 3
 - **Architecture:** MVI (Model-View-Intent) with Clean Architecture layers (data / domain / ui)
+- **Multi-module:** `build-logic` composite build with `fakestore.android.library` and `fakestore.kotlin.library` convention plugins; modules `:core`, `:domain`, `:data`, `:app`
+- **Networking:** Retrofit + OkHttp + kotlinx-serialization (converter: `retrofit2-kotlinx-serialization-converter`)
 - **Build system:** Gradle (Kotlin DSL) with version catalog (`gradle/libs.versions.toml`)
 - **Min SDK:** 24 — **Target SDK:** 37
 - **Static analysis:** Detekt 2.x with Compose rules plugin
 - **Code coverage:** Kover (95% minimum bound)
 - **CI / Release:** Fastlane (test, build, beta, deploy lanes)
 
-### Package Structure
+### Module Structure
 
 ```
-com.guidovezzoni.fakestore/
-├── di/              # Dependency injection modules
-├── ui/
-│   ├── screens/     # Feature screen composables
-│   ├── viewmodel/   # MVI ViewModels
-│   ├── state/       # UiState data classes
-│   ├── intent/      # UiIntent sealed classes
-│   ├── effect/      # UiEffect sealed classes
-│   └── theme/       # Material 3 theme (Color, Theme, Type)
-├── domain/
-│   ├── usecase/     # Business logic use cases
-│   └── repository/  # Repository interfaces (domain models only)
-└── data/
-    ├── repository/  # Repository implementations
-    └── mapper/      # DTO → domain mappers
+fakestore/
+├── build-logic/                # Convention plugins (Gradle composite build)
+│   └── src/main/kotlin/
+│       ├── AndroidLibraryConventionPlugin.kt   # fakestore.android.library
+│       └── KotlinLibraryConventionPlugin.kt    # fakestore.kotlin.library
+├── core/                       # Network client (Retrofit/OkHttp), BuildConfig.BASE_URL
+│   └── src/main/kotlin/com/guidovezzoni/fakestore/core/
+│       └── network/NetworkClient.kt
+├── domain/                     # Pure Kotlin — no Android dependencies
+│   └── src/main/kotlin/com/guidovezzoni/fakestore/domain/
+│       ├── model/              # Product, Rating
+│       ├── repository/         # ProductRepository interface
+│       └── usecase/            # GetProductsUseCase
+├── data/                       # Data layer — implements domain contracts
+│   └── src/main/kotlin/com/guidovezzoni/fakestore/data/
+│       ├── model/              # ProductDto, RatingDto (@Serializable)
+│       ├── network/            # ApiService (Retrofit)
+│       ├── mapper/             # ProductMapper (internal)
+│       └── repository/         # ProductRepositoryImpl
+└── app/                        # Android application module
+    └── src/main/java/com/guidovezzoni/fakestore/
+        ├── di/                 # Dependency injection modules
+        ├── ui/
+        │   ├── screens/        # Feature screen composables
+        │   ├── viewmodel/      # MVI ViewModels
+        │   ├── state/          # UiState data classes
+        │   ├── intent/         # UiIntent sealed classes
+        │   ├── effect/         # UiEffect sealed classes
+        │   └── theme/          # Material 3 theme (Color, Theme, Type)
 ```
 
 ### Key Commands
