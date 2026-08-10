@@ -64,7 +64,8 @@ bundle exec fastlane deploy  # Upload to Play Store production track
 ## Product Clarifications
 
 1. REST API does not support pagination, it should be added as  it currently limits the app scalability.
-2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product. 
+2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product.
+3. Currency for product prices is hardcoded to USD. Ideally the price should come with a currency field. 
 
 ## Technical Improvements
 

@@ -122,6 +122,95 @@
     </ul>
   </section>
 
+
+  <section class="report-section" data-source="propose_change" data-timestamp="2026-08-10T00:00:00Z">
+    <header>
+      <h2>Change Proposed</h2>
+      <time datetime="2026-08-10T00:00:00Z">10 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: opsx:propose</p>
+
+    <h3>Exploration Findings</h3>
+    <ul>
+      <li><strong>Domain layer fully built:</strong> <code>Product</code>/<code>Rating</code> models, <code>GetProductsUseCase</code> returning <code>Flow&lt;Result&lt;List&lt;Product&gt;&gt;&gt;</code> — consumed as-is</li>
+      <li><strong>App module UI infrastructure:</strong> No screens, viewmodels, MVI artifacts, image loading, or test patterns — this story establishes all of them</li>
+      <li><strong>Hilt DI:</strong> Already provides <code>GetProductsUseCase</code> via <code>DataModule</code></li>
+      <li><strong>Version catalog gaps:</strong> Image loading library, lifecycle-viewmodel-compose, hilt-navigation-compose (to be added)</li>
+      <li><strong>Kover configuration:</strong> Already excludes <code>*.ui.screens.*</code> and <code>@Composable</code>/<code>@Preview</code> — ViewModel/formatter must hit 95%</li>
+      <li><strong>Localisation:</strong> No Spanish resource directory exists yet</li>
+      <li><strong>Test precedents:</strong> No ViewModel or Compose UI test patterns exist in codebase</li>
+    </ul>
+
+    <h3>Questions Asked and Answers Received</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Image loading library?</td>
+          <td>Coil 3 (<code>io.coil-kt.coil3:coil-compose</code> + <code>coil-network-okhttp</code>)</td>
+        </tr>
+        <tr>
+          <td>Spanish resources directory?</td>
+          <td><code>values-es</code> (generic Spanish)</td>
+        </tr>
+        <tr>
+          <td>Currency formatting?</td>
+          <td>Always USD with locale-aware formatting</td>
+        </tr>
+        <tr>
+          <td>ViewModel DI mechanism?</td>
+          <td>Add <code>hilt-navigation-compose</code> for <code>hiltViewModel()</code></td>
+        </tr>
+        <tr>
+          <td>Image placeholder?</td>
+          <td>Simple Material icon (not custom drawable)</td>
+        </tr>
+        <tr>
+          <td>LazyColumn item key?</td>
+          <td><code>key = { it.id }</code> for scroll/recomposition stability</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Artifacts Created</h3>
+    <ul>
+      <li><code>openspec/changes/product-list-screen/proposal.md</code> — change proposal (why/what/impact)</li>
+      <li><code>openspec/changes/product-list-screen/design.md</code> — 8 design decisions, risks, migration plan</li>
+      <li><code>openspec/changes/product-list-screen/specs/product-list-screen/spec.md</code> — 12 ADDED requirements with BDD scenarios</li>
+      <li><code>openspec/changes/product-list-screen/tasks.md</code> — 33 tasks in 9 sections (BDD-structured)</li>
+    </ul>
+
+    <h3>Task Structure</h3>
+    <ul>
+      <li><strong>2 prerequisite sections</strong> (5 tasks): version catalog/Gradle, MVI scaffolding</li>
+      <li><strong>4 BDD sections</strong> (19 tasks): formatter, ViewModel, card composable, screen composable</li>
+      <li><strong>2 integration sections</strong> (3 tasks): strings/localisation, MainActivity wiring</li>
+      <li><strong>1 verification section</strong> (7 tasks): detekt, tests, kover, on-device checks</li>
+    </ul>
+
+    <h3>Key Design Decisions</h3>
+    <ol>
+      <li><strong>Coil 3 with OkHttp network engine</strong> (not Ktor) — reuses existing OkHttp stack</li>
+      <li><strong>Material icon placeholder/error for images</strong> — no custom drawable assets</li>
+      <li><strong>Formatting utility in <code>ui/util/</code></strong> — independently testable, per guidelines</li>
+      <li><strong><code>ProductListItem</code> display model in <code>ui/state/</code></strong> — pre-formatted values, composables are purely presentational</li>
+      <li><strong>Stateful/stateless composable split</strong> — enables isolated Compose UI testing</li>
+    </ol>
+
+    <h3>Risks Flagged</h3>
+    <ul>
+      <li><span class="badge badge-warn">Coil 3 runtime:</span> Requires separate <code>coil-network-okhttp</code> artifact for network images (compiles without it but fails at runtime)</li>
+      <li><span class="badge badge-warn">Currency locale:</span> <code>NumberFormat.getCurrencyInstance()</code> defaults to locale's own currency — must explicitly override to USD</li>
+      <li><span class="badge badge-info">Deferred error handling:</span> <code>Result.failure</code> silently swallowed in this story (empty product list) — by design, deferred to 1.2.2</li>
+    </ul>
+
+  </section>
+
   </main>
 
 </body>
