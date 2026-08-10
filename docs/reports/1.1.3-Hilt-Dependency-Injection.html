@@ -199,6 +199,79 @@
         Story opened successfully. Feature branch created and story refined with complete technical specifications covering Hilt setup, module structure, scoping, testing, and compliance. Ready for implementation.
       </div>
     </section>
+    <section class="report-section" data-source="propose_change" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Change Proposed</h2>
+        <time datetime="2026-08-10T00:00:00Z">2026-08-10</time>
+      </header>
+      <p class="section-source">Source: propose_change</p>
+
+      <h3>Exploration Summary</h3>
+      <p>Codebase exploration revealed the following key findings:</p>
+      <ul>
+        <li><strong>No Hilt/KSP/javax.inject dependencies</strong> exist in <code>gradle/libs.versions.toml</code> &mdash; must be added from scratch</li>
+        <li><strong><code>:app</code> has zero project dependencies</strong> &mdash; no <code>project(":core")</code>, <code>project(":domain")</code>, or <code>project(":data")</code>; this is the first time layers connect to the UI module</li>
+        <li><strong>No Application class exists</strong> &mdash; <code>AndroidManifest.xml</code> has no <code>android:name</code>; <code>FakeStoreApplication</code> must be created</li>
+        <li><strong><code>NetworkClient</code> is a Kotlin <code>object</code></strong> &mdash; must be converted to a class for <code>@Provides</code> instantiation; this will break <code>NetworkClientTest</code></li>
+        <li><strong><code>AnalyticsClient.register()</code> is never called in production</strong> &mdash; only in tests; the DI module will be the first production call site</li>
+        <li><strong>Kover/detekt already has Hilt exclusion patterns</strong> pre-populated in convention plugins and <code>app/build.gradle.kts</code></li>
+        <li><strong>Bleeding-edge toolchain</strong> (AGP 9.3.1, Kotlin 2.2.10, compileSdk 37) &mdash; Hilt/KSP version compatibility needs verification at implementation time</li>
+        <li><strong><code>ProductRepositoryImpl</code> and <code>GetProductsUseCase</code></strong> already use plain constructor injection &mdash; no source changes needed to become Hilt-provided</li>
+      </ul>
+
+      <h3>Questions Asked &amp; Answers Received</h3>
+      <table>
+        <tr><th>Question</th><th>Answer</th></tr>
+        <tr>
+          <td>Should DI modules use <code>@Provides</code> in <code>:app</code> only, or <code>@Inject</code> annotations on constructors across modules?</td>
+          <td><span class="badge badge-info">@Provides in :app only</span> &mdash; All Hilt modules live in <code>app/di/</code>. No DI annotations in <code>:core</code>/<code>:domain</code>/<code>:data</code>. All modules stay framework-free.</td>
+        </tr>
+        <tr>
+          <td>How should the debug-only <code>DebugAnalyticsProvider</code> registration be build-variant-gated?</td>
+          <td><span class="badge badge-info">Runtime BuildConfig.DEBUG check</span> &mdash; Single Hilt module with runtime flag. Simpler structure than source-set split.</td>
+        </tr>
+        <tr>
+          <td>Should <code>AnalyticsClient</code>'s constructor accept <code>Set&lt;AnalyticsProvider&gt;</code> via DI, or keep <code>register()</code>?</td>
+          <td><span class="badge badge-info">Keep register()</span> &mdash; DI module calls <code>register()</code> after construction. Preserves existing 1.1.2 API and test compatibility.</td>
+        </tr>
+      </table>
+
+      <h3>Artifacts Created</h3>
+      <table>
+        <tr><th>Artifact</th><th>Path</th></tr>
+        <tr><td>Proposal</td><td><code>openspec/changes/2026-08-10-hilt-dependency-injection/proposal.md</code></td></tr>
+        <tr><td>Design</td><td><code>openspec/changes/2026-08-10-hilt-dependency-injection/design.md</code></td></tr>
+        <tr><td>Delta Spec</td><td><code>openspec/changes/2026-08-10-hilt-dependency-injection/specs/hilt-dependency-injection/spec.md</code></td></tr>
+        <tr><td>Tasks</td><td><code>openspec/changes/2026-08-10-hilt-dependency-injection/tasks.md</code></td></tr>
+        <tr><td>Metadata</td><td><code>openspec/changes/2026-08-10-hilt-dependency-injection/.openspec.yaml</code></td></tr>
+      </table>
+
+      <h3>Task Structure Summary</h3>
+      <ul>
+        <li><strong>8 sections</strong>, <strong>27 tasks</strong> total</li>
+        <li><strong>&sect;1</strong> Build Configuration &mdash; 5 prerequisite tasks (version catalog, root/app Gradle wiring, build-logic scope check)</li>
+        <li><strong>&sect;2</strong> NetworkClient Conversion (BDD) &mdash; 1 test + 1 implementation</li>
+        <li><strong>&sect;3</strong> Network Provisioning (BDD) &mdash; 1 test + 1 implementation</li>
+        <li><strong>&sect;4</strong> Analytics Provisioning (BDD) &mdash; 2 tests + 1 implementation</li>
+        <li><strong>&sect;5</strong> Data Layer Provisioning (BDD) &mdash; 3 tests + 1 implementation</li>
+        <li><strong>&sect;6</strong> Application &amp; Entry-Point Integration &mdash; 4 mechanical tasks</li>
+        <li><strong>&sect;7</strong> Dependency Graph Assembly (BDD) &mdash; 4 tasks (HiltTestRunner, config, instrumented test, graph verification)</li>
+        <li><strong>&sect;8</strong> Final Verification &mdash; 6 tasks (build, test, detekt, kover, on-device, acceptance criteria cross-check)</li>
+      </ul>
+
+      <h3>Key Design Decisions</h3>
+      <ul>
+        <li><strong>Hilt 2.60 + KSP</strong> &mdash; versions verified via Context7 against current Hilt docs; exact KSP patch for Kotlin 2.2.10 flagged as first implementation task</li>
+        <li><strong>Three <code>object</code> modules</strong> (<code>NetworkModule</code>, <code>AnalyticsModule</code>, <code>DataModule</code>) &mdash; <code>@Provides</code> functions callable directly in unit tests without booting the Hilt graph</li>
+        <li><strong>Debug gating via extracted parameterised function</strong> &mdash; <code>internal fun provideAnalyticsClient(isDebug: Boolean)</code> enables unit-testing both branches in a single test run</li>
+        <li><strong>Instrumented graph-assembly test</strong> &mdash; <code>HiltDependencyGraphTest</code> with custom <code>HiltTestRunner</code> proves end-to-end graph resolution on-device</li>
+        <li><strong><code>NetworkClient</code> object &rarr; class</strong> &mdash; moves singleton scoping from language construct to DI container; <code>NetworkClientTest</code> updated accordingly</li>
+      </ul>
+
+      <div class="outcome outcome-passed">
+        Change proposed successfully. All SDD artifacts created with BDD-structured tasks. Ready for implementation.
+      </div>
+    </section>
   </main>
 
 </body>
