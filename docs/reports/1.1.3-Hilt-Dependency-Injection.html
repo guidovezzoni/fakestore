@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report: 1.1.3 — Hilt Dependency Injection</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .report-header h1 { font-size: 1.75rem; color: #1e293b; }
+    .report-meta {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;
+    }
+    .report-meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem; margin-bottom: 1rem;
+    }
+    .report-section header h2 { font-size: 1.25rem; color: #1e293b; }
+    .report-section header time { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+    .section-source { font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 0.75rem; }
+
+    h3 { font-size: 1.05rem; color: #334155; margin: 1rem 0 0.5rem; }
+    h4 { font-size: 0.95rem; color: #475569; margin: 0.75rem 0 0.35rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code {
+      background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 3px;
+      font-size: 0.875em;
+      font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+    .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef9c3; color: #854d0e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+
+    .outcome { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; }
+    .outcome-passed { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+    .outcome-failed { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <h1>1.1.3 — Hilt Dependency Injection</h1>
+    <div class="report-meta">
+      <span><strong>Story:</strong> 1.1.3</span>
+      <span><strong>Branch:</strong> feature/1.1.3-hilt-dependency-injection</span>
+      <span><strong>Created:</strong> 2026-08-10</span>
+    </div>
+  </div>
+
+  <main id="report-sections">
+    <section class="report-section" data-source="open_user_story" data-timestamp="2026-08-10T00:00:00Z">
+      <header>
+        <h2>Story Opened for Development</h2>
+        <time datetime="2026-08-10T00:00:00Z">2026-08-10</time>
+      </header>
+      <p class="section-source">Source: open_user_story</p>
+
+      <h3>Story State</h3>
+      <p>User story <code>1.1.3 — Hilt Dependency Injection</code> was opened for development and moved to <strong>WIP</strong> (Work in Progress) state. Feature branch <code>feature/1.1.3-hilt-dependency-injection</code> was created from <code>main</code>.</p>
+
+      <h3>Story Refinement Summary</h3>
+      <p>The story has been significantly expanded from 5 acceptance criteria to 14 detailed, observable-outcome criteria. Comprehensive technical specifications now cover DI architecture, scoping, build configuration, and integration patterns across all modules:</p>
+
+      <h4>Description &amp; Scope</h4>
+      <ul>
+        <li><strong>Objective:</strong> Integrate Hilt dependency injection framework into the multi-module FakeStore architecture to provide type-safe, automated DI with compile-time graph validation</li>
+        <li><strong>In Scope:</strong>
+          <ul>
+            <li>Hilt dependency provider modules for <code>:core</code>, <code>:data</code>, and <code>:domain</code></li>
+            <li><code>@HiltAndroidApp</code> entry point in <code>:app</code></li>
+            <li><code>@AndroidEntryPoint</code> on <code>MainActivity</code> for future ViewModel injection</li>
+            <li>Constructor injection in repositories and use cases</li>
+            <li>Singleton scoping for network and analytics clients</li>
+            <li>Build configuration and annotation processing setup via build-logic convention plugins</li>
+            <li>DI-graph integration test verifying the dependency graph</li>
+          </ul>
+        </li>
+        <li><strong>Out of Scope (deferred to future stories):</strong>
+          <ul>
+            <li>Real ViewModels and feature implementations (no ViewModels exist yet)</li>
+            <li>Database/persistence DI (story 2.1.2)</li>
+            <li>Real analytics SDK wiring</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h4>Files &amp; Classes Affected (by intent)</h4>
+      <table>
+        <tr><th>Module</th><th>Intent</th></tr>
+        <tr><td><code>:app</code></td><td>Establish the root of the Hilt dependency graph (<code>@HiltAndroidApp</code>) and make <code>MainActivity</code> an injection entry point</td></tr>
+        <tr><td><code>:core</code></td><td>Make the configured Retrofit/OkHttp instance and <code>AnalyticsClient</code> available through injection as singletons</td></tr>
+        <tr><td><code>:data</code></td><td>Make <code>ApiService</code> available and bind <code>ProductRepository</code> to <code>ProductRepositoryImpl</code></td></tr>
+        <tr><td><code>:domain</code></td><td>Make <code>GetProductsUseCase</code> injectable (constructor-injectable)</td></tr>
+        <tr><td><code>gradle/libs.versions.toml</code></td><td>Add Hilt and annotation-processing tool as managed dependencies</td></tr>
+        <tr><td><code>build-logic</code>, module build files</td><td>Apply Hilt's Gradle plugin and annotation processing consistently via convention plugins</td></tr>
+      </table>
+
+      <h4>What Must Be Provided Through the Dependency Graph</h4>
+      <table>
+        <tr><th>Dependency</th><th>Scope</th><th>Resolution</th></tr>
+        <tr><td><code>NetworkClient</code> (Retrofit/OkHttp)</td><td>Singleton</td><td>Available to any module needing network access</td></tr>
+        <tr><td><code>AnalyticsClient</code></td><td>Singleton</td><td>Available to any module needing analytics; correct providers registered per build type</td></tr>
+        <tr><td><code>ApiService</code></td><td>Singleton</td><td>Available to <code>ProductRepositoryImpl</code></td></tr>
+        <tr><td><code>ProductRepository</code></td><td>Singleton or per-use</td><td>Interface resolves to <code>ProductRepositoryImpl</code> transparently</td></tr>
+        <tr><td><code>GetProductsUseCase</code></td><td>Per injection point</td><td>Available to future ViewModels</td></tr>
+      </table>
+
+      <h4>Testing Requirements</h4>
+      <ul>
+        <li><strong>Unit Tests:</strong> Unchanged strategy &mdash; test constructor injection via mock/stub parameters, not via DI container</li>
+        <li><strong>DI-Graph Test:</strong> At least one test verifying the complete dependency graph assembles, <code>ProductRepository</code> resolves to <code>ProductRepositoryImpl</code>, and debug analytics provider is registered in debug builds</li>
+        <li><strong>Existing Tests:</strong> All pre-existing unit tests (1.1.1, 1.1.2) must pass unmodified</li>
+      </ul>
+
+      <h4>Security Considerations</h4>
+      <ul>
+        <li><strong>Risk Level:</strong> Medium</li>
+        <li><strong>Primary Concern:</strong> Debug analytics provider (Logcat) must not be registered in release builds &mdash; moving registration into the DI graph must preserve this build-variant-level guarantee</li>
+        <li><strong>Other:</strong> Dependency supply chain (low), expanded injection entry points (low), generated code correctness (low &mdash; verified by compilation and DI-graph test)</li>
+      </ul>
+
+      <h4>Performance Considerations</h4>
+      <ul>
+        <li><strong>Build time:</strong> Medium risk &mdash; Hilt annotation processing adds compile-time overhead; should be measured before/after</li>
+        <li><strong>Startup:</strong> Low risk &mdash; singleton dependencies should be lazily constructed to avoid startup latency</li>
+        <li><strong>Runtime:</strong> No impact expected &mdash; dependencies are looked up once per consumer lifetime</li>
+      </ul>
+
+      <h4>GDPR &amp; Data Protection</h4>
+      <ul>
+        <li><strong>Risk Level:</strong> Medium</li>
+        <li><strong>Concern:</strong> Regression risk &mdash; DI migration must preserve the debug-provider release-safety guarantee from story 1.1.2</li>
+        <li><strong>No new personal data introduced</strong> &mdash; this story only changes how existing objects are constructed</li>
+      </ul>
+
+      <h4>Other Non-Functional Requirements</h4>
+      <ul>
+        <li><strong>Constructor Injection Convention:</strong> Hilt adoption should reinforce constructor injection; field injection only where framework constraints require it (e.g. Activities)</li>
+        <li><strong>Convention-Plugin Alignment:</strong> Hilt plugin and annotation processing configured through <code>build-logic</code> convention plugins, not duplicated per module</li>
+        <li><strong>Version Catalogue Discipline:</strong> All Hilt dependencies declared in <code>gradle/libs.versions.toml</code> and referenced via <code>libs.*</code></li>
+        <li><strong>Module Boundary Preservation:</strong> <code>:domain</code> must not gain Android/Hilt framework dependencies beyond minimal constructor-injection annotations</li>
+        <li><strong>Kover Readiness:</strong> Existing Kover config already excludes Hilt-generated patterns &mdash; verify correctness once Hilt is applied</li>
+      </ul>
+
+      <h3>Assumptions</h3>
+      <p>Seven key assumptions documented for review:</p>
+      <ol>
+        <li>No ViewModels exist yet &mdash; <code>@HiltViewModel</code> is a standing requirement for future stories (1.2.x+), not testable in this story</li>
+        <li>KSP vs. kapt decision deferred to propose_change phase</li>
+        <li>Exact Hilt module file organisation deferred to propose_change phase</li>
+        <li>Whether <code>NetworkClient</code> and <code>ProductMapper</code> (Kotlin objects) are converted or wrapped is an implementation decision</li>
+        <li>Hilt version chosen for Kotlin 2.2 and AGP compatibility, pinned in version catalogue</li>
+        <li>Favourites persistence DI (story 2.1.2) is out of scope</li>
+        <li>No real analytics SDK is introduced &mdash; only the debug provider's registration mechanism changes</li>
+      </ol>
+
+      <h3>Definition of Done</h3>
+      <p>19-point checklist for story completion covering: Hilt graph initialisation, singleton scoping, build-type-gated provider registration, interface-to-implementation binding, <code>MainActivity</code> as injection entry point, DI-graph test, build-type analytics test, pre-existing test stability, build/detekt/kover checks, version catalogue discipline, convention-plugin alignment, clean <code>:domain</code> boundary, and code review.</p>
+
+      <div class="outcome outcome-passed">
+        Story opened successfully. Feature branch created and story refined with complete technical specifications covering Hilt setup, module structure, scoping, testing, and compliance. Ready for implementation.
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
