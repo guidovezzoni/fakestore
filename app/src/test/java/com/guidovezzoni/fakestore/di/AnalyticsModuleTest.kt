@@ -34,6 +34,15 @@ class AnalyticsModuleTest {
     }
 
     @Test
+    fun `GIVEN the analytics provisioning function is invoked with isDebug false WHEN the registered providers are inspected THEN no DebugAnalyticsProvider is registered`() {
+        val analyticsClient = provideAnalyticsClient(isDebug = false)
+
+        val providers = analyticsClient.registeredProviders()
+
+        assertTrue(providers.isEmpty())
+    }
+
+    @Test
     fun `GIVEN the analytics provisioning function is invoked with isDebug false WHEN the resulting AnalyticsClient logEvent app_open is called THEN no debug provider is registered and no debug-only side effect occurs`() {
         val analyticsClient = provideAnalyticsClient(isDebug = false)
         analyticsClient.register(mockProvider)
