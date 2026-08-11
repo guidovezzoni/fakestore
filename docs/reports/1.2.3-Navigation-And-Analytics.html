@@ -177,6 +177,73 @@
       <li>State restoration after process kill is deferred; navigation state is lost on app restart</li>
     </ol>
   </section>
+
+  <section class="report-section" data-source="sdlc_propose_change" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Change Proposed</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc_propose_change</p>
+
+    <h3>Exploration Findings</h3>
+    <p>Codebase exploration confirmed the following architecture:</p>
+    <ul>
+      <li>MVI pattern with stateful/stateless composable overloads, <code>ProductListViewModel</code> taking only <code>GetProductsUseCase</code></li>
+      <li><code>AnalyticsClient</code> in <code>:core</code> is a thread-safe dispatcher; <code>AnalyticsModule</code> provides it as a Hilt <code>@Singleton</code></li>
+      <li><code>MainActivity</code> calls <code>ProductListScreen</code> directly &mdash; no Scaffold, no navigation</li>
+      <li>No <code>androidx.navigation:navigation-compose</code> dependency exists in the project</li>
+      <li><code>hilt-navigation-compose</code> and <code>material-icons-extended</code> already present</li>
+    </ul>
+
+    <h3>Questions Raised and Resolved</h3>
+    <table>
+      <tr><th>#</th><th>Question</th><th>Resolution</th></tr>
+      <tr>
+        <td>1</td>
+        <td>Where should tab-tap analytics be logged from?</td>
+        <td>New <code>MainViewModel</code> MVI triplet &mdash; composables stay purely presentational</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>What navigation route definition style?</td>
+        <td><code>@Serializable</code> type-safe routes (navigation-compose 2.8+)</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Which Material icons for tabs? Different variants for selected/unselected?</td>
+        <td>Same filled icons (<code>ShoppingCart</code>, <code>Favorite</code>, <code>Person</code>); color-only distinction via Material 3 theming</td>
+      </tr>
+    </table>
+    <p>Additional questions (state preservation mechanism, re-fire-per-visit semantics, back-button behaviour, empty-content logging, navigation version) were resolved from the story document and codebase without user input.</p>
+
+    <h3>Artefacts Created</h3>
+    <table>
+      <tr><th>Artefact</th><th>Path</th></tr>
+      <tr><td>Proposal</td><td><code>openspec/changes/1.2.3-navigation-and-analytics/proposal.md</code></td></tr>
+      <tr><td>Design</td><td><code>openspec/changes/1.2.3-navigation-and-analytics/design.md</code></td></tr>
+      <tr><td>Spec: Bottom Navigation</td><td><code>openspec/changes/1.2.3-navigation-and-analytics/specs/bottom-navigation/spec.md</code></td></tr>
+      <tr><td>Spec: Product List Screen</td><td><code>openspec/changes/1.2.3-navigation-and-analytics/specs/product-list-screen/spec.md</code></td></tr>
+      <tr><td>Tasks</td><td><code>openspec/changes/1.2.3-navigation-and-analytics/tasks.md</code></td></tr>
+    </table>
+
+    <h3>Task Structure Summary</h3>
+    <p>53 tasks across 9 sections:</p>
+    <ul>
+      <li><strong>Sections 1&ndash;2</strong>: Prerequisites &mdash; build/version-catalog changes, <code>AppDestination</code> route definitions, MVI contract type shells</li>
+      <li><strong>Sections 3&ndash;7</strong>: 5 BDD groups &mdash; <code>MainViewModel</code> tab-tap handling (12 tasks), <code>BottomNavigationBar</code> rendering/dispatch (6 tasks), <code>ProductListViewModel</code> analytics (7 tasks), placeholder screens (4 tasks), <code>MainScreen</code> nav-host/effect wiring (6 tasks)</li>
+      <li><strong>Section 8</strong>: Integration &mdash; <code>MainActivity</code> wiring, strings.xml EN/ES, DI graph confirmation</li>
+      <li><strong>Section 9</strong>: Final verification &mdash; detekt, unit tests, UI tests, kover, on-device checks</li>
+    </ul>
+
+    <h3>Key Design Decisions</h3>
+    <ul>
+      <li><code>AppDestination</code> as a sealed interface with <code>@Serializable data object</code> routes (type-safe navigation-compose 2.9.8)</li>
+      <li><code>MainUiState.selectedDestination</code> is ViewModel-owned state, not derived from <code>NavController</code></li>
+      <li>Tab taps flow: <code>MainUiIntent.TabTapped</code> &rarr; ViewModel logs analytics + emits <code>MainUiEffect.NavigateToTab</code> &rarr; <code>MainScreen</code> calls <code>navController.navigate()</code></li>
+      <li><code>product_list_viewed</code> logged inline in <code>ProductListViewModel.loadProducts()</code>'s <code>onSuccess</code> branch &mdash; no new intent needed</li>
+      <li><code>BottomNavigationBar</code> is fully stateless: <code>(selectedDestination, onTabTapped, modifier)</code> &mdash; independently testable via Compose UI tests</li>
+    </ul>
+  </section>
   </main>
 
 </body>
