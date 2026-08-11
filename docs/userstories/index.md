@@ -13,7 +13,7 @@
 | # | Story | Role |
 |---|-------|------|
 | [1.2.1](1.2.1-Product-List-Screen-DONE.md) | Product List Screen | User |
-| [1.2.2](1.2.2-Product-List-States-WIP.md) | Product List States (Loading / Error / Empty) | User |
+| [1.2.2](1.2.2-Product-List-States-DONE.md) | Product List States (Loading / Error / Empty) | User |
 | [1.2.3](1.2.3-Bottom-Navigation.md) | Bottom Navigation | User |
 | [1.2.4](1.2.4-Product-List-Analytics.md) | Product List Analytics | Product Owner |
 

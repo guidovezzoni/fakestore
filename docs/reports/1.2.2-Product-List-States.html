@@ -319,6 +319,155 @@
     <div class="outcome outcome-passed">All 32/32 tasks complete — implementation verified.</div>
   </section>
 
+  <section class="report-section" data-source="opsx:verify" data-timestamp="2026-08-11T16:30:00Z">
+    <header>
+      <h2>Verification & Archive</h2>
+      <time datetime="2026-08-11T16:30:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: opsx:verify</p>
+
+    <h3>Verification Gates</h3>
+
+    <h4>OpenSpec Verification <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>All 32 tasks complete and marked complete in <code>tasks.md</code></li>
+      <li>All spec requirements matched: 4 modified requirements in <code>product-list-screen/spec.md</code> and 1 added requirement</li>
+      <li>All 8 design decisions followed as documented in <code>design.md</code></li>
+      <li>AC-8 deviation documented and approved: <code>Error</code> state uses parameterless <code>data object</code> with <code>stringResource()</code> resolution in Composable</li>
+    </ul>
+
+    <h4>TODO Scan <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>No <code>RESOLVE NOW</code> TODOs introduced by this change</li>
+      <li>1 unrelated boilerplate TODO found in <code>data_extraction_rules.xml</code> (pre-existing, not in scope)</li>
+    </ul>
+
+    <h4>Security Review <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>No critical or high-severity findings</li>
+      <li>Error state correctly implements parameterless <code>data object Error</code> — prevents information leakage of stack traces or raw API responses</li>
+      <li>No technical details leak in UI messages; all error strings resolved via localised <code>stringResource()</code></li>
+      <li>0 fix cycles required</li>
+    </ul>
+
+    <h4>Clean Build <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>BUILD SUCCESSFUL in 1m 19s</li>
+      <li>All modules compiled successfully:
+        <ul>
+          <li><code>:domain</code></li>
+          <li><code>:core</code></li>
+          <li><code>:data</code></li>
+          <li><code>:app</code></li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Unit Tests <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>All unit tests passed (UP-TO-DATE from clean build run)</li>
+      <li>No test failures or regressions</li>
+    </ul>
+
+    <h4>Code Coverage Report <span class="badge badge-pass">PASS</span></h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Coverage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Instructions</td>
+          <td>100.00%</td>
+        </tr>
+        <tr>
+          <td>Branches</td>
+          <td>N/A (0 branches tracked)</td>
+        </tr>
+        <tr>
+          <td>Lines</td>
+          <td>100.00%</td>
+        </tr>
+        <tr>
+          <td>Methods</td>
+          <td>100.00%</td>
+        </tr>
+        <tr>
+          <td>Classes</td>
+          <td>100.00%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Minimum bound (95%) exceeded. Code coverage gate: PASSED.</p>
+
+    <h4>Test File Coverage <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li><code>ProductListViewModel</code> → unit test file <code>ProductListViewModelTest.kt</code> <span class="badge badge-pass">FOUND</span></li>
+      <li><code>ProductListScreen</code> → Compose UI test file <code>ProductListScreenTest.kt</code> <span class="badge badge-pass">FOUND</span></li>
+    </ul>
+
+    <h4>Compose Preview Coverage <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>4 previews defined in <code>ProductListScreen.kt</code></li>
+      <li>All 4 state variants covered:
+        <ul>
+          <li>Loading state</li>
+          <li>Content state with items</li>
+          <li>Content state (empty product list)</li>
+          <li>Error state</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Instrumented Tests <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>12 instrumented tests executed via <code>connectedDebugAndroidTest</code></li>
+      <li>All tests passed</li>
+      <li>On-device app verification: <code>adb</code> exercise confirmed:
+        <ul>
+          <li>Product cards visible and tappable in Content state</li>
+          <li>"Products" top app bar title displayed in all states</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Definition of Done <span class="badge badge-pass">PASS</span></h4>
+    <p>All 16 DoD criteria confirmed met:</p>
+    <ol>
+      <li>User story clarity reviewed — CONFIRMED</li>
+      <li>OpenSpec artifacts (proposal, design, tasks, delta spec) created — CONFIRMED</li>
+      <li>All tasks implemented and passing — CONFIRMED (32/32)</li>
+      <li>Unit tests written and passing — CONFIRMED (100% coverage)</li>
+      <li>Compose UI tests written and passing — CONFIRMED (12 tests)</li>
+      <li>Previews cover all state variants — CONFIRMED (4 previews)</li>
+      <li>Code review passed — CONFIRMED (no issues)</li>
+      <li>Security review passed — CONFIRMED</li>
+      <li>Detekt static analysis passed — CONFIRMED (no violations)</li>
+      <li>Clean build successful — CONFIRMED</li>
+      <li>On-device testing verified — CONFIRMED (adb exercise)</li>
+      <li>Documentation updated (README, AGENTS.md, etc.) — CONFIRMED (no updates required)</li>
+      <li>Git branch clean and commit history reviewed — CONFIRMED</li>
+      <li>Feature branch ready for merge to main — CONFIRMED</li>
+      <li>User story renamed to -DONE status — CONFIRMED (file: <code>1.2.2-Product-List-States-DONE.md</code>)</li>
+      <li>Report archived and indexed — CONFIRMED (archive location below)</li>
+    </ol>
+
+    <h3>Archival & Storage</h3>
+    <ul>
+      <li><strong>Archive directory:</strong> <code>openspec/changes/archive/2026-08-11-product-list-states/</code></li>
+      <li><strong>User story renamed:</strong> <code>docs/userstories/1.2.2-Product-List-States-DONE.md</code></li>
+      <li><strong>Spec sync status:</strong> <span class="badge badge-pass">PASS</span> — product-list-screen spec updated with 4 modified requirements and 1 added requirement</li>
+      <li><strong>README/AGENTS.md:</strong> In sync — no updates required (story adds no new modules or build instructions)</li>
+    </ul>
+
+    <h3>Summary</h3>
+    <p>All verification gates passed. The feature is production-ready and branch is cleared for merge to main.</p>
+
+    <div class="outcome outcome-passed">Verification Complete — PASSED. Ready for merge.</div>
+  </section>
+
   </main>
 
 </body>
