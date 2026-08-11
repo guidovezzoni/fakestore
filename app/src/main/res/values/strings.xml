@@ -2,4 +2,7 @@
     <string name="app_name" translatable="false">FakeStore</string>
     <string name="product_list_screen_title">Products</string>
     <string name="product_image_content_description">Image of %1$s</string>
+    <string name="product_list_error_message">Something went wrong. Please try again.</string>
+    <string name="product_list_retry_button">Retry</string>
+    <string name="product_list_empty_message">No products available</string>
 </resources>

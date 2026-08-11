@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -24,7 +23,7 @@ class ProductListViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProductListUiState())
+    private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
     val uiState: StateFlow<ProductListUiState> = _uiState.asStateFlow()
 
     private val _uiEffect = MutableSharedFlow<ProductListUiEffect>()
@@ -32,19 +31,25 @@ class ProductListViewModel @Inject constructor(
 
     fun onIntent(intent: ProductListUiIntent) {
         when (intent) {
-            is ProductListUiIntent.LoadProducts -> loadProducts()
+            is ProductListUiIntent.LoadProducts,
+            is ProductListUiIntent.RetryClicked -> loadProducts()
         }
     }
 
     private fun loadProducts() {
         val locale = Locale.getDefault()
+        _uiState.value = ProductListUiState.Loading
         viewModelScope.launch {
             getProductsUseCase().collect { result ->
-                result.onSuccess { products ->
-                    _uiState.update { currentState ->
-                        currentState.copy(products = products.map { mapToProductListItem(it, locale) })
+                result
+                    .onSuccess { products ->
+                        _uiState.value = ProductListUiState.Content(
+                            products.map { mapToProductListItem(it, locale) }
+                        )
                     }
-                }
+                    .onFailure {
+                        _uiState.value = ProductListUiState.Error
+                    }
             }
         }
     }
