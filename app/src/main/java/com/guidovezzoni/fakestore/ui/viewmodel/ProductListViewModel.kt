@@ -2,14 +2,11 @@ package com.guidovezzoni.fakestore.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.guidovezzoni.fakestore.domain.model.Product
 import com.guidovezzoni.fakestore.domain.usecase.GetProductsUseCase
 import com.guidovezzoni.fakestore.ui.effect.ProductListUiEffect
 import com.guidovezzoni.fakestore.ui.intent.ProductListUiIntent
-import com.guidovezzoni.fakestore.ui.state.ProductListItem
 import com.guidovezzoni.fakestore.ui.state.ProductListUiState
-import com.guidovezzoni.fakestore.ui.util.formatPrice
-import com.guidovezzoni.fakestore.ui.util.formatRatingScore
+import com.guidovezzoni.fakestore.ui.util.mapToProductListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject
@@ -40,25 +37,15 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun loadProducts() {
+        val locale = Locale.getDefault()
         viewModelScope.launch {
             getProductsUseCase().collect { result ->
                 result.onSuccess { products ->
                     _uiState.update { currentState ->
-                        currentState.copy(products = products.map(::toProductListItem))
+                        currentState.copy(products = products.map { mapToProductListItem(it, locale) })
                     }
                 }
             }
         }
-    }
-
-    private fun toProductListItem(product: Product): ProductListItem {
-        val locale = Locale.getDefault()
-        return ProductListItem(
-            id = product.id,
-            imageUrl = product.imageUrl,
-            title = product.title,
-            formattedPrice = formatPrice(product.price, locale),
-            formattedRatingScore = formatRatingScore(product.rating.score, locale),
-        )
     }
 }
