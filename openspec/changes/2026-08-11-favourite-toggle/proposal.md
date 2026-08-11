@@ -7,13 +7,13 @@ The FakeStore app currently has no way for a user to mark a product as a favouri
 - Add a Room database (`:data`) with a single `favourite_entity` table storing only `productId: Int` (primary key) — no other product fields are persisted locally.
 - Add `FavouritesRepository` (interface in `:domain`, `FavouritesRepositoryImpl` in `:data`) exposing `addFavourite(productId)`, `removeFavourite(productId)`, and `getFavouriteIds(): Flow<Set<Int>>` (converted from Room's native `Flow<List<Int>>` for O(1) membership checks downstream).
 - Add `ToggleFavouriteUseCase(productId: Int, shouldBeFavourite: Boolean): Result<Unit>` and `GetFavouriteIdsUseCase(): Flow<Set<Int>>` in `:domain`, both plain Kotlin with no Room/Android dependency.
-- Extend `ProductListItem` with `isFavourite: Boolean` and `favouriteContentDescription: String`, both computed in the ViewModel (never in a composable).
+- Extend `ProductListItem` with `isFavourite: Boolean`, computed in the ViewModel.
 - Extend `ProductListUiIntent` with `ToggleFavourite(productId: Int)` and `ProductListUiEffect` with `ShowFavouriteToggleError`, the app's first real one-shot effect.
 - Rework `ProductListViewModel` to combine the one-shot product fetch with the reactive `GetFavouriteIdsUseCase()` flow via `combine()`, so favourite state updates automatically when Room changes. Toggling a favourite updates `uiState` optimistically, calls `ToggleFavouriteUseCase`, logs `favourite_added`/`favourite_removed` (with `product_id`) only after a successful write, and reverts the optimistic change plus emits `ShowFavouriteToggleError` on failure.
-- Add a heart `IconButton` (filled/outlined, localised content description) to `ProductListItemCard`, and wire a `SnackbarHost` + effect collection into `ProductListScreen`.
+- Add a heart `IconButton` (filled/outlined, content description resolved via `stringResource()` based on `isFavourite`) to `ProductListItemCard`, and wire a `SnackbarHost` + effect collection into `ProductListScreen`.
 - Replace the `FavouritesScreen` placeholder with a full MVI feature: `FavouritesUiState`/`FavouritesUiIntent`/`FavouritesUiEffect`/`FavouritesViewModel`, displaying only favourited products (fetched via `GetProductsUseCase` and filtered against `GetFavouriteIdsUseCase`'s ids), an empty-state message when there are none, and the same optimistic-toggle/revert/snackbar behaviour as the Products screen.
 - Add Room (`room-runtime`, `room-ktx`, `room-compiler` via KSP) to `gradle/libs.versions.toml` and `:data`'s build file — the first KSP annotation processing in `:data`.
-- Add a new `DatabaseModule` (`:app/di/`) provisioning the Room database (via `@ApplicationContext`), DAO, `FavouritesRepository`, and the two new use cases; extend `DataModule`'s existing test coverage pattern for the new provisions.
+- Add a new `DatabaseModule` (`:app/di/`) provisioning the Room database, DAO, `FavouritesRepository`, and the two new use cases; extend `DataModule`'s existing test coverage pattern for the new provisions.
 - Add four new strings (`favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, `favourites_empty_message`) to `values/strings.xml` and their Spanish translations in `values-es/strings.xml`.
 
 ## Capabilities

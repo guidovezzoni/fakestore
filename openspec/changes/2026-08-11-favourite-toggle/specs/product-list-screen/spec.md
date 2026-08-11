@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
-### Requirement: ProductListItem carries pre-computed favourite state
-`:app` SHALL extend `ProductListItem` with `isFavourite: Boolean` (default `false`) and `favouriteContentDescription: String` (default `""`), both computed by `ProductListViewModel`/`FavouritesViewModel` when mapping a domain `Product` — never derived, formatted, or looked up inside a composable.
+### Requirement: ProductListItem carries favourite state
+`:app` SHALL extend `ProductListItem` with `isFavourite: Boolean` (default `false`), computed by `ProductListViewModel`/`FavouritesViewModel` when mapping a domain `Product`. The corresponding content description string is resolved in the composable via `stringResource()`, not stored on `ProductListItem`.
 
 #### Scenario: A favourited product's item reflects isFavourite = true
 - **GIVEN** a `Product` whose `id` is present in the current favourite ID set
@@ -39,9 +39,9 @@
 - **THEN** its `productId` field equals `7`, and it is a member of the `ProductListUiIntent` sealed interface distinct from `LoadProducts` and `RetryClicked`
 
 ### Requirement: ProductListViewModel combines products with reactive favourite state and handles optimistic toggling
-`ProductListViewModel` SHALL additionally be constructor-injected with `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`, and `Context` (via `@ApplicationContext`). On a successful product fetch, it SHALL `combine()` the fetched products with `GetFavouriteIdsUseCase()`'s reactive `Flow<Set<Int>>`, mapping each product to a `ProductListItem` with `isFavourite` set from set membership and `favouriteContentDescription` resolved accordingly, and SHALL re-derive `ProductListUiState.Content` whenever the favourite ID set changes, without requiring a new `LoadProducts`/`RetryClicked` dispatch.
+`ProductListViewModel` SHALL additionally be constructor-injected with `GetFavouriteIdsUseCase` and `ToggleFavouriteUseCase` (no `Context` dependency). On a successful product fetch, it SHALL `combine()` the fetched products with `GetFavouriteIdsUseCase()`'s reactive `Flow<Set<Int>>`, mapping each product to a `ProductListItem` with `isFavourite` set from set membership, and SHALL re-derive `ProductListUiState.Content` whenever the favourite ID set changes, without requiring a new `LoadProducts`/`RetryClicked` dispatch.
 
-On `ProductListUiIntent.ToggleFavourite(productId)`, it SHALL immediately flip that item's `isFavourite` (and recompute its `favouriteContentDescription`) in the currently displayed `Content.products` (optimistic update), then call `ToggleFavouriteUseCase(productId, shouldBeFavourite = <the new state>)`. On success, it SHALL log `favourite_added` or `favourite_removed` (selected by the new state) with `params = mapOf("product_id" to productId)`. On failure, it SHALL restore the pre-toggle `products` list and emit `ProductListUiEffect.ShowFavouriteToggleError`; it SHALL NOT log any analytics event in this case.
+On `ProductListUiIntent.ToggleFavourite(productId)`, it SHALL immediately flip that item's `isFavourite` in the currently displayed `Content.products` (optimistic update), then call `ToggleFavouriteUseCase(productId, shouldBeFavourite = <the new state>)`. On success, it SHALL log `favourite_added` or `favourite_removed` (selected by the new state) with `params = mapOf("product_id" to productId)`. On failure, it SHALL restore the pre-toggle `products` list and emit `ProductListUiEffect.ShowFavouriteToggleError`; it SHALL NOT log any analytics event in this case.
 
 The existing Loading/Content/Error emission behaviour on `LoadProducts`/`RetryClicked` (including empty-list handling and `product_list_viewed` logging) is unchanged by this requirement.
 
@@ -71,17 +71,17 @@ The existing Loading/Content/Error emission behaviour on `LoadProducts`/`RetryCl
 - **THEN** `uiState.value`'s item with `id = 7` reverts to `isFavourite = false`, `uiEffect` emits `ProductListUiEffect.ShowFavouriteToggleError`, and `AnalyticsClient.logEvent()` is never invoked with `name = "favourite_added"` or `"favourite_removed"`
 
 ### Requirement: ProductListItemCard displays image, title, price, rating score, and a favourite toggle icon
-`:app` SHALL define a stateless `ProductListItemCard(item: ProductListItem, onToggleFavourite: (Int) -> Unit = {}, modifier: Modifier = Modifier)` composable displaying, for a single `ProductListItem`: an asynchronously loaded product image, the full product title, the pre-formatted price and rating score strings (unchanged from the existing requirement), and a heart `IconButton` whose icon is filled when `item.isFavourite` is `true` and outlined when `false`, whose content description is `item.favouriteContentDescription`, and which invokes `onToggleFavourite(item.id)` when tapped. The composable SHALL perform no formatting, locale detection, or other business logic — it renders only values already present on `ProductListItem`.
+`:app` SHALL define a stateless `ProductListItemCard(item: ProductListItem, onToggleFavourite: (Int) -> Unit = {}, modifier: Modifier = Modifier)` composable displaying, for a single `ProductListItem`: an asynchronously loaded product image, the full product title, the pre-formatted price and rating score strings (unchanged from the existing requirement), and a heart `IconButton` whose icon is filled when `item.isFavourite` is `true` and outlined when `false`, whose content description is resolved via `stringResource(if (item.isFavourite) R.string.favourite_remove_content_description else R.string.favourite_add_content_description)`, and which invokes `onToggleFavourite(item.id)` when tapped.
 
 #### Scenario: The filled heart icon is shown for a favourited item
 - **GIVEN** a `ProductListItem` with `isFavourite = true`
 - **WHEN** `ProductListItemCard(item)` is composed
-- **THEN** the filled favourite icon is displayed with content description equal to `item.favouriteContentDescription`
+- **THEN** the filled favourite icon is displayed with the localised "Remove from favourites" content description
 
 #### Scenario: The outlined heart icon is shown for a non-favourited item
 - **GIVEN** a `ProductListItem` with `isFavourite = false`
 - **WHEN** `ProductListItemCard(item)` is composed
-- **THEN** the outlined favourite icon is displayed with content description equal to `item.favouriteContentDescription`
+- **THEN** the outlined favourite icon is displayed with the localised "Add to favourites" content description
 
 #### Scenario: Tapping the favourite icon invokes onToggleFavourite with the item's ID
 - **GIVEN** a `ProductListItem` with `id = 7`

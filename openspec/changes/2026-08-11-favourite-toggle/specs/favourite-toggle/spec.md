@@ -108,7 +108,7 @@ On a successful `ToggleFavouriteUseCase` call, the calling ViewModel SHALL log `
 - **THEN** `uiEffect` emits `FavouritesUiEffect.ShowFavouriteToggleError`
 
 ### Requirement: FavouritesViewModel shows only favourited products, kept in sync with Room
-`FavouritesViewModel` SHALL be annotated `@HiltViewModel`, constructor-injected with `GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`, and `AnalyticsClient`. On `LoadFavourites`, it SHALL invoke `GetProductsUseCase()`; on success, it SHALL combine the fetched products with `GetFavouriteIdsUseCase()`'s reactive `Flow<Set<Int>>`, filter to only products whose `id` is present in the favourite ID set, map each to a `ProductListItem` with `isFavourite = true`, and set `uiState` to `FavouritesUiState.Content` with the filtered, mapped list — including when the filtered list is empty. On failure, it SHALL set `uiState` to `FavouritesUiState.Error`.
+`FavouritesViewModel` SHALL be annotated `@HiltViewModel`, constructor-injected with `GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`, and `AnalyticsClient` (no `Context` dependency). On `LoadFavourites`, it SHALL invoke `GetProductsUseCase()`; on success, it SHALL combine the fetched products with `GetFavouriteIdsUseCase()`'s reactive `Flow<Set<Int>>`, filter to only products whose `id` is present in the favourite ID set, map each to a `ProductListItem` with `isFavourite = true`, and set `uiState` to `FavouritesUiState.Content` with the filtered, mapped list — including when the filtered list is empty. On failure, it SHALL set `uiState` to `FavouritesUiState.Error`.
 
 #### Scenario: Only favourited products appear in Content
 - **GIVEN** a mocked `GetProductsUseCase` returning three products with ids `1`, `2`, `3`, and a mocked `GetFavouriteIdsUseCase` emitting `setOf(2)`
@@ -172,7 +172,7 @@ On `FavouritesUiIntent.ToggleFavourite(productId)`, `FavouritesViewModel` SHALL 
 - **THEN** a `Snackbar` displaying the localised `favourite_toggle_error_message` text is shown
 
 ### Requirement: Favourite-related strings are localised in English and Spanish
-`app/src/main/res/values/strings.xml` SHALL define `favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, and `favourites_empty_message` as English (base) string resources, each with a corresponding translated entry in `app/src/main/res/values-es/strings.xml`, and none SHALL appear as a hardcoded literal in `ProductListItemCard.kt`, `ProductListScreen.kt`, `ProductListViewModel.kt`, `FavouritesScreen.kt`, or `FavouritesViewModel.kt`.
+`app/src/main/res/values/strings.xml` SHALL define `favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, and `favourites_empty_message` as English (base) string resources, each with a corresponding translated entry in `app/src/main/res/values-es/strings.xml`, and none SHALL appear as a hardcoded literal in source code. Content description strings are resolved in composables via `stringResource()` based on `isFavourite`, not pre-computed in ViewModels.
 
 #### Scenario: Every new string resource has a Spanish translation
 - **WHEN** `app/src/main/res/values/strings.xml` and `app/src/main/res/values-es/strings.xml` are compared

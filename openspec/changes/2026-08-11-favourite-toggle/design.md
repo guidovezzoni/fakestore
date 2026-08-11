@@ -67,7 +67,6 @@ init {
                     product = product,
                     locale = Locale.getDefault(),
                     isFavourite = isFavourite,
-                    favouriteContentDescription = favouriteContentDescriptionFor(isFavourite),
                 )
             }
         }.collect { items -> _uiState.value = ProductListUiState.Content(items) }
@@ -84,7 +83,7 @@ Because `getFavouriteIdsUseCase()` is a live Room-backed `Flow`, this collector 
 ### 6. Optimistic toggle + revert-on-failure is self-healing via the same `combine()` path
 `onIntent(ToggleFavourite(productId))`:
 1. Reads the current `ProductListUiState.Content.products` (no-op if `uiState` isn't `Content` — a toggle can't be dispatched from a state with no rendered items).
-2. Computes `newIsFavourite = !item.isFavourite` and immediately writes an optimistically-updated `ProductListUiState.Content` (new `favouriteContentDescription` computed for the flipped state too) — this is the "immediate visual feedback" acceptance criterion.
+2. Computes `newIsFavourite = !item.isFavourite` and immediately writes an optimistically-updated `ProductListUiState.Content` — this is the "immediate visual feedback" acceptance criterion.
 3. Launches a coroutine calling `toggleFavouriteUseCase(productId, newIsFavourite)`.
 4. On success: logs `favourite_added` or `favourite_removed` (selected by `newIsFavourite`) with `params = mapOf("product_id" to productId)`.
 5. On failure: restores the pre-toggle `products` list (the snapshot captured in step 1) and emits `ProductListUiEffect.ShowFavouriteToggleError` via `_uiEffect`.
@@ -96,15 +95,13 @@ Because step 2 writes directly to `_uiState` (not to `rawProducts`), it does not
 ### 7. Analytics logging stays in the ViewModel, not the use case
 `ToggleFavouriteUseCase` has no `AnalyticsClient` dependency and lives in `:domain`, which has no Gradle dependency on `:core` (confirmed in `product-catalogue-data`'s "Module dependency graph is enforced" requirement — `:domain` depends on nothing). `ProductListViewModel`/`FavouritesViewModel` already hold `AnalyticsClient` (an existing constructor dependency on `ProductListViewModel`) and are the layer responsible for side effects in this codebase's established MVI convention — `product-list-screen`'s existing `product_list_viewed` logging follows the same shape. Keeping analytics in the ViewModel also makes "no event on failure" trivial to guarantee: it's simply never called on the `onFailure` branch.
 
-### 8. Content description strings are resolved via `@ApplicationContext` injected into the ViewModel — a new pattern
-The user story explicitly requires `favouriteContentDescription` to be pre-computed in the ViewModel (not resolved in the composable via `stringResource()`, unlike every other string in this codebase so far). This requires Android string-resource access from a ViewModel, which has no precedent in this project. `ProductListViewModel` and `FavouritesViewModel` each take a `@ApplicationContext private val context: Context` constructor parameter and call `context.getString(R.string.favourite_remove_content_description)` / `context.getString(R.string.favourite_add_content_description)` via a small shared helper, `favouriteContentDescriptionFor(context: Context, isFavourite: Boolean): String`, placed in `ui/util/FavouriteContentDescriptionProvider.kt` (its own file, per the "utility functions in their own file" guideline) so it's unit-testable with a mocked `Context` (MockK: `every { context.getString(R.string.favourite_add_content_description) } returns "..."`).
+### 8. Content description strings are resolved in the composable via `stringResource()`
+The favourite toggle icon's content description ("Add to favourites" / "Remove from favourites") is resolved inside the composable rather than pre-computed in the ViewModel. `ProductListItemCard` calls `stringResource(if (item.isFavourite) R.string.favourite_remove_content_description else R.string.favourite_add_content_description)` — the same kind of presentational branching already used to select between `Icons.Filled.Favorite` and `Icons.Outlined.FavoriteBorder`. This keeps both ViewModels free of `@ApplicationContext Context`, avoids introducing a `FavouriteContentDescriptionProvider` utility, and removes the `favouriteContentDescription: String` field from `ProductListItem` entirely.
 
-*Alternative considered*: keep `favouriteContentDescription` derivation in the composable (`stringResource` based on `item.isFavourite`), leaving `ProductListItem.favouriteContentDescription` unused/redundant. Rejected — contradicts the user story's explicit data model (`favouriteContentDescription` is a named `ProductListItem` field with the annotation "pre-computed in ViewModel") and the guideline that composables must not branch on business state to pick user-facing strings.
+*Alternative considered*: pre-compute `favouriteContentDescription` in the ViewModel via `@ApplicationContext Context`, exposing it as a `ProductListItem` field. Rejected — introduces Android `Context` into ViewModels for the first time (no precedent in this codebase), adds a utility class and its tests, and the string selection is purely presentational (it maps 1:1 from `isFavourite`, with no business logic involved).
 
-*Alternative considered*: inject an abstraction (e.g. a `StringProvider`) instead of raw `Context`, to avoid Android framework types in the ViewModel. Considered but not required — `ViewModel`s in this codebase are already Android-framework-adjacent (`@HiltViewModel`, `androidx.lifecycle.ViewModel`), and `@ApplicationContext` is the standard, minimal-boilerplate Hilt mechanism for this exact need. An abstraction can be introduced later if more string-resolution needs accumulate.
-
-### 9. `FavouritesViewModel` mirrors `ProductListViewModel`'s shape, filtered to favourited ids
-`FavouritesViewModel` independently calls `getProductsUseCase()` (one-shot) and `getFavouriteIdsUseCase()` (reactive), `combine()`s them the same way, but maps only products whose `id` is present in `favouriteIds` (every resulting `ProductListItem.isFavourite` is therefore always `true`, and `favouriteContentDescription` always resolves to the "remove" string). Tapping the heart icon on the Favourites screen always means "remove" — `toggleFavouriteUseCase(productId, shouldBeFavourite = false)` — with the same optimistic-removal/revert-on-failure/snackbar shape as `ProductListViewModel`, applied to filtering the item out of the locally-held list rather than flipping a boolean field.
+### 9. `FavouritesViewModel` mirrors `ProductListViewModel`'s shape, filtered to favourited IDs
+`FavouritesViewModel` independently calls `getProductsUseCase()` (one-shot) and `getFavouriteIdsUseCase()` (reactive), `combine()`s them the same way, but maps only products whose `id` is present in `favouriteIds` (every resulting `ProductListItem.isFavourite` is therefore always `true`). Tapping the heart icon on the Favourites screen always means "remove" — `toggleFavouriteUseCase(productId, shouldBeFavourite = false)` — with the same optimistic-removal/revert-on-failure/snackbar shape as `ProductListViewModel`, applied to filtering the item out of the locally-held list rather than flipping a boolean field.
 
 `FavouritesUiState` reuses the exact three-variant shape already established by `ProductListUiState` (`Loading` / `Content(products: List<ProductListItem>)` / `Error`), so `FavouritesScreen` can reuse `ProductListItemCard` directly for rendering, and the "empty state" acceptance criterion is satisfied the same way `ProductListScreen` already handles it — `Content(products = emptyList())` renders a dedicated empty message, no new sealed variant needed.
 
@@ -144,14 +141,13 @@ The database is `@Singleton`-scoped (one connection for the app's lifetime, matc
 
 `Room` schema export is enabled (`exportSchema = true` on `@Database`, with `ksp { arg("room.schemaLocation", "$projectDir/schemas") }` in `data/build.gradle.kts`), even though version 1 has no migration to test yet — this keeps the database "migration-friendly from day one" per the user story's NFR, rather than retrofitting schema export when the second migration story arrives.
 
-### 12. `ProductListItemMapper` gains two new parameters, existing tests extend rather than break
-`mapToProductListItem(product: Product, locale: Locale, isFavourite: Boolean, favouriteContentDescription: String): ProductListItem` — both new parameters are required (not defaulted), so every existing call site is forced to pass real values, preventing a silent `isFavourite = false` default from masking a missed wiring point. `ProductListItemMapperTest`'s existing six tests are updated to pass fixed `isFavourite`/`favouriteContentDescription` arguments; two new tests assert those two fields map straight through unchanged.
+### 12. `ProductListItemMapper` gains one new parameter, existing tests extend rather than break
+`mapToProductListItem(product: Product, locale: Locale, isFavourite: Boolean): ProductListItem` — the new parameter is required (not defaulted), so every existing call site is forced to pass a real value, preventing a silent `isFavourite = false` default from masking a missed wiring point. `ProductListItemMapperTest`'s existing six tests are updated to pass a fixed `isFavourite` argument; one new test asserts the field maps straight through unchanged.
 
 ## Risks / Trade-offs
 
 - **[Risk]** First Room usage in the project — KSP annotation processing errors (e.g. a missing `@PrimaryKey`, an unsupported `Flow`-of-`Set` return type) will only surface at compile time. → **Mitigation**: Decision 2 above deliberately avoids `Flow<Set<Int>>` at the DAO layer; `FavouriteEntity`/`FavouriteDao`/`FavouritesDatabase` are prerequisite tasks built and compiled before any dependent use case/repository code is written (see `tasks.md` §3).
 - **[Risk]** The `combine()` + optimistic-update interplay (Decision 5–6) is the most structurally complex ViewModel logic in the project so far. → **Mitigation**: `ProductListViewModelTest` explicitly covers the merge scenario (favourite ids arriving after products), the optimistic-then-success path, and the optimistic-then-failure-then-revert path as distinct test cases, per the user story's Unit Testing table.
-- **[Risk]** Injecting `@ApplicationContext` into `ProductListViewModel`/`FavouritesViewModel` (Decision 8) is architecturally new — a reviewer unfamiliar with this story might read it as a violation of "composables are purely presentational, ViewModel does formatting," when in fact it's the ViewModel resolving a resource, which is the correct layer per the user story's own data model. → **Mitigation**: documented explicitly here and inline where the constructor parameter is declared.
 - **[Trade-off]** `FavouritesViewModel` re-fetches the full product list from the network independently of `ProductListViewModel` (Decision 9). → Accepted per the user story's own NFR table; noted as a Non-Goal above so it isn't mistaken for an oversight during review.
 - **[Trade-off]** No `Migration` objects or `room-testing` dependency added in this story, since there is no prior schema to migrate from. → Schema export is still enabled (Decision 11) so the first future migration has a version-1 baseline to diff against.
 
@@ -161,4 +157,4 @@ No data migration (first Room database, version 1, `exportSchema = true`, no `fa
 
 ## Open Questions
 
-None outstanding — return type (`Set<Int>`), scope (full Favourites screen per the DoD), use-case naming (`GetFavouriteIdsUseCase` only), KSP placement, context injection mechanism, and migration strategy were all resolved via user clarification before this design was written.
+None outstanding — return type (`Set<Int>`), scope (full Favourites screen per the DoD), use-case naming (`GetFavouriteIdsUseCase` only), KSP placement, content description resolution (composable-side via `stringResource()`), and migration strategy were all resolved via user clarification before this design was written.
