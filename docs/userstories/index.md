@@ -24,9 +24,7 @@
 ### Feature 2.1 — Favourite Toggle & Persistence
 | # | Story | Role |
 |---|-------|------|
-| [2.1.1](2.1.1-Favourite-Toggle.md) | Favourite Toggle | User |
-| [2.1.2](2.1.2-Favourites-Persistence.md) | Favourites Persistence | User |
-| [2.1.3](2.1.3-Favourite-Toggle-Analytics.md) | Favourite Toggle Analytics | Product Owner |
+| [2.1.1](2.1.1-Favourite-Toggle.md) | Favourite Toggle & Persistence | User / Product Owner |
 
 ### Feature 2.2 — Favourites Screen
 | # | Story | Role |
@@ -54,6 +52,6 @@
 | Epic | Features | Stories |
 |------|---------|---------|
 | 1 — Product Catalogue | 2 | 7 |
-| 2 — Favourites Management | 2 | 6 |
+| 2 — Favourites Management | 2 | 4 |
 | 3 — User Profile | 1 | 4 |
-| **Total** | **5** | **17** |
+| **Total** | **5** | **15** |
