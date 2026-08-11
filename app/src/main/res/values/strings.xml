@@ -5,4 +5,9 @@
     <string name="product_list_error_message">Something went wrong. Please try again.</string>
     <string name="product_list_retry_button">Retry</string>
     <string name="product_list_empty_message">No products available</string>
+    <string name="global_tab_products">Products</string>
+    <string name="global_tab_favourites">Favourites</string>
+    <string name="global_tab_profile">Profile</string>
+    <string name="favourites_placeholder">Favourites coming soon…</string>
+    <string name="profile_placeholder">Profile coming soon…</string>
 </resources>

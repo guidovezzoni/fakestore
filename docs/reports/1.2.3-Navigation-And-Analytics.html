@@ -244,6 +244,74 @@
       <li><code>BottomNavigationBar</code> is fully stateless: <code>(selectedDestination, onTabTapped, modifier)</code> &mdash; independently testable via Compose UI tests</li>
     </ul>
   </section>
+  <section class="report-section" data-source="sdlc_implement_change" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Change Applied</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc_implement_change</p>
+
+    <h3>What Was Applied</h3>
+    <p>All 53 tasks across 9 sections implemented in full:</p>
+    <ul>
+      <li><strong>Build &amp; navigation dependencies</strong> (Section 1): Added <code>androidx.navigation:navigation-compose 2.9.8</code> and <code>kotlin.serialization</code> plugin to <code>app/build.gradle.kts</code>; added <code>navigationCompose</code> version entry to <code>gradle/libs.versions.toml</code>; created <code>AppDestination</code> sealed interface with <code>@Serializable data object</code> routes (<code>Products</code>, <code>Favourites</code>, <code>Profile</code>).</li>
+      <li><strong>MainViewModel MVI contract</strong> (Sections 2–3): Created <code>MainUiState</code>, <code>MainUiIntent</code>, <code>MainUiEffect</code>; implemented <code>MainViewModel</code> with tab-tap analytics (<code>tab_products_tapped</code>, <code>tab_favourites_tapped</code>, <code>tab_profile_tapped</code>) and <code>NavigateToTab</code> effect emission; 11 unit tests verified via BDD cycle.</li>
+      <li><strong>BottomNavigationBar</strong> (Section 4): Stateless Material 3 <code>NavigationBar</code> with 3 items, test-tag constants, and 3 previews; 4 Compose UI tests covering tab display, selection state, and tap dispatch.</li>
+      <li><strong>ProductListViewModel analytics</strong> (Section 5): Added <code>analyticsClient: AnalyticsClient</code> to constructor; <code>product_list_viewed</code> logged on <code>onSuccess</code> only; 5 new unit tests for success/failure/retry/double-load scenarios.</li>
+      <li><strong>Placeholder screens</strong> (Section 6): <code>FavouritesScreen</code> and <code>ProfileScreen</code> with centred placeholder text, previews, and Compose UI tests.</li>
+      <li><strong>MainScreen NavHost wiring</strong> (Section 7): Stateless overload with <code>NavHost</code>, <code>Scaffold</code>, <code>LaunchedEffect</code> for effect-driven navigation, and route-based selected-tab derivation; stateful overload via <code>hiltViewModel()</code>; 3 instrumented tests.</li>
+      <li><strong>Integration &amp; localisation</strong> (Section 8): <code>MainActivity</code> updated to call <code>MainScreen</code>; 5 new string resources added in EN and ES.</li>
+      <li><strong>Final verification</strong> (Section 9): <code>detektDebug</code> clean, all unit tests pass, all 21 instrumented tests pass, Kover ≥95%, on-device navigation and analytics logcat verified.</li>
+    </ul>
+
+    <h3>Iteration Cycles</h3>
+    <table>
+      <tr><th>Issue</th><th>Root Cause</th><th>Fix</th></tr>
+      <tr>
+        <td>HiltComponentActivity not resolvable in instrumented tests</td>
+        <td>Class compiled into test APK; cannot be launched from main-process context with <code>createAndroidComposeRule&lt;&gt;</code></td>
+        <td>Moved <code>HiltComponentActivity.kt</code> to <code>app/src/debug/</code> with a debug <code>AndroidManifest.xml</code> entry; reverted test back to <code>@HiltAndroidTest</code> + <code>createAndroidComposeRule&lt;HiltComponentActivity&gt;</code></td>
+      </tr>
+      <tr>
+        <td>Bottom nav selection not syncing on system back-press</td>
+        <td><code>BottomNavigationBar</code> used <code>uiState.selectedDestination</code> (ViewModel state), which does not update when the system back key pops the back stack</td>
+        <td>Switched to deriving <code>selectedDestination</code> from <code>navController.currentBackStackEntryAsState()</code> via route-string comparison; added <code>@Suppress("UnusedParameter")</code> on <code>uiState</code> to preserve MVI contract</td>
+      </tr>
+      <tr>
+        <td>Detekt ParameterNaming violation on <code>onTabTapped</code></td>
+        <td>Compose rules plugin requires present-tense lambda parameter names</td>
+        <td>Renamed parameter to <code>onTabTap</code> throughout <code>BottomNavigationBar</code>, <code>MainScreen</code>, and all call sites</td>
+      </tr>
+    </table>
+
+    <h3>TODOs</h3>
+    <p>No <code>// TODO</code> comments were found in any source file modified or created by this story. No ACKNOWLEDGED items remain.</p>
+
+    <h3>Security Review</h3>
+    <p>Result: <span class="badge badge-pass">PASS</span> &mdash; 0 fix cycles required, no findings.</p>
+    <ul>
+      <li>Type-safe routes (<code>@Serializable data object</code>) eliminate deep-link injection risks — no string-based routes exposed.</li>
+      <li>No PII transmitted in analytics events; all event names are developer-defined constants.</li>
+      <li><code>DebugAnalyticsProvider</code> is debug-build only and never reaches production.</li>
+    </ul>
+
+    <h3>Documentation Updates</h3>
+    <table>
+      <tr><th>File</th><th>Updated?</th><th>Change</th></tr>
+      <tr>
+        <td><code>README.md</code></td>
+        <td><span class="badge badge-pass">YES</span></td>
+        <td>Added Navigation Compose 2.9.8 with type-safe routes and 3-tab bottom nav to the tech stack section</td>
+      </tr>
+      <tr>
+        <td><code>AGENTS.md</code></td>
+        <td><span class="badge badge-pass">YES</span></td>
+        <td>Added <strong>Navigation</strong> entry to tech stack; updated module structure to include <code>ui/navigation/</code> directory and new screens/ViewModels/state/intent/effect artefacts</td>
+      </tr>
+    </table>
+
+    <div class="outcome outcome-passed">All 53/53 tasks complete. Security review PASSED. All automated and on-device checks confirmed.</div>
+  </section>
   </main>
 
 </body>

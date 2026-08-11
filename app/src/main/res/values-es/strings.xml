@@ -4,4 +4,9 @@
     <string name="product_list_error_message">Algo ha salido mal. Por favor, inténtalo de nuevo.</string>
     <string name="product_list_retry_button">Reintentar</string>
     <string name="product_list_empty_message">No hay productos disponibles</string>
+    <string name="global_tab_products">Productos</string>
+    <string name="global_tab_favourites">Favoritos</string>
+    <string name="global_tab_profile">Perfil</string>
+    <string name="favourites_placeholder">Favoritos disponibles próximamente…</string>
+    <string name="profile_placeholder">Perfil disponible próximamente…</string>
 </resources>
