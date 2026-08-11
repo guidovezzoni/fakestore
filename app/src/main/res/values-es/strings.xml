@@ -1,0 +1,4 @@
+<resources>
+    <string name="product_list_screen_title">Productos</string>
+    <string name="product_image_content_description">Imagen de %1$s</string>
+</resources>

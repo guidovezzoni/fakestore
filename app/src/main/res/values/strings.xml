@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FakeStore</string>
+    <string name="product_list_screen_title">Products</string>
+    <string name="product_image_content_description">Image of %1$s</string>
 </resources>
