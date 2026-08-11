@@ -1,8 +1,14 @@
 package com.guidovezzoni.fakestore.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -11,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,6 +30,11 @@ import com.guidovezzoni.fakestore.ui.state.ProductListItem
 import com.guidovezzoni.fakestore.ui.state.ProductListUiState
 import com.guidovezzoni.fakestore.ui.theme.FakeStoreTheme
 import com.guidovezzoni.fakestore.ui.viewmodel.ProductListViewModel
+
+const val PRODUCT_LIST_LOADING_INDICATOR_TEST_TAG = "product_list_loading_indicator"
+const val PRODUCT_LIST_ERROR_CONTAINER_TEST_TAG = "product_list_error_container"
+const val PRODUCT_LIST_RETRY_BUTTON_TEST_TAG = "product_list_retry_button"
+const val PRODUCT_LIST_EMPTY_MESSAGE_TEST_TAG = "product_list_empty_message"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,10 +54,63 @@ fun ProductListScreen(
             TopAppBar(title = { Text(stringResource(R.string.product_list_screen_title)) })
         },
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(uiState.products, key = { it.id }) { item ->
-                ProductListItemCard(item = item)
+        when (uiState) {
+            ProductListUiState.Loading -> ProductListLoadingContent(
+                modifier = Modifier.padding(innerPadding),
+            )
+            is ProductListUiState.Content -> if (uiState.products.isEmpty()) {
+                ProductListEmptyContent(modifier = Modifier.padding(innerPadding))
+            } else {
+                LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                    items(uiState.products, key = { it.id }) { item ->
+                        ProductListItemCard(item = item)
+                    }
+                }
             }
+            ProductListUiState.Error -> ProductListErrorContent(
+                onRetry = { currentOnIntent(ProductListUiIntent.RetryClicked) },
+                modifier = Modifier.padding(innerPadding),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProductListLoadingContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(modifier = Modifier.testTag(PRODUCT_LIST_LOADING_INDICATOR_TEST_TAG))
+    }
+}
+
+@Composable
+private fun ProductListEmptyContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.product_list_empty_message),
+            modifier = Modifier.testTag(PRODUCT_LIST_EMPTY_MESSAGE_TEST_TAG),
+        )
+    }
+}
+
+@Composable
+private fun ProductListErrorContent(onRetry: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize().testTag(PRODUCT_LIST_ERROR_CONTAINER_TEST_TAG),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(text = stringResource(R.string.product_list_error_message))
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.testTag(PRODUCT_LIST_RETRY_BUTTON_TEST_TAG),
+        ) {
+            Text(text = stringResource(R.string.product_list_retry_button))
         }
     }
 }
@@ -67,7 +133,7 @@ fun ProductListScreen(
 private fun PreviewProductListScreen() {
     FakeStoreTheme {
         ProductListScreen(
-            uiState = ProductListUiState(
+            uiState = ProductListUiState.Content(
                 products = listOf(
                     ProductListItem(
                         id = FIRST_PREVIEW_PRODUCT_ID,
@@ -85,6 +151,39 @@ private fun PreviewProductListScreen() {
                     ),
                 ),
             ),
+            onIntent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewProductListScreenLoading() {
+    FakeStoreTheme {
+        ProductListScreen(
+            uiState = ProductListUiState.Loading,
+            onIntent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewProductListScreenEmpty() {
+    FakeStoreTheme {
+        ProductListScreen(
+            uiState = ProductListUiState.Content(products = emptyList()),
+            onIntent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewProductListScreenError() {
+    FakeStoreTheme {
+        ProductListScreen(
+            uiState = ProductListUiState.Error,
             onIntent = {},
         )
     }

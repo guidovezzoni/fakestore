@@ -73,7 +73,7 @@ fakestore/
         ├── ui/
         │   ├── screens/        # Feature screen composables
         │   ├── viewmodel/      # MVI ViewModels
-        │   ├── state/          # UiState data classes
+        │   ├── state/          # UiState sealed interfaces
         │   ├── intent/         # UiIntent sealed classes
         │   ├── effect/         # UiEffect sealed classes
         │   ├── util/           # Formatting and helper functions

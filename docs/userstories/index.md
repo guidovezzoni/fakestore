@@ -13,9 +13,8 @@
 | # | Story | Role |
 |---|-------|------|
 | [1.2.1](1.2.1-Product-List-Screen-DONE.md) | Product List Screen | User |
-| [1.2.2](1.2.2-Product-List-States.md) | Product List States (Loading / Error / Empty) | User |
-| [1.2.3](1.2.3-Bottom-Navigation.md) | Bottom Navigation | User |
-| [1.2.4](1.2.4-Product-List-Analytics.md) | Product List Analytics | Product Owner |
+| [1.2.2](1.2.2-Product-List-States-DONE.md) | Product List States (Loading / Error / Empty) | User |
+| [1.2.3](1.2.3-Navigation-And-Analytics.md) | Navigation & Product List Analytics | User / Product Owner |
 
 ---
 
@@ -24,9 +23,7 @@
 ### Feature 2.1 — Favourite Toggle & Persistence
 | # | Story | Role |
 |---|-------|------|
-| [2.1.1](2.1.1-Favourite-Toggle.md) | Favourite Toggle | User |
-| [2.1.2](2.1.2-Favourites-Persistence.md) | Favourites Persistence | User |
-| [2.1.3](2.1.3-Favourite-Toggle-Analytics.md) | Favourite Toggle Analytics | Product Owner |
+| [2.1.1](2.1.1-Favourite-Toggle.md) | Favourite Toggle & Persistence | User / Product Owner |
 
 ### Feature 2.2 — Favourites Screen
 | # | Story | Role |
@@ -53,7 +50,7 @@
 
 | Epic | Features | Stories |
 |------|---------|---------|
-| 1 — Product Catalogue | 2 | 7 |
-| 2 — Favourites Management | 2 | 6 |
+| 1 — Product Catalogue | 2 | 6 |
+| 2 — Favourites Management | 2 | 4 |
 | 3 — User Profile | 1 | 4 |
-| **Total** | **5** | **17** |
+| **Total** | **5** | **14** |

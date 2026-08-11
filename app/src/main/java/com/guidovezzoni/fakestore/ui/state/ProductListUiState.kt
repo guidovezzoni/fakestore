@@ -1,5 +1,7 @@
 package com.guidovezzoni.fakestore.ui.state
 
-data class ProductListUiState(
-    val products: List<ProductListItem> = emptyList(),
-)
+sealed interface ProductListUiState {
+    data object Loading : ProductListUiState
+    data class Content(val products: List<ProductListItem>) : ProductListUiState
+    data object Error : ProductListUiState
+}

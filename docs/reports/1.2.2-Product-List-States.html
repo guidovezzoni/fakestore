@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report: 1.2.2 — Product List States</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .report-header h1 { font-size: 1.75rem; color: #1e293b; }
+    .report-meta {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;
+    }
+    .report-meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem; margin-bottom: 1rem;
+    }
+    .report-section header h2 { font-size: 1.25rem; color: #1e293b; }
+    .report-section header time { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+    .section-source { font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 0.75rem; }
+
+    h3 { font-size: 1.05rem; color: #334155; margin: 1rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code {
+      background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 3px;
+      font-size: 0.875em;
+      font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+    .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef9c3; color: #854d0e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+
+    .outcome { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; }
+    .outcome-passed { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+    .outcome-failed { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <h1>1.2.2 — Product List States</h1>
+    <div class="report-meta">
+      <span><strong>Story:</strong> 1.2.2</span>
+      <span><strong>Branch:</strong> feature/1.2.2-product-list-states</span>
+      <span><strong>Created:</strong> 2026-08-11</span>
+    </div>
+  </div>
+
+  <main id="report-sections">
+  <section class="report-section" data-source="open_user_story" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Opening</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: open_user_story</p>
+
+    <h3>User Story</h3>
+    <p><strong>Product List States</strong> — Implement loading, error, and empty states for the product list screen with proper error handling, retry functionality, and localised UI messaging.</p>
+
+    <h3>Branch Created</h3>
+    <p><code>feature/1.2.2-product-list-states</code></p>
+
+    <h3>Refinement Summary</h3>
+
+    <h4>Description & Scope</h4>
+    <p>The story refines the product list screen to handle all possible states when fetching products from the API:</p>
+    <ul>
+      <li>Loading state with progress indicator</li>
+      <li>Content state displaying the product list</li>
+      <li>Empty state when no products are available</li>
+      <li>Error state with user-friendly messaging and retry button</li>
+    </ul>
+
+    <h4>Acceptance Criteria (11 items)</h4>
+    <ol>
+      <li>Loading state displays a centered progress indicator</li>
+      <li>Content state displays a list of products</li>
+      <li>Empty state displays a message indicating no products are available</li>
+      <li>Error state displays a user-friendly error message</li>
+      <li>Error messages must not leak technical details (no stack traces or raw API errors)</li>
+      <li>Error state includes a "Retry" button to re-fetch products</li>
+      <li>Empty state is treated as a sub-case of Content state in the type hierarchy</li>
+      <li>All UI strings are localised (English and Spanish)</li>
+      <li>Top app bar remains visible in all states</li>
+      <li>Product List State is sealed type with Loading, Content, and Error cases</li>
+      <li>Retry functionality dispatches a RetryClicked intent</li>
+    </ol>
+
+    <h4>Type Structure Defined</h4>
+    <p>ProductListUiState sealed type replaces flat data class:</p>
+    <ul>
+      <li><code>Loading</code> — shown during initial fetch or after retry</li>
+      <li><code>Content</code> — shown when products loaded (includes empty product list)</li>
+      <li><code>Error</code> — shown when fetch fails, with retry capability</li>
+    </ul>
+
+    <h4>MVI Contract Updates</h4>
+    <p>New intent added: <code>RetryClicked</code> — dispatched when user taps the retry button in error state.</p>
+
+    <h4>String Resources (3 new)</h4>
+    <ul>
+      <li>Error message prompt (EN + ES)</li>
+      <li>Retry button label (EN + ES)</li>
+      <li>Empty state message (EN + ES)</li>
+    </ul>
+
+    <h4>Implementation Scope</h4>
+    <p><strong>Production files (6):</strong></p>
+    <ul>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/state/ProductListUiState.kt</code> — new sealed type</li>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/viewmodel/ProductListViewModel.kt</code> — handle states and retry</li>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/screens/ProductListScreen.kt</code> — render all states</li>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/intent/ProductListUiIntent.kt</code> — add RetryClicked</li>
+      <li><code>app/src/main/res/values/strings.xml</code> — add EN strings</li>
+      <li><code>app/src/main/res/values-es/strings.xml</code> — add ES translations</li>
+    </ul>
+
+    <p><strong>Test files (2):</strong></p>
+    <ul>
+      <li><code>app/src/test/kotlin/com/guidovezzoni/fakestore/ui/viewmodel/ProductListViewModelTest.kt</code> — 7 unit tests</li>
+      <li><code>app/src/androidTest/kotlin/com/guidovezzoni/fakestore/ui/screens/ProductListScreenTest.kt</code> — 8 Compose UI tests</li>
+    </ul>
+
+    <h4>Test Coverage (15 tests)</h4>
+    <p><strong>ViewModel unit tests (7):</strong></p>
+    <ul>
+      <li>Initial state is Loading</li>
+      <li>Successful fetch transitions to Content with products</li>
+      <li>Fetch failure transitions to Error with message</li>
+      <li>RetryClicked intent re-fetches from Error state</li>
+      <li>Loading state during fetch</li>
+      <li>Empty product list renders as Content state</li>
+      <li>Network error does not leak technical details</li>
+    </ul>
+
+    <p><strong>Compose UI tests (8):</strong></p>
+    <ul>
+      <li>Loading indicator visible in Loading state</li>
+      <li>Product list visible in Content state</li>
+      <li>Empty message visible when products list empty</li>
+      <li>Error message visible in Error state</li>
+      <li>Retry button visible in Error state</li>
+      <li>Retry button dispatches RetryClicked intent</li>
+      <li>Top app bar visible in all states</li>
+      <li>Localised strings render correctly (EN + ES)</li>
+    </ul>
+
+    <h4>Non-Functional Considerations</h4>
+    <p><strong>Security:</strong> Error messages must not leak technical details (stack traces, raw API responses, internal state).</p>
+    <p><strong>Performance:</strong> Rapid retry clicking could launch concurrent fetch requests — ViewModel must debounce or queue retry attempts.</p>
+    <p><strong>GDPR:</strong> No personal data involved. Logging must not capture user-identifying information.</p>
+    <p><strong>Accessibility:</strong> Loading indicator must have proper content description. Error UI must be keyboard-navigable and screen-reader friendly.</p>
+
+  </section>
+
+  <section class="report-section" data-source="sdlc:sdlc_propose_change" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Change Proposed</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_propose_change</p>
+
+    <h3>Exploration Summary</h3>
+    <ul>
+      <li>Explored the existing MVI architecture in <code>:app</code> module — found <code>ProductListUiState</code> (flat data class), <code>ProductListUiIntent</code> (sealed interface with <code>LoadProducts</code>), <code>ProductListViewModel</code> (no error handling — <code>onFailure</code> branch missing), <code>ProductListScreen</code> (renders only product list, no loading/error/empty states)</li>
+      <li>Identified all integration points: <code>ProductListUiState.kt</code>, <code>ProductListUiIntent.kt</code>, <code>ProductListViewModel.kt</code>, <code>ProductListScreen.kt</code>, existing tests, string resources</li>
+      <li>First use of <code>CircularProgressIndicator</code>, retry-button pattern, and full-screen state UI in this codebase</li>
+    </ul>
+
+    <h3>Questions Asked and Answers Received</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How should the ViewModel obtain localised error messages? (ResourceProvider injection vs Composable resolves string)</td>
+          <td><strong>Composable resolves string</strong> — ViewModel emits <code>data object Error</code> with no message field; Composable calls <code>stringResource()</code> at render time</td>
+        </tr>
+        <tr>
+          <td>Should rapid-retry / concurrent fetch handling be in scope?</td>
+          <td><strong>Deferred</strong> to a later story — keep plain <code>viewModelScope.launch</code> with no cancellation guard</td>
+        </tr>
+        <tr>
+          <td>Should the ViewModel auto-fetch in <code>init{}</code> or keep the existing <code>LaunchedEffect</code> pattern?</td>
+          <td><strong>Keep LaunchedEffect</strong> — screen dispatches <code>LoadProducts</code> via <code>LaunchedEffect(Unit)</code> as today</td>
+        </tr>
+        <tr>
+          <td>Should reasonable string copy defaults be proposed?</td>
+          <td><strong>Yes</strong> — propose defaults for review</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Artifacts Created</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Artifact</th>
+          <th>Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OpenSpec config</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/.openspec.yaml</code></td>
+        </tr>
+        <tr>
+          <td>Proposal</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/proposal.md</code></td>
+        </tr>
+        <tr>
+          <td>Design</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/design.md</code></td>
+        </tr>
+        <tr>
+          <td>Tasks</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/tasks.md</code></td>
+        </tr>
+        <tr>
+          <td>Delta spec</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/specs/product-list-screen/spec.md</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Task Structure</h3>
+    <ul>
+      <li><strong>21 tasks total</strong> across 5 sections</li>
+      <li>Section 1: MVI Contract Restructuring (3 prerequisite tasks)</li>
+      <li>Section 2: ProductListViewModel BDD (11 tasks — 7 test + 3 implementation + 1 routing)</li>
+      <li>Section 3: ProductListScreen BDD (10 tasks — 6 test + 1 implementation + 1 intent test update + 1 test tags + 1 preview)</li>
+      <li>Section 4: Strings and Localisation (2 integration tasks)</li>
+      <li>Section 5: Final Verification (6 tasks)</li>
+    </ul>
+
+    <h3>Key Design Decision</h3>
+    <p><code>ProductListUiState.Error</code> is a parameterless <code>data object</code> (deliberately deviating from AC-8's "Error holds a user-facing error message string"). The Composable resolves <code>stringResource(R.string.product_list_error_message)</code> at render time. Documented in <code>design.md</code> Decision 1.</p>
+
+  </section>
+  <section class="report-section" data-source="apply_changes" data-timestamp="2026-08-11T11:51:00Z">
+    <header>
+      <h2>Apply Changes</h2>
+      <time datetime="2026-08-11T11:51:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: apply_changes</p>
+
+    <h3>What Was Applied</h3>
+    <p>Implemented all 32 tasks across 5 sections via sub-agent orchestration (sections 1–3 with Sonnet, section 4 with Haiku, section 5 executed directly):</p>
+    <ul>
+      <li><strong>Section 1 — MVI Contract Restructuring</strong>: Converted <code>ProductListUiState</code> from a flat <code>data class</code> to a <code>sealed interface</code> with <code>Loading</code>, <code>Content</code>, and <code>Error</code> variants. Added <code>RetryClicked</code> intent. Updated existing preview.</li>
+      <li><strong>Section 2 — ViewModel BDD</strong>: Updated <code>ProductListViewModel</code> to emit <code>Loading</code> before each fetch, <code>Content</code> on success, <code>Error</code> on failure. Added <code>RetryClicked</code> routing. 8 unit tests written and verified (RED → GREEN).</li>
+      <li><strong>Section 3 — Screen BDD</strong>: Rewrote <code>ProductListScreen</code> scaffold content as a <code>when (uiState)</code> with three branches. Added 4 test tag constants, 7 new/updated Compose UI tests, 4 previews covering all state variants.</li>
+      <li><strong>Section 4 — Strings</strong>: Added 3 English strings to <code>values/strings.xml</code> (done in section 3) and 3 Spanish translations to <code>values-es/strings.xml</code>.</li>
+      <li><strong>Section 5 — Final Verification</strong>: detekt, unit tests, instrumented tests, Kover, and on-device verification all passed.</li>
+    </ul>
+
+    <h3>Iteration Cycles</h3>
+    <table>
+      <tr><th>Issue</th><th>Fix</th></tr>
+      <tr><td><code>LongMethod</code> detekt violation on <code>ProductListScreen</code> (69 lines, max 60)</td><td>Extracted three private composables: <code>ProductListLoadingContent</code>, <code>ProductListEmptyContent</code>, <code>ProductListErrorContent</code></td></tr>
+      <tr><td>Instrumented test <code>givenAnyState…topAppBarTitleIsAlwaysDisplayed</code> called <code>setContent</code> in a loop (not allowed)</td><td>Replaced with a single <code>setContent</code> using a <code>MutableState</code> variable updated between assertions</td></tr>
+      <tr><td>First <code>connectedDebugAndroidTest</code> run: <code>INSTALL_FAILED_UPDATE_INCOMPATIBLE</code></td><td>Transient — retried and succeeded on second run</td></tr>
+    </table>
+
+    <h3>Acknowledged TODOs</h3>
+    <p>No <code>RESOLVE NOW</code> TODOs found. No TODO comments were introduced by this change.</p>
+
+    <h3>AC-8 Deviation</h3>
+    <p>The user story specifies <code>Error</code> holds a user-facing error message string. The implementation uses a parameterless <code>data object Error</code> — the message is resolved via <code>stringResource()</code> at render time in the Composable. This was a deliberate design decision (Decision 1 in <code>design.md</code>) to avoid requiring a <code>Context</code>/<code>ResourceProvider</code> in the ViewModel for a single static string. Behaviourally AC-3, AC-4, and AC-10 are all satisfied.</p>
+
+    <h3>Security Review</h3>
+    <p><span class="badge badge-pass">PASS</span> — No findings. 0 fix cycles needed. The parameterless <code>Error</code> data object is the correct pattern for preventing information leakage; no exception detail can propagate to the UI.</p>
+
+    <h3>README.md and AGENTS.md</h3>
+    <p>No updates required. The story adds no new modules, tech stack items, or build instructions. All existing documentation remains accurate.</p>
+
+    <div class="outcome outcome-passed">All 32/32 tasks complete — implementation verified.</div>
+  </section>
+
+  <section class="report-section" data-source="opsx:verify" data-timestamp="2026-08-11T16:30:00Z">
+    <header>
+      <h2>Verification & Archive</h2>
+      <time datetime="2026-08-11T16:30:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: opsx:verify</p>
+
+    <h3>Verification Gates</h3>
+
+    <h4>OpenSpec Verification <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>All 32 tasks complete and marked complete in <code>tasks.md</code></li>
+      <li>All spec requirements matched: 4 modified requirements in <code>product-list-screen/spec.md</code> and 1 added requirement</li>
+      <li>All 8 design decisions followed as documented in <code>design.md</code></li>
+      <li>AC-8 deviation documented and approved: <code>Error</code> state uses parameterless <code>data object</code> with <code>stringResource()</code> resolution in Composable</li>
+    </ul>
+
+    <h4>TODO Scan <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>No <code>RESOLVE NOW</code> TODOs introduced by this change</li>
+      <li>1 unrelated boilerplate TODO found in <code>data_extraction_rules.xml</code> (pre-existing, not in scope)</li>
+    </ul>
+
+    <h4>Security Review <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>No critical or high-severity findings</li>
+      <li>Error state correctly implements parameterless <code>data object Error</code> — prevents information leakage of stack traces or raw API responses</li>
+      <li>No technical details leak in UI messages; all error strings resolved via localised <code>stringResource()</code></li>
+      <li>0 fix cycles required</li>
+    </ul>
+
+    <h4>Clean Build <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>BUILD SUCCESSFUL in 1m 19s</li>
+      <li>All modules compiled successfully:
+        <ul>
+          <li><code>:domain</code></li>
+          <li><code>:core</code></li>
+          <li><code>:data</code></li>
+          <li><code>:app</code></li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Unit Tests <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>All unit tests passed (UP-TO-DATE from clean build run)</li>
+      <li>No test failures or regressions</li>
+    </ul>
+
+    <h4>Code Coverage Report <span class="badge badge-pass">PASS</span></h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Coverage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Instructions</td>
+          <td>100.00%</td>
+        </tr>
+        <tr>
+          <td>Branches</td>
+          <td>N/A (0 branches tracked)</td>
+        </tr>
+        <tr>
+          <td>Lines</td>
+          <td>100.00%</td>
+        </tr>
+        <tr>
+          <td>Methods</td>
+          <td>100.00%</td>
+        </tr>
+        <tr>
+          <td>Classes</td>
+          <td>100.00%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Minimum bound (95%) exceeded. Code coverage gate: PASSED.</p>
+
+    <h4>Test File Coverage <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li><code>ProductListViewModel</code> → unit test file <code>ProductListViewModelTest.kt</code> <span class="badge badge-pass">FOUND</span></li>
+      <li><code>ProductListScreen</code> → Compose UI test file <code>ProductListScreenTest.kt</code> <span class="badge badge-pass">FOUND</span></li>
+    </ul>
+
+    <h4>Compose Preview Coverage <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>4 previews defined in <code>ProductListScreen.kt</code></li>
+      <li>All 4 state variants covered:
+        <ul>
+          <li>Loading state</li>
+          <li>Content state with items</li>
+          <li>Content state (empty product list)</li>
+          <li>Error state</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Instrumented Tests <span class="badge badge-pass">PASS</span></h4>
+    <ul>
+      <li>12 instrumented tests executed via <code>connectedDebugAndroidTest</code></li>
+      <li>All tests passed</li>
+      <li>On-device app verification: <code>adb</code> exercise confirmed:
+        <ul>
+          <li>Product cards visible and tappable in Content state</li>
+          <li>"Products" top app bar title displayed in all states</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Definition of Done <span class="badge badge-pass">PASS</span></h4>
+    <p>All 16 DoD criteria confirmed met:</p>
+    <ol>
+      <li>User story clarity reviewed — CONFIRMED</li>
+      <li>OpenSpec artifacts (proposal, design, tasks, delta spec) created — CONFIRMED</li>
+      <li>All tasks implemented and passing — CONFIRMED (32/32)</li>
+      <li>Unit tests written and passing — CONFIRMED (100% coverage)</li>
+      <li>Compose UI tests written and passing — CONFIRMED (12 tests)</li>
+      <li>Previews cover all state variants — CONFIRMED (4 previews)</li>
+      <li>Code review passed — CONFIRMED (no issues)</li>
+      <li>Security review passed — CONFIRMED</li>
+      <li>Detekt static analysis passed — CONFIRMED (no violations)</li>
+      <li>Clean build successful — CONFIRMED</li>
+      <li>On-device testing verified — CONFIRMED (adb exercise)</li>
+      <li>Documentation updated (README, AGENTS.md, etc.) — CONFIRMED (no updates required)</li>
+      <li>Git branch clean and commit history reviewed — CONFIRMED</li>
+      <li>Feature branch ready for merge to main — CONFIRMED</li>
+      <li>User story renamed to -DONE status — CONFIRMED (file: <code>1.2.2-Product-List-States-DONE.md</code>)</li>
+      <li>Report archived and indexed — CONFIRMED (archive location below)</li>
+    </ol>
+
+    <h3>Archival & Storage</h3>
+    <ul>
+      <li><strong>Archive directory:</strong> <code>openspec/changes/archive/2026-08-11-product-list-states/</code></li>
+      <li><strong>User story renamed:</strong> <code>docs/userstories/1.2.2-Product-List-States-DONE.md</code></li>
+      <li><strong>Spec sync status:</strong> <span class="badge badge-pass">PASS</span> — product-list-screen spec updated with 4 modified requirements and 1 added requirement</li>
+      <li><strong>README/AGENTS.md:</strong> In sync — no updates required (story adds no new modules or build instructions)</li>
+    </ul>
+
+    <h3>Summary</h3>
+    <p>All verification gates passed. The feature is production-ready and branch is cleared for merge to main.</p>
+
+    <div class="outcome outcome-passed">Verification Complete — PASSED. Ready for merge.</div>
+  </section>
+
+  </main>
+
+</body>
+</html>
