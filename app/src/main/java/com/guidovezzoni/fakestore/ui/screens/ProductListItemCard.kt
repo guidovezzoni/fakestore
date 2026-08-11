@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.guidovezzoni.fakestore.R
 import com.guidovezzoni.fakestore.ui.state.ProductListItem
 import com.guidovezzoni.fakestore.ui.theme.FakeStoreTheme
 
@@ -48,7 +50,7 @@ fun ProductListItemCard(
         ) {
             AsyncImage(
                 model = item.imageUrl,
-                contentDescription = item.title,
+                contentDescription = stringResource(R.string.product_image_content_description, item.title),
                 placeholder = rememberVectorPainter(Icons.Default.Image),
                 error = rememberVectorPainter(Icons.Default.Image),
                 contentScale = ContentScale.Fit,

@@ -48,7 +48,7 @@ class ProductListItemCardTest {
     }
 
     @Test
-    fun givenProductItem_whenCardIsDisplayed_thenImageContentDescriptionMatchesTitle() {
+    fun givenProductItem_whenCardIsDisplayed_thenImageContentDescriptionIsLocalisedWithTitle() {
         val item = createItem()
 
         composeTestRule.setContent {
@@ -57,7 +57,8 @@ class ProductListItemCardTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription(item.title).assertIsDisplayed()
+        val expectedContentDescription = "Image of ${item.title}"
+        composeTestRule.onNodeWithContentDescription(expectedContentDescription).assertIsDisplayed()
     }
 
     @Test

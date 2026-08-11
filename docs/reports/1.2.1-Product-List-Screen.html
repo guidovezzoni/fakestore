@@ -283,6 +283,106 @@
     <div class="outcome outcome-passed">All 36 tasks complete. Implementation matches all acceptance criteria and Definition of Done items.</div>
   </section>
 
+  <section class="report-section" data-source="verify_user_story" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Verification &amp; Archive</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_verify_story</p>
+
+    <h3>Verification Gates</h3>
+    <table>
+      <thead>
+        <tr><th>Gate</th><th>Result</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OpenSpec verify</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>4 warnings found and fixed: <code>sealed interface</code> vs <code>sealed class</code> for <code>UiIntent</code>/<code>UiEffect</code>; <code>product_image_content_description</code> not wired; <code>product_list_screen_title</code> not displayed</td>
+        </tr>
+        <tr>
+          <td>TODO scan</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>No TODOs found in source</td>
+        </tr>
+        <tr>
+          <td>Security review</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>No critical or high-severity findings</td>
+        </tr>
+        <tr>
+          <td>Clean build</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>After adding <code>translatable="false"</code> to <code>app_name</code> and adding <code>TopAppBar</code> with <code>@OptIn</code></td>
+        </tr>
+        <tr>
+          <td>Unit tests</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>All unit tests pass</td>
+        </tr>
+        <tr>
+          <td>Test file coverage</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>All 5 testable classes have corresponding test files</td>
+        </tr>
+        <tr>
+          <td>Compose preview coverage</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td><code>ProductListScreen</code> and <code>ProductListItemCard</code> both have previews; all <code>UiState</code> fields covered</td>
+        </tr>
+        <tr>
+          <td>On-device tests</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>8 instrumented tests passed; <code>TopAppBar</code> "Products" title visible; product cards with names, prices, and ratings confirmed on device</td>
+        </tr>
+        <tr>
+          <td>Definition of Done</td>
+          <td><span class="badge badge-pass">PASS</span></td>
+          <td>All 19 criteria met after fixes</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Code Coverage Report</h3>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Coverage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Instructions</td><td>100.00%</td></tr>
+        <tr><td>Branches</td><td>N/A (no branches)</td></tr>
+        <tr><td>Lines</td><td>100.00%</td></tr>
+        <tr><td>Methods</td><td>100.00%</td></tr>
+        <tr><td>Classes</td><td>100.00%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Fixes Applied During Verification</h3>
+    <ol>
+      <li><code>app_name</code> marked <code>translatable="false"</code> in <code>strings.xml</code> (lint: MissingTranslation)</li>
+      <li><code>ProductListItemCard</code> contentDescription changed to use <code>stringResource(R.string.product_image_content_description, item.title)</code> for proper localisation</li>
+      <li><code>ProductListScreen</code> wrapped in <code>Scaffold</code> with <code>TopAppBar</code> displaying <code>stringResource(R.string.product_list_screen_title)</code></li>
+      <li><code>@OptIn(ExperimentalMaterial3Api::class)</code> added for <code>TopAppBar</code></li>
+      <li><code>ProductListItemCardTest</code> updated: contentDescription assertion uses localised format <code>"Image of {title}"</code></li>
+    </ol>
+
+    <h3>Archive</h3>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Detail</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Archive location</td><td><code>openspec/changes/archive/2026-08-11-product-list-screen/</code></td></tr>
+        <tr><td>Spec sync status</td><td>Synced — new spec created at <code>openspec/specs/product-list-screen/spec.md</code> (11 requirements added)</td></tr>
+        <tr><td>README / AGENTS sync</td><td>In sync, no updates needed</td></tr>
+        <tr><td>User story renamed</td><td><code>1.2.1-Product-List-Screen-DONE.md</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="outcome outcome-passed">PASSED — All 19 Definition of Done criteria met. Story archived to <code>openspec/changes/archive/2026-08-11-product-list-screen/</code>.</div>
+  </section>
+
   </main>
 
 </body>
