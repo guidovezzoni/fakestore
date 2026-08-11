@@ -1,5 +1,6 @@
 package com.guidovezzoni.fakestore.ui.viewmodel
 
+import com.guidovezzoni.fakestore.core.analytics.AnalyticsClient
 import com.guidovezzoni.fakestore.domain.model.Product
 import com.guidovezzoni.fakestore.domain.model.Rating
 import com.guidovezzoni.fakestore.domain.usecase.GetProductsUseCase
@@ -9,6 +10,7 @@ import com.guidovezzoni.fakestore.ui.util.formatPrice
 import com.guidovezzoni.fakestore.ui.util.formatRatingScore
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +41,8 @@ class ProductListViewModelTest {
 
     private fun createViewModel(
         getProductsUseCase: GetProductsUseCase = mockk(),
-    ) = ProductListViewModel(getProductsUseCase)
+        analyticsClient: AnalyticsClient = mockk(relaxed = true),
+    ) = ProductListViewModel(getProductsUseCase, analyticsClient)
 
     private fun createProduct(
         id: Int = PRODUCT_ID,
@@ -185,6 +188,96 @@ class ProductListViewModelTest {
 
         val expected = ProductListUiState.Error
         assertEquals(expected, result)
+    }
+
+    // Task 5.2 — success with non-empty list fires product_list_viewed once with empty params
+    @Test
+    fun givenSuccessNonEmptyProducts_whenLoadProductsDispatched_thenLogEventCalledOnceWithProductListViewed() = runTest {
+        val products = listOf(createProduct())
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+
+        verify(exactly = 1) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
+    }
+
+    // Task 5.3 — success with empty list still fires product_list_viewed once
+    @Test
+    fun givenSuccessEmptyProducts_whenLoadProductsDispatched_thenLogEventCalledOnceWithProductListViewed() = runTest {
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(emptyList()))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+
+        verify(exactly = 1) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
+    }
+
+    // Task 5.4 — failure never fires product_list_viewed
+    @Test
+    fun givenFailure_whenLoadProductsDispatched_thenLogEventNeverCalled() = runTest {
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.failure(IllegalStateException("error")))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+
+        verify(exactly = 0) { analyticsClient.logEvent(any()) }
+    }
+
+    // Task 5.5 — success dispatched twice fires product_list_viewed exactly twice
+    @Test
+    fun givenSuccessProducts_whenLoadProductsDispatchedTwice_thenLogEventCalledTwice() = runTest {
+        val products = listOf(createProduct())
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+
+        verify(exactly = 2) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
+    }
+
+    // Guard — already in Content: LoadProducts logs analytics but does not re-fetch from network
+    @Test
+    fun givenAlreadyInContentState_whenLoadProductsDispatched_thenLogEventCalledAndNetworkNotCalledAgain() = runTest {
+        val products = listOf(createProduct())
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+
+        val expected = 1
+        verify(exactly = expected) { getProductsUseCase() }
+        verify(exactly = 2) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
+    }
+
+    // Task 5.6 — failure then success via RetryClicked fires product_list_viewed exactly once
+    @Test
+    fun givenFailureThenSuccess_whenLoadProductsThenRetryClicked_thenLogEventCalledOnce() = runTest {
+        val products = listOf(createProduct())
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returnsMany listOf(
+            flowOf(Result.failure(IllegalStateException("error"))),
+            flowOf(Result.success(products)),
+        )
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.RetryClicked)
+
+        verify(exactly = 1) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
     }
 
     private companion object {

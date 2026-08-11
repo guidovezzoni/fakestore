@@ -35,6 +35,7 @@ FakeStore is a native Android application built with Kotlin and Jetpack Compose.
 - **UI:** Jetpack Compose with Material 3
 - **Architecture:** MVI (Model-View-Intent) with Clean Architecture layers (data / domain / ui)
 - **Multi-module:** `build-logic` composite build with `fakestore.android.library` and `fakestore.kotlin.library` convention plugins; modules `:core`, `:domain`, `:data`, `:app`
+- **Navigation:** Jetpack Navigation Compose 2.9.8 with type-safe (`@Serializable`) routes; `MainScreen` hosts a `NavHost` with `AppDestination` sealed-interface destinations
 - **Networking:** Retrofit + OkHttp + kotlinx-serialization (converter: `retrofit2-kotlinx-serialization-converter`)
 - **Image Loading:** Coil 3 (`coil-compose` + `coil-network-okhttp`)
 - **Dependency Injection:** Hilt 2.60 (Dagger-Hilt) + KSP 2.2.10-2.0.2; `@Provides` modules in `:app/di/`; entry points: `FakeStoreApplication` (`@HiltAndroidApp`), `MainActivity` (`@AndroidEntryPoint`)
@@ -71,11 +72,12 @@ fakestore/
     └── src/main/java/com/guidovezzoni/fakestore/
         ├── di/                 # Dependency injection modules
         ├── ui/
-        │   ├── screens/        # Feature screen composables
-        │   ├── viewmodel/      # MVI ViewModels
-        │   ├── state/          # UiState sealed interfaces
-        │   ├── intent/         # UiIntent sealed classes
-        │   ├── effect/         # UiEffect sealed classes
+        │   ├── navigation/     # AppDestination sealed interface (type-safe nav routes)
+        │   ├── screens/        # Feature screen composables (MainScreen, BottomNavigationBar, ProductListScreen, FavouritesScreen, ProfileScreen)
+        │   ├── viewmodel/      # MVI ViewModels (MainViewModel, ProductListViewModel)
+        │   ├── state/          # UiState data classes and sealed interfaces (MainUiState, ProductListUiState, ProductListItem)
+        │   ├── intent/         # UiIntent sealed interfaces (MainUiIntent, ProductListUiIntent)
+        │   ├── effect/         # UiEffect sealed interfaces (MainUiEffect, ProductListUiEffect)
         │   ├── util/           # Formatting and helper functions
         │   └── theme/          # Material 3 theme (Color, Theme, Type)
 ```

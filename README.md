@@ -6,6 +6,7 @@ A native Android app built with Kotlin and Jetpack Compose that consumes the [Fa
 
 - **Kotlin 2.2** with Jetpack Compose and Material 3
 - **MVI architecture** (Model-View-Intent) with Clean Architecture layers
+- **Navigation**: Jetpack Navigation Compose 2.9.8 with type-safe (`@Serializable`) routes and a 3-tab bottom navigation bar
 - **Multi-module**: `build-logic` (convention plugins), `:core`, `:domain`, `:data`, `:app`
 - **Networking**: Retrofit + OkHttp + kotlinx-serialization
 - **Image Loading**: Coil 3 (with OkHttp network engine)

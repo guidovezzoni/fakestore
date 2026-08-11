@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
 }
@@ -101,6 +102,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(project(":core"))

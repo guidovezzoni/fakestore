@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import com.guidovezzoni.fakestore.ui.screens.ProductListScreen
+import com.guidovezzoni.fakestore.ui.screens.MainScreen
 import com.guidovezzoni.fakestore.ui.theme.FakeStoreTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FakeStoreTheme {
-                ProductListScreen(modifier = Modifier.fillMaxSize())
+                MainScreen(modifier = Modifier.fillMaxSize())
             }
         }
     }

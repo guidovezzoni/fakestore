@@ -2,6 +2,7 @@ package com.guidovezzoni.fakestore.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guidovezzoni.fakestore.core.analytics.AnalyticsClient
 import com.guidovezzoni.fakestore.domain.usecase.GetProductsUseCase
 import com.guidovezzoni.fakestore.ui.effect.ProductListUiEffect
 import com.guidovezzoni.fakestore.ui.intent.ProductListUiIntent
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
+    private val analyticsClient: AnalyticsClient,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
@@ -31,9 +33,21 @@ class ProductListViewModel @Inject constructor(
 
     fun onIntent(intent: ProductListUiIntent) {
         when (intent) {
-            is ProductListUiIntent.LoadProducts,
+            is ProductListUiIntent.LoadProducts -> loadProductsOrTrack()
             is ProductListUiIntent.RetryClicked -> loadProducts()
         }
+    }
+
+    private fun loadProductsOrTrack() {
+        if (_uiState.value is ProductListUiState.Content) {
+            analyticsClient.logEvent(EVENT_PRODUCT_LIST_VIEWED)
+            return
+        }
+        loadProducts()
+    }
+
+    private companion object {
+        const val EVENT_PRODUCT_LIST_VIEWED = "product_list_viewed"
     }
 
     private fun loadProducts() {
@@ -46,6 +60,7 @@ class ProductListViewModel @Inject constructor(
                         _uiState.value = ProductListUiState.Content(
                             products.map { mapToProductListItem(it, locale) }
                         )
+                        analyticsClient.logEvent(EVENT_PRODUCT_LIST_VIEWED)
                     }
                     .onFailure {
                         _uiState.value = ProductListUiState.Error
