@@ -112,6 +112,61 @@
       <li>Definition of Done established with 20-item checklist covering implementation, testing, code quality, and documentation</li>
     </ul>
   </section>
+  <section class="report-section" data-source="sdlc:sdlc_propose_change" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Change Proposal</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_propose_change</p>
+
+    <h3>Exploration Findings</h3>
+    <ul>
+      <li>MVI pattern consistently applied across <code>ProductListViewModel</code> and <code>MainViewModel</code>; new code follows established <code>UiState</code>/<code>UiIntent</code>/<code>UiEffect</code> conventions</li>
+      <li>Room is entirely new to the project — no existing database, no Room entries in <code>libs.versions.toml</code>, no KSP plugin on <code>:data</code></li>
+      <li><code>FavouritesScreen</code> is a bare placeholder <code>Text</code> with no ViewModel or MVI scaffolding — full buildout required</li>
+      <li><code>ProductListUiEffect</code> is an empty sealed interface — first real one-shot effect usage in the project</li>
+      <li><code>combine()</code> pattern (merging a one-shot product fetch with a reactive Room flow) is new to this codebase</li>
+      <li>Analytics API (<code>AnalyticsClient.logEvent()</code>) is already integrated in <code>ProductListViewModel</code> — same pattern reused</li>
+      <li>Existing strings in <code>values/</code> (English) and <code>values-es/</code> (Spanish) — both require new entries</li>
+    </ul>
+
+    <h3>Questions and Clarifications</h3>
+    <table>
+      <tr><th>Question</th><th>Resolution</th></tr>
+      <tr>
+        <td><code>Flow&lt;List&lt;Int&gt;&gt;</code> vs <code>Flow&lt;Set&lt;Int&gt;&gt;</code> for favourite IDs at the domain boundary</td>
+        <td><code>Set&lt;Int&gt;</code> at domain/use-case level; DAO returns <code>Flow&lt;List&lt;Int&gt;&gt;</code>, repository converts via <code>.map { it.toSet() }</code></td>
+      </tr>
+      <tr>
+        <td>Scope: should 2.1.1 fully implement the Favourites screen, or defer to story 2.2.1?</td>
+        <td>Follow the DoD — 2.1.1 fully implements the Favourites screen (MVI scaffolding, product display, empty state, toggle)</td>
+      </tr>
+      <tr>
+        <td>Use case naming: <code>GetFavouriteIdsUseCase</code> only, or also <code>GetFavouritesUseCase</code>?</td>
+        <td><code>GetFavouriteIdsUseCase</code> only; downstream stories can add <code>GetFavouritesUseCase</code> later</td>
+      </tr>
+    </table>
+
+    <h3>Artifacts Created</h3>
+    <table>
+      <tr><th>Artifact</th><th>Path</th></tr>
+      <tr><td>Proposal</td><td><code>openspec/changes/2026-08-11-favourite-toggle/proposal.md</code></td></tr>
+      <tr><td>Design</td><td><code>openspec/changes/2026-08-11-favourite-toggle/design.md</code></td></tr>
+      <tr><td>Tasks</td><td><code>openspec/changes/2026-08-11-favourite-toggle/tasks.md</code></td></tr>
+      <tr><td>Delta spec — favourite-toggle (new)</td><td><code>openspec/changes/2026-08-11-favourite-toggle/specs/favourite-toggle/spec.md</code></td></tr>
+      <tr><td>Delta spec — product-list-screen</td><td><code>openspec/changes/2026-08-11-favourite-toggle/specs/product-list-screen/spec.md</code></td></tr>
+      <tr><td>Delta spec — bottom-navigation</td><td><code>openspec/changes/2026-08-11-favourite-toggle/specs/bottom-navigation/spec.md</code></td></tr>
+      <tr><td>Change metadata</td><td><code>openspec/changes/2026-08-11-favourite-toggle/.openspec.yaml</code></td></tr>
+    </table>
+
+    <h3>Task Structure Summary</h3>
+    <p>17 sections, 86 tasks total:</p>
+    <ul>
+      <li><strong>4 prerequisite sections</strong>: Gradle/version catalog, domain contract interface, Room entity/DAO/database, MVI intent/effect/state type additions</li>
+      <li><strong>11 BDD-paired sections</strong>: FavouritesRepositoryImpl, ToggleFavouriteUseCase, GetFavouriteIdsUseCase, ProductListItem mapper, content description provider, ProductListViewModel combine/toggle, ProductListItemCard heart icon, ProductListScreen snackbar, FavouritesViewModel, FavouritesScreen, DatabaseModule</li>
+      <li><strong>2 integration/verification sections</strong>: strings/localisation, final verification (detekt, unit tests, UI tests, coverage, on-device checks)</li>
+    </ul>
+  </section>
   </main>
 
 </body>
