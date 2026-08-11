@@ -33,9 +33,17 @@ class ProductListViewModel @Inject constructor(
 
     fun onIntent(intent: ProductListUiIntent) {
         when (intent) {
-            is ProductListUiIntent.LoadProducts,
+            is ProductListUiIntent.LoadProducts -> loadProductsOrTrack()
             is ProductListUiIntent.RetryClicked -> loadProducts()
         }
+    }
+
+    private fun loadProductsOrTrack() {
+        if (_uiState.value is ProductListUiState.Content) {
+            analyticsClient.logEvent(EVENT_PRODUCT_LIST_VIEWED)
+            return
+        }
+        loadProducts()
     }
 
     private companion object {

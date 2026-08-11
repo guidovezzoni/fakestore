@@ -245,6 +245,23 @@ class ProductListViewModelTest {
         verify(exactly = 2) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
     }
 
+    // Guard — already in Content: LoadProducts logs analytics but does not re-fetch from network
+    @Test
+    fun givenAlreadyInContentState_whenLoadProductsDispatched_thenLogEventCalledAndNetworkNotCalledAgain() = runTest {
+        val products = listOf(createProduct())
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(getProductsUseCase = getProductsUseCase, analyticsClient = analyticsClient)
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+
+        val expected = 1
+        verify(exactly = expected) { getProductsUseCase() }
+        verify(exactly = 2) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
+    }
+
     // Task 5.6 — failure then success via RetryClicked fires product_list_viewed exactly once
     @Test
     fun givenFailureThenSuccess_whenLoadProductsThenRetryClicked_thenLogEventCalledOnce() = runTest {
