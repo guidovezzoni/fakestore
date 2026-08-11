@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report: 1.2.2 — Product List States</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .report-header h1 { font-size: 1.75rem; color: #1e293b; }
+    .report-meta {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;
+    }
+    .report-meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem; margin-bottom: 1rem;
+    }
+    .report-section header h2 { font-size: 1.25rem; color: #1e293b; }
+    .report-section header time { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+    .section-source { font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 0.75rem; }
+
+    h3 { font-size: 1.05rem; color: #334155; margin: 1rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code {
+      background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 3px;
+      font-size: 0.875em;
+      font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+    .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef9c3; color: #854d0e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+
+    .outcome { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; }
+    .outcome-passed { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+    .outcome-failed { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <h1>1.2.2 — Product List States</h1>
+    <div class="report-meta">
+      <span><strong>Story:</strong> 1.2.2</span>
+      <span><strong>Branch:</strong> feature/1.2.2-product-list-states</span>
+      <span><strong>Created:</strong> 2026-08-11</span>
+    </div>
+  </div>
+
+  <main id="report-sections">
+  <section class="report-section" data-source="open_user_story" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Opening</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: open_user_story</p>
+
+    <h3>User Story</h3>
+    <p><strong>Product List States</strong> — Implement loading, error, and empty states for the product list screen with proper error handling, retry functionality, and localised UI messaging.</p>
+
+    <h3>Branch Created</h3>
+    <p><code>feature/1.2.2-product-list-states</code></p>
+
+    <h3>Refinement Summary</h3>
+
+    <h4>Description & Scope</h4>
+    <p>The story refines the product list screen to handle all possible states when fetching products from the API:</p>
+    <ul>
+      <li>Loading state with progress indicator</li>
+      <li>Content state displaying the product list</li>
+      <li>Empty state when no products are available</li>
+      <li>Error state with user-friendly messaging and retry button</li>
+    </ul>
+
+    <h4>Acceptance Criteria (11 items)</h4>
+    <ol>
+      <li>Loading state displays a centered progress indicator</li>
+      <li>Content state displays a list of products</li>
+      <li>Empty state displays a message indicating no products are available</li>
+      <li>Error state displays a user-friendly error message</li>
+      <li>Error messages must not leak technical details (no stack traces or raw API errors)</li>
+      <li>Error state includes a "Retry" button to re-fetch products</li>
+      <li>Empty state is treated as a sub-case of Content state in the type hierarchy</li>
+      <li>All UI strings are localised (English and Spanish)</li>
+      <li>Top app bar remains visible in all states</li>
+      <li>Product List State is sealed type with Loading, Content, and Error cases</li>
+      <li>Retry functionality dispatches a RetryClicked intent</li>
+    </ol>
+
+    <h4>Type Structure Defined</h4>
+    <p>ProductListUiState sealed type replaces flat data class:</p>
+    <ul>
+      <li><code>Loading</code> — shown during initial fetch or after retry</li>
+      <li><code>Content</code> — shown when products loaded (includes empty product list)</li>
+      <li><code>Error</code> — shown when fetch fails, with retry capability</li>
+    </ul>
+
+    <h4>MVI Contract Updates</h4>
+    <p>New intent added: <code>RetryClicked</code> — dispatched when user taps the retry button in error state.</p>
+
+    <h4>String Resources (3 new)</h4>
+    <ul>
+      <li>Error message prompt (EN + ES)</li>
+      <li>Retry button label (EN + ES)</li>
+      <li>Empty state message (EN + ES)</li>
+    </ul>
+
+    <h4>Implementation Scope</h4>
+    <p><strong>Production files (6):</strong></p>
+    <ul>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/state/ProductListUiState.kt</code> — new sealed type</li>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/viewmodel/ProductListViewModel.kt</code> — handle states and retry</li>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/screens/ProductListScreen.kt</code> — render all states</li>
+      <li><code>app/src/main/kotlin/com/guidovezzoni/fakestore/ui/intent/ProductListUiIntent.kt</code> — add RetryClicked</li>
+      <li><code>app/src/main/res/values/strings.xml</code> — add EN strings</li>
+      <li><code>app/src/main/res/values-es/strings.xml</code> — add ES translations</li>
+    </ul>
+
+    <p><strong>Test files (2):</strong></p>
+    <ul>
+      <li><code>app/src/test/kotlin/com/guidovezzoni/fakestore/ui/viewmodel/ProductListViewModelTest.kt</code> — 7 unit tests</li>
+      <li><code>app/src/androidTest/kotlin/com/guidovezzoni/fakestore/ui/screens/ProductListScreenTest.kt</code> — 8 Compose UI tests</li>
+    </ul>
+
+    <h4>Test Coverage (15 tests)</h4>
+    <p><strong>ViewModel unit tests (7):</strong></p>
+    <ul>
+      <li>Initial state is Loading</li>
+      <li>Successful fetch transitions to Content with products</li>
+      <li>Fetch failure transitions to Error with message</li>
+      <li>RetryClicked intent re-fetches from Error state</li>
+      <li>Loading state during fetch</li>
+      <li>Empty product list renders as Content state</li>
+      <li>Network error does not leak technical details</li>
+    </ul>
+
+    <p><strong>Compose UI tests (8):</strong></p>
+    <ul>
+      <li>Loading indicator visible in Loading state</li>
+      <li>Product list visible in Content state</li>
+      <li>Empty message visible when products list empty</li>
+      <li>Error message visible in Error state</li>
+      <li>Retry button visible in Error state</li>
+      <li>Retry button dispatches RetryClicked intent</li>
+      <li>Top app bar visible in all states</li>
+      <li>Localised strings render correctly (EN + ES)</li>
+    </ul>
+
+    <h4>Non-Functional Considerations</h4>
+    <p><strong>Security:</strong> Error messages must not leak technical details (stack traces, raw API responses, internal state).</p>
+    <p><strong>Performance:</strong> Rapid retry clicking could launch concurrent fetch requests — ViewModel must debounce or queue retry attempts.</p>
+    <p><strong>GDPR:</strong> No personal data involved. Logging must not capture user-identifying information.</p>
+    <p><strong>Accessibility:</strong> Loading indicator must have proper content description. Error UI must be keyboard-navigable and screen-reader friendly.</p>
+
+  </section>
+  </main>
+
+</body>
+</html>
