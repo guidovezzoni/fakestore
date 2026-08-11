@@ -14,8 +14,7 @@
 |---|-------|------|
 | [1.2.1](1.2.1-Product-List-Screen-DONE.md) | Product List Screen | User |
 | [1.2.2](1.2.2-Product-List-States-DONE.md) | Product List States (Loading / Error / Empty) | User |
-| [1.2.3](1.2.3-Bottom-Navigation.md) | Bottom Navigation | User |
-| [1.2.4](1.2.4-Product-List-Analytics.md) | Product List Analytics | Product Owner |
+| [1.2.3](1.2.3-Navigation-And-Analytics.md) | Navigation & Product List Analytics | User / Product Owner |
 
 ---
 
@@ -51,7 +50,7 @@
 
 | Epic | Features | Stories |
 |------|---------|---------|
-| 1 — Product Catalogue | 2 | 7 |
+| 1 — Product Catalogue | 2 | 6 |
 | 2 — Favourites Management | 2 | 4 |
 | 3 — User Profile | 1 | 4 |
-| **Total** | **5** | **15** |
+| **Total** | **5** | **14** |
