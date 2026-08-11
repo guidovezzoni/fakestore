@@ -190,6 +190,95 @@
     <p><strong>Accessibility:</strong> Loading indicator must have proper content description. Error UI must be keyboard-navigable and screen-reader friendly.</p>
 
   </section>
+
+  <section class="report-section" data-source="sdlc:sdlc_propose_change" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Change Proposed</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_propose_change</p>
+
+    <h3>Exploration Summary</h3>
+    <ul>
+      <li>Explored the existing MVI architecture in <code>:app</code> module — found <code>ProductListUiState</code> (flat data class), <code>ProductListUiIntent</code> (sealed interface with <code>LoadProducts</code>), <code>ProductListViewModel</code> (no error handling — <code>onFailure</code> branch missing), <code>ProductListScreen</code> (renders only product list, no loading/error/empty states)</li>
+      <li>Identified all integration points: <code>ProductListUiState.kt</code>, <code>ProductListUiIntent.kt</code>, <code>ProductListViewModel.kt</code>, <code>ProductListScreen.kt</code>, existing tests, string resources</li>
+      <li>First use of <code>CircularProgressIndicator</code>, retry-button pattern, and full-screen state UI in this codebase</li>
+    </ul>
+
+    <h3>Questions Asked and Answers Received</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How should the ViewModel obtain localised error messages? (ResourceProvider injection vs Composable resolves string)</td>
+          <td><strong>Composable resolves string</strong> — ViewModel emits <code>data object Error</code> with no message field; Composable calls <code>stringResource()</code> at render time</td>
+        </tr>
+        <tr>
+          <td>Should rapid-retry / concurrent fetch handling be in scope?</td>
+          <td><strong>Deferred</strong> to a later story — keep plain <code>viewModelScope.launch</code> with no cancellation guard</td>
+        </tr>
+        <tr>
+          <td>Should the ViewModel auto-fetch in <code>init{}</code> or keep the existing <code>LaunchedEffect</code> pattern?</td>
+          <td><strong>Keep LaunchedEffect</strong> — screen dispatches <code>LoadProducts</code> via <code>LaunchedEffect(Unit)</code> as today</td>
+        </tr>
+        <tr>
+          <td>Should reasonable string copy defaults be proposed?</td>
+          <td><strong>Yes</strong> — propose defaults for review</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Artifacts Created</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Artifact</th>
+          <th>Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OpenSpec config</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/.openspec.yaml</code></td>
+        </tr>
+        <tr>
+          <td>Proposal</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/proposal.md</code></td>
+        </tr>
+        <tr>
+          <td>Design</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/design.md</code></td>
+        </tr>
+        <tr>
+          <td>Tasks</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/tasks.md</code></td>
+        </tr>
+        <tr>
+          <td>Delta spec</td>
+          <td><code>openspec/changes/2026-08-11-product-list-states/specs/product-list-screen/spec.md</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Task Structure</h3>
+    <ul>
+      <li><strong>21 tasks total</strong> across 5 sections</li>
+      <li>Section 1: MVI Contract Restructuring (3 prerequisite tasks)</li>
+      <li>Section 2: ProductListViewModel BDD (11 tasks — 7 test + 3 implementation + 1 routing)</li>
+      <li>Section 3: ProductListScreen BDD (10 tasks — 6 test + 1 implementation + 1 intent test update + 1 test tags + 1 preview)</li>
+      <li>Section 4: Strings and Localisation (2 integration tasks)</li>
+      <li>Section 5: Final Verification (6 tasks)</li>
+    </ul>
+
+    <h3>Key Design Decision</h3>
+    <p><code>ProductListUiState.Error</code> is a parameterless <code>data object</code> (deliberately deviating from AC-8's "Error holds a user-facing error message string"). The Composable resolves <code>stringResource(R.string.product_list_error_message)</code> at render time. Documented in <code>design.md</code> Decision 1.</p>
+
+  </section>
   </main>
 
 </body>
