@@ -1,5 +1,6 @@
 package com.guidovezzoni.fakestore.ui.screens
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -63,7 +64,7 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = AppDestination.Products,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
         ) {
             composable<AppDestination.Products> { ProductListScreen() }
             composable<AppDestination.Favourites> { FavouritesScreen() }
