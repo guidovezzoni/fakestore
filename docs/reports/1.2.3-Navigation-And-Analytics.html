@@ -312,6 +312,89 @@
 
     <div class="outcome outcome-passed">All 53/53 tasks complete. Security review PASSED. All automated and on-device checks confirmed.</div>
   </section>
+
+  <section class="report-section" data-source="verify_user_story" data-timestamp="2026-08-11T00:00:00Z">
+    <header>
+      <h2>Verification &amp; Archive</h2>
+      <time datetime="2026-08-11T00:00:00Z">11 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: verify_user_story</p>
+
+    <h3>OpenSpec Verification</h3>
+    <p><span class="badge badge-pass">PASS</span> with warning resolved — Design Decision 2 divergence fixed during implementation. Navigation now correctly uses <code>uiState.selectedDestination</code> for <code>BottomNavigationBar</code> state synchronisation, and back navigation implements the exit-app pattern via <code>popUpTo(graph.id)</code> with <code>inclusive=true</code>.</p>
+
+    <h3>Code Quality Gates</h3>
+    <ul>
+      <li><strong>TODO Scan:</strong> <span class="badge badge-pass">PASS</span> — One boilerplate TODO in <code>data_extraction_rules.xml</code>, unrelated to this story.</li>
+      <li><strong>Security Review:</strong> <span class="badge badge-pass">PASS</span> — No critical or high findings. Navigation uses compile-time sealed routes; analytics logs only hardcoded event names.</li>
+      <li><strong>Clean Build:</strong> <span class="badge badge-pass">PASS</span> — <code>./gradlew check</code> successful, exit code 0, 189 tasks.</li>
+      <li><strong>Unit Tests:</strong> <span class="badge badge-pass">PASS</span> — Included in clean build run; all ViewModels and utilities tested via MVI intent/state assertions.</li>
+    </ul>
+
+    <h3>Code Coverage Report</h3>
+    <table>
+      <tr>
+        <th>Category</th>
+        <th>Coverage</th>
+      </tr>
+      <tr>
+        <td>Instructions</td>
+        <td>98.82%</td>
+      </tr>
+      <tr>
+        <td>Lines</td>
+        <td>96.77%</td>
+      </tr>
+      <tr>
+        <td>Methods</td>
+        <td>93.75%</td>
+      </tr>
+      <tr>
+        <td>Classes</td>
+        <td>93.33%</td>
+      </tr>
+    </table>
+
+    <h3>Test Completeness</h3>
+    <ul>
+      <li><strong>Test File Coverage:</strong> <span class="badge badge-pass">PASS</span> — All ViewModels (<code>MainViewModel</code>, <code>ProductListViewModel</code>) and screen composables (<code>MainScreen</code>, <code>BottomNavigationBar</code>, <code>FavouritesScreen</code>, <code>ProfileScreen</code>) have corresponding unit and/or UI test files.</li>
+      <li><strong>Compose Preview Coverage:</strong> <span class="badge badge-pass">PASS</span> — All composables include <code>@Preview</code> functions. <code>MainUiState.selectedDestination</code> field covered with all three non-default values (<code>Favourites</code>, <code>Profile</code>) across previews.</li>
+    </ul>
+
+    <h3>On-Device Testing</h3>
+    <p><span class="badge badge-pass">PASS</span> — 21 instrumented Compose UI tests executed on Pixel 6a (Android 16). Manual verification via UIAutomator confirmed:</p>
+    <ul>
+      <li>Bottom navigation bar displays all 3 tabs with correct labels and icons.</li>
+      <li>Products tab is selected by default and displays product list.</li>
+      <li>Favourites tab navigates to placeholder screen.</li>
+      <li>Profile tab navigates to placeholder screen.</li>
+      <li>Tab taps dispatch correct analytics events (verified in logcat).</li>
+    </ul>
+
+    <h3>Definition of Done</h3>
+    <p><span class="badge badge-pass">PASS</span> — All 18 acceptance criteria and 14 DoD items confirmed:</p>
+    <ul>
+      <li>Bottom navigation rendering with 3 tabs and Material 3 styling ✓</li>
+      <li>Tab state preservation across screen rotation ✓</li>
+      <li>Analytics event logging (tab taps and product list view) with deduplication ✓</li>
+      <li>Localisation (EN + ES) for all user-facing strings ✓</li>
+      <li>Unit test coverage ≥95% ✓</li>
+      <li>Detekt analysis clean ✓</li>
+      <li>All other DoD criteria verified ✓</li>
+    </ul>
+
+    <h3>Documentation Sync</h3>
+    <ul>
+      <li><strong>Spec Sync Status:</strong> <span class="badge badge-pass">PASS</span> — Product list screen spec updated; bottom navigation spec created and synced to main specifications.</li>
+      <li><strong>README &amp; AGENTS.md:</strong> <span class="badge badge-pass">PASS</span> — README updated with Navigation Compose 2.9.8 entry. AGENTS.md updated with navigation module structure, new screens, ViewModels, and state/intent/effect types.</li>
+    </ul>
+
+    <h3>Archival Details</h3>
+    <p>User story archived to <code>openspec/changes/archive/2026-08-11-1.2.3-navigation-and-analytics/</code> with all artifacts preserved.</p>
+    <p>Story file renamed to: <code>docs/userstories/1.2.3-Navigation-And-Analytics-DONE.md</code></p>
+
+    <div class="outcome outcome-passed">VERIFICATION PASSED. All gates confirmed. Story ready for release.</div>
+  </section>
   </main>
 
 </body>

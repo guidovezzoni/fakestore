@@ -10,10 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.guidovezzoni.fakestore.ui.effect.MainUiEffect
 import com.guidovezzoni.fakestore.ui.intent.MainUiIntent
@@ -24,7 +22,6 @@ import com.guidovezzoni.fakestore.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
-@Suppress("UnusedParameter")
 @Composable
 fun MainScreen(
     uiState: MainUiState,
@@ -33,18 +30,12 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val selectedDestination: AppDestination = when (navBackStackEntry?.destination?.route) {
-        AppDestination.Favourites::class.qualifiedName -> AppDestination.Favourites
-        AppDestination.Profile::class.qualifiedName -> AppDestination.Profile
-        else -> AppDestination.Products
-    }
 
     LaunchedEffect(navController) {
         uiEffect.collect { effect ->
             when (effect) {
                 is MainUiEffect.NavigateToTab -> navController.navigate(effect.destination) {
-                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                    popUpTo(navController.graph.id) { saveState = true; inclusive = true }
                     launchSingleTop = true
                     restoreState = true
                 }
@@ -56,7 +47,7 @@ fun MainScreen(
         modifier = modifier,
         bottomBar = {
             BottomNavigationBar(
-                selectedDestination = selectedDestination,
+                selectedDestination = uiState.selectedDestination,
                 onTabTap = { onIntent(MainUiIntent.TabTapped(it)) },
             )
         },

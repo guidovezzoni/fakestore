@@ -14,7 +14,7 @@
 |---|-------|------|
 | [1.2.1](1.2.1-Product-List-Screen-DONE.md) | Product List Screen | User |
 | [1.2.2](1.2.2-Product-List-States-DONE.md) | Product List States (Loading / Error / Empty) | User |
-| [1.2.3](1.2.3-Navigation-And-Analytics-WIP.md) | Navigation & Product List Analytics | User / Product Owner |
+| [1.2.3](1.2.3-Navigation-And-Analytics-DONE.md) | Navigation & Product List Analytics | User / Product Owner |
 
 ---
 

@@ -75,9 +75,9 @@ fakestore/
         │   ├── navigation/     # AppDestination sealed interface (type-safe nav routes)
         │   ├── screens/        # Feature screen composables (MainScreen, BottomNavigationBar, ProductListScreen, FavouritesScreen, ProfileScreen)
         │   ├── viewmodel/      # MVI ViewModels (MainViewModel, ProductListViewModel)
-        │   ├── state/          # UiState sealed interfaces (MainUiState, ProductListUiState)
-        │   ├── intent/         # UiIntent sealed classes (MainUiIntent, ProductListUiIntent)
-        │   ├── effect/         # UiEffect sealed classes (MainUiEffect, ProductListUiEffect)
+        │   ├── state/          # UiState data classes and sealed interfaces (MainUiState, ProductListUiState, ProductListItem)
+        │   ├── intent/         # UiIntent sealed interfaces (MainUiIntent, ProductListUiIntent)
+        │   ├── effect/         # UiEffect sealed interfaces (MainUiEffect, ProductListUiEffect)
         │   ├── util/           # Formatting and helper functions
         │   └── theme/          # Material 3 theme (Color, Theme, Type)
 ```

@@ -66,7 +66,7 @@ data class MainUiState(
 )
 ```
 
-*Alternative considered*: derive the highlighted tab directly in `MainScreen` from `navController.currentBackStackEntryAsState()`, as shown in the official Navigation-Compose bottom-bar sample. Rejected — while this is the more common Compose-only pattern, it means `BottomNavigationBar`'s "which tab is selected" fact lives outside `UiState`, so a Compose UI test of `BottomNavigationBar` in isolation (per the project's "no ViewModel mocking" testing guideline) would have no state to assert against without hand-rolling a `NavController`. Making `selectedDestination` part of `MainUiState` keeps `BottomNavigationBar` a pure function of `(selectedDestination, onTabTapped)`, directly matching the "Test the composable in isolation: pass `uiState` directly" testing guideline, and keeps the ViewModel-testable surface (which tab is "current") in the ViewModel where Kover measures coverage.
+*Alternative considered*: derive the highlighted tab directly in `MainScreen` from `navController.currentBackStackEntryAsState()`, as shown in the official Navigation-Compose bottom-bar sample. Rejected — while this is the more common Compose-only pattern, it means `BottomNavigationBar`'s "which tab is selected" fact lives outside `UiState`, so a Compose UI test of `BottomNavigationBar` in isolation (per the project's "no ViewModel mocking" testing guideline) would have no state to assert against without hand-rolling a `NavController`. Making `selectedDestination` part of `MainUiState` keeps `BottomNavigationBar` a pure function of `(selectedDestination, onTabTap)`, directly matching the "Test the composable in isolation: pass `uiState` directly" testing guideline, and keeps the ViewModel-testable surface (which tab is "current") in the ViewModel where Kover measures coverage.
 
 `MainViewModel.onTabTapped()` unconditionally updates `selectedDestination` to the tapped tab (even if unchanged) — idempotent, no branching needed.
 
@@ -131,7 +131,7 @@ LaunchedEffect(navController) {
     uiEffect.collect { effect ->
         when (effect) {
             is MainUiEffect.NavigateToTab -> navController.navigate(effect.destination) {
-                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                popUpTo(navController.graph.id) { saveState = true; inclusive = true }
                 launchSingleTop = true
                 restoreState = true
             }
@@ -139,6 +139,8 @@ LaunchedEffect(navController) {
     }
 }
 ```
+
+`popUpTo(navController.graph.id) { inclusive = true }` clears the entire back stack before adding the new destination, so each tab holds a single back stack entry. Pressing back from any tab exits the app rather than navigating between tabs. `saveState = true` / `restoreState = true` still preserves each tab's scroll position and content state across switches.
 
 Because `launchSingleTop = true`, calling `navigate()` with the currently-displayed destination is a no-op with respect to the back stack and composition — this is what makes "tapping the already-selected tab has no visible effect" (AC) true, while analytics still fires on every tap per Decision 3 above (the `logEvent` call happens in the ViewModel regardless of whether the subsequent navigation is a no-op).
 
@@ -148,27 +150,27 @@ Because `launchSingleTop = true`, calling `navigate()` with the currently-displa
 @Composable
 fun BottomNavigationBar(
     selectedDestination: AppDestination,
-    onTabTapped: (AppDestination) -> Unit,
+    onTabTap: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavigationBar(modifier = modifier) {
         NavigationBarItem(
             selected = selectedDestination == AppDestination.Products,
-            onClick = { onTabTapped(AppDestination.Products) },
+            onClick = { onTabTap(AppDestination.Products) },
             icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null) },
             label = { Text(stringResource(R.string.global_tab_products)) },
             modifier = Modifier.testTag(BOTTOM_NAVIGATION_PRODUCTS_TAB_TEST_TAG),
         )
         NavigationBarItem(
             selected = selectedDestination == AppDestination.Favourites,
-            onClick = { onTabTapped(AppDestination.Favourites) },
+            onClick = { onTabTap(AppDestination.Favourites) },
             icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
             label = { Text(stringResource(R.string.global_tab_favourites)) },
             modifier = Modifier.testTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG),
         )
         NavigationBarItem(
             selected = selectedDestination == AppDestination.Profile,
-            onClick = { onTabTapped(AppDestination.Profile) },
+            onClick = { onTabTap(AppDestination.Profile) },
             icon = { Icon(Icons.Filled.Person, contentDescription = null) },
             label = { Text(stringResource(R.string.global_tab_profile)) },
             modifier = Modifier.testTag(BOTTOM_NAVIGATION_PROFILE_TAB_TEST_TAG),
@@ -195,7 +197,7 @@ fun MainScreen(
         uiEffect.collect { effect ->
             when (effect) {
                 is MainUiEffect.NavigateToTab -> navController.navigate(effect.destination) {
-                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                    popUpTo(navController.graph.id) { saveState = true; inclusive = true }
                     launchSingleTop = true
                     restoreState = true
                 }
@@ -208,14 +210,14 @@ fun MainScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedDestination = uiState.selectedDestination,
-                onTabTapped = { onIntent(MainUiIntent.TabTapped(it)) },
+                onTabTap = { onIntent(MainUiIntent.TabTapped(it)) },
             )
         },
     ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = AppDestination.Products,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
         ) {
             composable<AppDestination.Products> { ProductListScreen() }
             composable<AppDestination.Favourites> { FavouritesScreen() }
@@ -316,7 +318,7 @@ dependencies {
 
 - **[Risk]** `MainScreen`'s stateless overload still owns `rememberNavController()` internally, so it is not testable purely by passing primitives the way `ProductListScreen`'s stateless overload is. → **Mitigation**: Decision 5 documents this as an accepted, bounded exception (the same category as `hiltViewModel()` in other stateful overloads); `BottomNavigationBar` — the composable with the actual tab-selection/tap-dispatch logic subject to the acceptance criteria — remains fully stateless and unit-testable in isolation. `MainScreen` itself is covered by an instrumented test asserting end-to-end tab-switch behaviour with a real `NavController`.
 - **[Risk]** Relying on "leaving a `NavHost` destination removes its composable from composition, so `LaunchedEffect(Unit)` re-fires on return" is an implementation detail of Navigation-Compose's `saveState`/`restoreState` mechanics, not something this design can enforce structurally. → **Mitigation**: this is the exact mechanism named in the user's own clarification #5; the Final Verification section in `tasks.md` includes an on-device check (switch away from Products, switch back, confirm a second `product_list_viewed` Logcat line) to catch any drift from this assumption on the actual Navigation-Compose version pinned in Decision 7.
-- **[Trade-off]** `MainUiState.selectedDestination` and `NavController`'s own back-stack-derived "current destination" are two separate sources of truth that must stay in sync (Decision 2 vs. Decision 5). They are kept in sync because the *only* way to change `selectedDestination` is `TabTapped` → `MainUiEffect.NavigateToTab` → `navController.navigate()`, and the `NavHost`'s `startDestination` matches `MainUiState`'s default — but a future story adding programmatic navigation (e.g. "View Cart" deep-linking into the Products tab from elsewhere) would need to also dispatch a state-syncing intent, or this could drift. Flagged for future stories, not a gap in this one (no such deep-link exists yet).
+- **[Design decision]** `MainUiState.selectedDestination` is the single source of truth for which tab is highlighted. Because `popUpTo(navController.graph.id) { inclusive = true }` clears the back stack on every tab switch, back navigation always exits the app rather than navigating between tabs. This eliminates the two-source-of-truth risk: `uiState.selectedDestination` can never diverge from the NavController's current destination via a back press. Future stories adding programmatic navigation (e.g. deep-linking) must also dispatch a state-syncing intent to keep this invariant.
 - **[Risk]** Analytics tests for `MainViewModel.uiEffect` (a `SharedFlow` with no replay) require a collector to be actively subscribed before the emitting intent is dispatched, or the emitted value is missed. → **Mitigation**: `tasks.md` specifies the collect-then-dispatch test pattern explicitly (launch a collecting coroutine into a `mutableListOf` before calling `onIntent`), consistent with how `kotlinx-coroutines-test`'s `UnconfinedTestDispatcher` is already used elsewhere in this codebase.
 
 ## Migration Plan
