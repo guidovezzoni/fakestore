@@ -282,6 +282,7 @@ Unit tests should follow these criteria:
 - When a text string appears in multiple nodes (e.g. a button label and a dialog title), use `onAllNodesWithText(...)[index]` instead of `onNodeWithText`.
 - Wrap the composable in the app theme for accurate rendering.
 - Cover at minimum: empty/default state, populated state, visibility toggles for dialogs, button click intents, and dismiss intents.
+- **Test naming**: Backtick-quoted function names are not supported by the Android test runner. Use camelCase with underscores as GIVEN/WHEN/THEN separators instead, e.g. `givenProductList_whenScreenIsDisplayed_thenOneCardPerProduct`.
 - **Execution**: tests run on a connected device (physical or emulator) via `./gradlew connectedDebugAndroidTest`.
 
 ### ADB Interaction with Compose UIs

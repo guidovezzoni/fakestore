@@ -8,6 +8,7 @@ A native Android app built with Kotlin and Jetpack Compose that consumes the [Fa
 - **MVI architecture** (Model-View-Intent) with Clean Architecture layers
 - **Multi-module**: `build-logic` (convention plugins), `:core`, `:domain`, `:data`, `:app`
 - **Networking**: Retrofit + OkHttp + kotlinx-serialization
+- **Image Loading**: Coil 3 (with OkHttp network engine)
 - **Dependency Injection**: Hilt (Dagger-Hilt 2.60) + KSP; modules in `:app/di/`
 - **Detekt** for static analysis (with Compose rules)
 - **Kover** for code coverage (95% minimum)
@@ -64,7 +65,8 @@ bundle exec fastlane deploy  # Upload to Play Store production track
 ## Product Clarifications
 
 1. REST API does not support pagination, it should be added as  it currently limits the app scalability.
-2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product. 
+2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product.
+3. Currency for product prices is hardcoded to USD. Ideally the price should come with a currency field. 
 
 ## Technical Improvements
 
