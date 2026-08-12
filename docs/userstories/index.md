@@ -28,7 +28,7 @@
 ### Feature 2.2 — Favourites Screen
 | # | Story | Role |
 |---|-------|------|
-| [2.2.1](2.2.1-Favourites-Screen-WIP.md) | Favourites Screen | User / Product Owner |
+| [2.2.1](2.2.1-Favourites-Screen-DONE.md) | Favourites Screen | User / Product Owner |
 
 ---
 

@@ -252,6 +252,121 @@
     </table>
   </section>
 
+  <section class="report-section" data-source="verify_user_story" data-timestamp="2026-08-12T14:30:00Z">
+    <header>
+      <h2>Verification & Archive</h2>
+      <time datetime="2026-08-12T14:30:00Z">12 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: verify_user_story</p>
+
+    <h3>Verification Gates</h3>
+
+    <h4>OpenSpec Verification</h4>
+    <p><span class="badge badge-pass">PASS</span> — 22/22 tasks complete. All spec requirements and scenarios implemented. No issues found.</p>
+
+    <h4>TODO Comment Scan</h4>
+    <p><span class="badge badge-pass">PASS</span> — No TODO comments found in <code>app/src/</code>.</p>
+
+    <h4>Security Review</h4>
+    <p><span class="badge badge-pass">PASS</span> — No findings of any severity. Analytics event contains only anonymous integer <code>favourite_count</code>, no PII exposed.</p>
+
+    <h4>Clean Build & Full Check</h4>
+    <p><span class="badge badge-pass">PASS</span> — <code>./gradlew clean check</code> completed with exit code 0. 196 tasks executed, all checks satisfied (unit tests, detekt, lint).</p>
+
+    <h4>Unit Tests</h4>
+    <p><span class="badge badge-pass">PASS</span> — All modules passing (cached from clean check). No failures detected.</p>
+
+    <h4>Code Coverage Report</h4>
+    <table>
+      <tr>
+        <th>Category</th>
+        <th>Coverage</th>
+      </tr>
+      <tr>
+        <td>Instructions</td>
+        <td>99.04%</td>
+      </tr>
+      <tr>
+        <td>Branches</td>
+        <td>N/A (0 branch points tracked)</td>
+      </tr>
+      <tr>
+        <td>Lines</td>
+        <td>97.56%</td>
+      </tr>
+      <tr>
+        <td>Methods</td>
+        <td>96.00%</td>
+      </tr>
+      <tr>
+        <td>Classes</td>
+        <td>95.83%</td>
+      </tr>
+    </table>
+    <p><span class="badge badge-pass">PASS</span> — All metrics meet or exceed 95% minimum bound.</p>
+
+    <h4>Test File Coverage</h4>
+    <p><span class="badge badge-pass">PASS</span> — All screen and ViewModel classes have corresponding test files:</p>
+    <ul>
+      <li><code>FavouritesViewModel</code> → <code>FavouritesViewModelTest</code> (FOUND)</li>
+      <li><code>FavouritesScreen</code> → <code>FavouritesScreenTest</code> (FOUND)</li>
+    </ul>
+
+    <h4>Compose Preview Coverage</h4>
+    <p><span class="badge badge-pass">PASS</span> — 4/4 <code>UiState</code> variants covered in previews:</p>
+    <ul>
+      <li>Loading state</li>
+      <li>Content state (with items)</li>
+      <li>Content state (empty list)</li>
+      <li>Error state</li>
+    </ul>
+
+    <h4>On-Device Tests</h4>
+    <p><span class="badge badge-pass">PASS</span> — 34 instrumented tests passed via <code>./gradlew connectedDebugAndroidTest</code>.</p>
+    <p>Manual on-device verification confirmed:</p>
+    <ul>
+      <li>Navigation to Favourites tab via bottom navigation bar functional</li>
+      <li>Empty state message "No favourites yet. Tap the heart on a product to save it." confirmed centred on screen</li>
+    </ul>
+
+    <h4>Definition of Done</h4>
+    <p><span class="badge badge-pass">PASS</span> — All 16 DoD criteria confirmed:</p>
+    <ul>
+      <li>Unit tests passing (5 new scenarios)</li>
+      <li>Compose UI tests passing (3 new scenarios)</li>
+      <li>Code coverage at 95%+</li>
+      <li>Detekt passing (zero violations)</li>
+      <li>Lint passing</li>
+      <li>Branch review ready</li>
+      <li>Manual on-device verification complete</li>
+      <li>No TODO comments in source</li>
+      <li>Security review passed</li>
+      <li>All 22 implementation tasks complete</li>
+      <li>Specs synchronised</li>
+      <li>Documentation up-to-date</li>
+      <li>No merge conflicts</li>
+      <li>Git history clean</li>
+      <li>Branch squashed (single commit per task section)</li>
+      <li>Ready to merge to <code>main</code></li>
+    </ul>
+
+    <h4>Spec Sync Status</h4>
+    <p><span class="badge badge-pass">DONE</span> — 4 requirements updated in <code>openspec/specs/favourite-toggle/spec.md</code>:</p>
+    <ul>
+      <li>New requirement added: <code>favourites_screen_viewed</code> analytics event (with <code>favourite_count</code> parameter)</li>
+      <li>Updated: TrackScreenViewed intent implementation requirement</li>
+      <li>Updated: Empty state message requirement with instructional copy</li>
+      <li>Updated: Error state message requirement</li>
+    </ul>
+
+    <h3>Archive</h3>
+    <p><strong>Location:</strong> <code>openspec/changes/archive/2026-08-12-favourites-screen-analytics/</code></p>
+    <p>All change artifacts (proposal, design, specs, tasks) have been archived. User story file renamed to <code>docs/userstories/2.2.1-Favourites-Screen-DONE.md</code>.</p>
+
+    <h3>Outcome</h3>
+    <div class="outcome outcome-passed">PASSED — All verification gates satisfied. Implementation complete, tested, and ready for production. Archived on 2026-08-12.</div>
+  </section>
+
   </main>
 
 </body>
