@@ -232,6 +232,130 @@
       <li><strong>AGENTS.md</strong> — Updated module structure tree to include UserProfile, UserName, UserRepository, GetUserProfileUseCase, UserDto, UserNameDto, UserMapper, UserRepositoryImpl, ProfileViewModel, ProfileUiState, ProfileUiIntent, ProfileUiEffect.</li>
     </ul>
   </section>
+  <section class="report-section" data-source="verify_and_archive" data-timestamp="2026-08-12T18:00:00Z">
+    <header>
+      <h2>Verification & Archive</h2>
+      <time datetime="2026-08-12T18:00:00Z">12 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: verify_and_archive</p>
+
+    <h3>OpenSpec Verification</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> <code>openspec verify</code> — 46/46 tasks verified</li>
+      <li>3 non-blocking suggestions noted; 0 critical findings; 0 warning findings</li>
+    </ul>
+
+    <h3>Code Quality Checks</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> TODO scan — 1 unrelated boilerplate TODO in <code>data_extraction_rules.xml</code> (not in modified files)</li>
+      <li><span class="badge badge-pass">PASS</span> Clean build — <code>./gradlew clean</code> + <code>./gradlew build</code> successful (3m 33s; exit code 0)</li>
+      <li><span class="badge badge-pass">PASS</span> Unit &amp; instrumented tests — included in <code>./gradlew check</code></li>
+      <li><span class="badge badge-pass">PASS</span> Detekt static analysis — included in <code>./gradlew check</code></li>
+    </ul>
+
+    <h3>Code Coverage Report</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Coverage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Instructions</td>
+          <td>99.17%</td>
+        </tr>
+        <tr>
+          <td>Branches</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>Lines</td>
+          <td>98.04%</td>
+        </tr>
+        <tr>
+          <td>Methods</td>
+          <td>96.77%</td>
+        </tr>
+        <tr>
+          <td>Classes</td>
+          <td>96.67%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Test Suite Coverage</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> Unit test files present: <code>ProfileViewModelTest</code>, <code>UserMapperTest</code>, <code>UserRepositoryImplTest</code>, <code>GetUserProfileUseCaseTest</code></li>
+      <li><span class="badge badge-pass">PASS</span> Compose UI test file: <code>ProfileScreenTest</code> with 6 comprehensive tests</li>
+      <li><span class="badge badge-pass">PASS</span> Preview coverage: Loading, Content, Error states all present; FavouritesScreen 4/4 states covered</li>
+      <li><span class="badge badge-pass">PASS</span> Instrumented tests: 40 passed, 0 failures, 0 errors</li>
+    </ul>
+
+    <h3>Security Review</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> No critical findings; no high-severity findings</li>
+      <li>Password field excluded from all DTOs and domain models</li>
+      <li>PII (name, email) never logged or persisted locally</li>
+      <li>Analytics log only non-PII data (<code>favourite_count</code> as integer)</li>
+    </ul>
+
+    <h3>On-Device Verification</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> Profile screen displays correctly for user ID 8</li>
+      <li>Name: <em>william hopkins</em></li>
+      <li>Email: <em>william@gmail.com</em></li>
+      <li>Favourite count: 0 (reactive updates confirmed after toggling favourite on Products screen)</li>
+      <li><span class="badge badge-pass">PASS</span> Error state triggered by airplane mode; retry restored Content state after network restore</li>
+    </ul>
+
+    <h3>Definition of Done</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> All 11 DoD items confirmed:
+        <ul>
+          <li>User profile data fetched from API and displayed</li>
+          <li>Reactive favourite count integrated</li>
+          <li>Loading and error states with retry implemented</li>
+          <li>Analytics event sent when screen reaches Content state</li>
+          <li>Caching prevents re-fetch on screen revisit</li>
+          <li>PII excluded from analytics and local storage</li>
+          <li>Accessibility labels present</li>
+          <li>English and Spanish strings provided</li>
+          <li>Unit, ViewModel, and Compose UI tests all passing</li>
+          <li>Code coverage meets 95% minimum bound</li>
+          <li>On-device testing confirms feature works as expected</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Specification Sync</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> Delta specs synced to main specs:
+        <ul>
+          <li><code>openspec/specs/profile-screen/spec.md</code> — UI layer design</li>
+          <li><code>openspec/specs/user-profile-data/spec.md</code> — domain/data layer design</li>
+        </ul>
+      </li>
+      <li><span class="badge badge-pass">PASS</span> Project documentation in sync:
+        <ul>
+          <li>README.md — module descriptions and limitations updated</li>
+          <li>AGENTS.md — module structure tree updated with new types and components</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Archival</h3>
+    <ul>
+      <li><strong>Change archived:</strong> <code>openspec/changes/archive/2026-08-12-profile-screen/</code></li>
+      <li><strong>User story renamed:</strong> <code>docs/userstories/3.1.1-Profile-Screen-DONE.md</code></li>
+      <li><strong>Branch:</strong> <code>feature/3.1.1-profile-screen</code> ready for merge to <code>main</code></li>
+    </ul>
+
+    <div class="outcome outcome-passed">
+      VERIFICATION COMPLETE — All gates PASSED. Story ready for production. Archive complete.
+    </div>
+  </section>
   </main>
 
 </body>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Screen – Redesign Preview</title>
+  <style>
+    /* ── Material 3 tokens (FakeStore purple scheme) ── */
+    :root {
+      --md-primary:            #6650A4;
+      --md-on-primary:         #FFFFFF;
+      --md-primary-container:  #EADDFF;
+      --md-on-primary-container: #21005D;
+      --md-secondary:          #625B71;
+      --md-secondary-container:#E8DEF8;
+      --md-surface:            #FFFBFE;
+      --md-surface-variant:    #E7E0EC;
+      --md-on-surface:         #1C1B1F;
+      --md-on-surface-variant: #49454F;
+      --md-outline:            #79747E;
+      --md-error:              #B3261E;
+      --md-on-error:           #FFFFFF;
+      --md-error-container:    #F9DEDC;
+      --shadow-elevation-2:    0 1px 2px rgba(0,0,0,.15), 0 2px 6px rgba(0,0,0,.12);
+
+      /* Typography scale (Roboto fallback) */
+      --type-headline-large:   400 2rem/2.5rem system-ui, sans-serif;
+      --type-headline-medium:  400 1.75rem/2.25rem system-ui, sans-serif;
+      --type-body-large:       400 1rem/1.5rem system-ui, sans-serif;
+      --type-body-medium:      400 .875rem/1.25rem system-ui, sans-serif;
+      --type-title-medium:     500 1rem/1.5rem system-ui, sans-serif;
+      --type-label-small:      500 .6875rem/1rem system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #F4F0FA;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--md-on-surface);
+      min-height: 100vh;
+    }
+
+    /* ── Page layout ── */
+    .page-header {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      padding: 20px 24px 16px;
+    }
+    .page-header h1 { font-size: 1.125rem; font-weight: 600; letter-spacing: .02em; }
+    .page-header p  { font-size: .8125rem; opacity: .8; margin-top: 2px; }
+
+    .stage {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 32px 24px 48px;
+    }
+
+    /* ── Phone shell ── */
+    .phone-shell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .phone-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--md-secondary);
+    }
+    .phone {
+      width: 360px;
+      border-radius: 40px;
+      background: #1a1a2e;
+      padding: 14px 12px 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.2);
+    }
+    .phone-notch {
+      width: 90px;
+      height: 10px;
+      background: #111;
+      border-radius: 6px;
+      margin: 0 auto 10px;
+    }
+    .phone-screen {
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--md-surface);
+      height: 680px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      background: var(--md-primary-container);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 16px 0;
+      font-size: .65rem;
+      font-weight: 600;
+      color: var(--md-on-primary-container);
+      flex-shrink: 0;
+    }
+
+    /* ── Screen states ── */
+    .screen-content {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Content state ── */
+    .hero {
+      background: var(--md-primary-container);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 24px 32px;
+      flex-shrink: 0;
+    }
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: var(--md-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-on-primary);
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: .02em;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(102,80,164,.35);
+    }
+    .hero-name {
+      font-size: 1.625rem;
+      font-weight: 400;
+      line-height: 2rem;
+      color: var(--md-on-primary-container);
+      text-align: center;
+    }
+    .hero-email {
+      font-size: .875rem;
+      line-height: 1.25rem;
+      color: var(--md-on-primary-container);
+      opacity: .7;
+      margin-top: 4px;
+      text-align: center;
+    }
+    .info-section {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+    .elevated-card {
+      background: var(--md-surface);
+      border-radius: 12px;
+      box-shadow: var(--shadow-elevation-2);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      color: var(--md-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-label {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      color: var(--md-on-surface);
+      flex: 1;
+    }
+    .card-value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--md-primary);
+    }
+
+    /* ── Loading state ── */
+    .loading-center {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3.5px solid var(--md-surface-variant);
+      border-top-color: var(--md-primary);
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error state ── */
+    .error-center {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 24px;
+    }
+    .error-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--md-error-container);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .error-text {
+      font-size: .9375rem;
+      color: var(--md-on-surface-variant);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .retry-btn {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      border: none;
+      border-radius: 100px;
+      padding: 10px 24px;
+      font-size: .875rem;
+      font-weight: 500;
+      letter-spacing: .0625em;
+      cursor: pointer;
+    }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      background: var(--md-surface);
+      border-top: 1px solid var(--md-surface-variant);
+      display: flex;
+      padding: 8px 0 4px;
+      flex-shrink: 0;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 0;
+      cursor: pointer;
+    }
+    .nav-item .nav-icon-pill {
+      border-radius: 100px;
+      padding: 4px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-item.active .nav-icon-pill {
+      background: var(--md-secondary-container);
+    }
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      opacity: .6;
+    }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .nav-label {
+      font-size: .6875rem;
+      font-weight: 500;
+      color: var(--md-on-surface-variant);
+    }
+    .nav-item.active .nav-label { color: var(--md-on-surface); }
+
+    /* ── Callout ── */
+    .callout-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      padding: 0 24px 32px;
+    }
+    .callout-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      max-width: 340px;
+      flex: 1 1 280px;
+    }
+    .callout-card h3 {
+      font-size: .8125rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--md-secondary);
+      margin-bottom: 8px;
+    }
+    .callout-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .callout-card li {
+      font-size: .875rem;
+      color: var(--md-on-surface);
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      line-height: 1.4;
+    }
+    .callout-card li::before {
+      content: "✓";
+      color: var(--md-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Profile Screen — Redesign Preview</h1>
+  <p>FakeStore · Material 3 · Three states: Content · Loading · Error</p>
+</div>
+
+<div class="stage">
+
+  <!-- ── CONTENT STATE ── -->
+  <div class="phone-shell">
+    <span class="phone-label">Content</span>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+        <!-- Screen body -->
+        <div class="screen-content">
+          <!-- Hero -->
+          <div class="hero">
+            <div class="avatar">JD</div>
+            <div class="hero-name">John Doe</div>
+            <div class="hero-email">john@example.com</div>
+          </div>
+          <!-- Info cards -->
+          <div class="info-section">
+            <div class="elevated-card">
+              <div class="card-icon">
+                <!-- Heart SVG (Material Filled Favorite) -->
+                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </div>
+              <span class="card-label">Favourites</span>
+              <span class="card-value">3</span>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom nav -->
+        <nav class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 18a.96.96 0 0 1-.75-.35A.96.96 0 0 1 6 17V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10a.96.96 0 0 1-.35.75A.96.96 0 0 1 17 18H7z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Products</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Favourites</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profile</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOADING STATE ── -->
+  <div class="phone-shell">
+    <span class="phone-label">Loading</span>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+        <div class="screen-content">
+          <div class="loading-center">
+            <div class="spinner"></div>
+          </div>
+        </div>
+        <nav class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 18a.96.96 0 0 1-.75-.35A.96.96 0 0 1 6 17V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10a.96.96 0 0 1-.35.75A.96.96 0 0 1 17 18H7z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Products</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Favourites</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profile</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ERROR STATE ── -->
+  <div class="phone-shell">
+    <span class="phone-label">Error</span>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="status-bar" style="background: var(--md-surface);">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+        <div class="screen-content">
+          <div class="error-center">
+            <div class="error-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#B3261E">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+            </div>
+            <div class="error-text">Something went wrong.<br>Please try again.</div>
+            <button class="retry-btn">RETRY</button>
+          </div>
+        </div>
+        <nav class="bottom-nav">
+          <div class="nav-item">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 18a.96.96 0 0 1-.75-.35A.96.96 0 0 1 6 17V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10a.96.96 0 0 1-.35.75A.96.96 0 0 1 17 18H7z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Products</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Favourites</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+              </svg>
+            </div>
+            <span class="nav-label">Profile</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- ── Change summary ── -->
+<div class="callout-row">
+  <div class="callout-card">
+    <h3>What changed</h3>
+    <ul>
+      <li>Hero banner with <code>primaryContainer</code> background replaces plain centered text</li>
+      <li>Circular avatar sized 96 dp shows computed initials (ViewModel-derived, in <code>UiState.Content</code>)</li>
+      <li>Full name in <code>headlineMedium</code>, email in <code>bodyMedium</code> at 70% opacity</li>
+      <li><code>ElevatedCard</code> row for Favourites with filled heart icon + reactive count</li>
+      <li>Screen is scrollable — cards section can grow as more stats are added</li>
+    </ul>
+  </div>
+  <div class="callout-card">
+    <h3>Code changes</h3>
+    <ul>
+      <li><code>ProfileUiState.Content</code> — new <code>initials: String</code> field</li>
+      <li><code>ProfileViewModel</code> — computes <code>initials</code> from first letters of firstName + lastName</li>
+      <li><code>ProfileScreen.kt</code> — hero + card layout; all dimensions extracted as <code>private val</code></li>
+      <li><code>ProfileViewModelTest</code> — asserts <code>initials == "JD"</code></li>
+      <li><code>ProfileScreenTest</code> — passes <code>initials = "JD"</code> into Content state</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>
