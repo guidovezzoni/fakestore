@@ -41,6 +41,9 @@ cd fakestore
 
 # Run all checks (tests + detekt + lint)
 ./gradlew check
+
+# Run Compose tests
+./gradlew connectedDebugAndroidTest
 ```
 
 ## Project Structure
@@ -52,17 +55,6 @@ The project uses a multi-module Clean Architecture with four Gradle modules:
 - **:domain** — Domain models (`Product`, `Rating`, `UserProfile`, `UserName`), repository interfaces (`ProductRepository`, `FavouritesRepository`, `UserRepository`), use cases (`GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`, `GetUserProfileUseCase`) — pure Kotlin, no Android dependencies
 - **:data** — DTOs, mappers, `ApiService`, `ProductRepositoryImpl`, `UserRepositoryImpl`; Room database (`FavouritesDatabase`, `FavouriteDao`, `FavouriteEntity`, `FavouritesRepositoryImpl`) — KSP annotation processing
 - **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation; Hilt DI modules (`NetworkModule`, `AnalyticsModule`, `DataModule`, `DatabaseModule`), `FakeStoreApplication` (`@HiltAndroidApp`)
-
-## Build & Release
-
-Automated via Fastlane:
-
-```bash
-bundle exec fastlane test    # Run checks
-bundle exec fastlane build   # Build debug APK
-bundle exec fastlane beta    # Upload to Play Store internal track
-bundle exec fastlane deploy  # Upload to Play Store production track
-```
 
 ## Limitations and Assumptions
 
