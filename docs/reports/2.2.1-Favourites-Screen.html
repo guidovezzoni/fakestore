@@ -147,6 +147,56 @@
       <h3>Definition of Done</h3>
       <p>Comprehensive DoD checklist defined including unit tests passing, Compose UI tests passing, code coverage at 95%+, detekt passing, branch review and approval, and manual on-device verification.</p>
     </section>
+    <section class="report-section" data-source="propose_change" data-timestamp="2026-08-12T10:00:00Z">
+      <header>
+        <h2>Change Proposed</h2>
+        <time datetime="2026-08-12">12 August 2026</time>
+      </header>
+      <p class="section-source">Source: propose_change</p>
+
+      <h3>Exploration Summary</h3>
+      <ul>
+        <li>MVI stack fully in place for Favourites with existing ViewModel, state, intent, effect, and screen composables</li>
+        <li>AnalyticsClient already injected in FavouritesViewModel, used for <code>favourite_removed</code> event</li>
+        <li><code>product_list_viewed</code> pattern in ProductListViewModel identified as the reference for analytics implementation</li>
+        <li>Key timing risk identified: synchronous snapshot check would miss first screen visit — resolved by adopting collect-until-Content approach</li>
+        <li>Existing test files follow established conventions (GIVEN/WHEN/THEN naming, factory helpers, MockK)</li>
+        <li><code>favourites_empty_message</code> string exists in both English and Spanish locales</li>
+      </ul>
+
+      <h3>Questions Asked and Answers Received</h3>
+      <ol>
+        <li>
+          <strong>Q:</strong> Should TrackScreenViewed wait for Content state before logging (matching product_list_viewed pattern)?<br>
+          <strong>A:</strong> Yes — wait for Content state (collect uiState, filter for Content, take first emission)
+        </li>
+        <li>
+          <strong>Q:</strong> Should the Spanish string use correct accented Spanish?<br>
+          <strong>A:</strong> Yes — use proper accents ("aún", "corazón") consistent with existing localisation
+        </li>
+        <li>
+          <strong>Q:</strong> Is plain Text composable sufficient for screen reader accessibility?<br>
+          <strong>A:</strong> Yes — plain Text is sufficient, matching existing patterns
+        </li>
+      </ol>
+
+      <h3>Artifacts Created</h3>
+      <ol>
+        <li><code>openspec/changes/favourites-screen-analytics/proposal.md</code> — change proposal (why/what/impact)</li>
+        <li><code>openspec/changes/favourites-screen-analytics/design.md</code> — technical design decisions</li>
+        <li><code>openspec/changes/favourites-screen-analytics/specs/favourite-toggle/spec.md</code> — delta spec with 1 ADDED and 3 MODIFIED requirements</li>
+        <li><code>openspec/changes/favourites-screen-analytics/tasks.md</code> — 23 tasks in 5 sections (3 BDD-paired sections with 8 test tasks, 2 non-testable sections)</li>
+      </ol>
+
+      <h3>Task Structure Summary</h3>
+      <ul>
+        <li><strong>Section 1:</strong> Prerequisites (1 task) — add TrackScreenViewed intent</li>
+        <li><strong>Section 2:</strong> FavouritesViewModel Analytics BDD (8 tasks: 5 tests + 3 implementation)</li>
+        <li><strong>Section 3:</strong> FavouritesScreen Dispatch and Error-State Coverage BDD (3 tasks: 2 tests + 1 implementation)</li>
+        <li><strong>Section 4:</strong> Empty-State Message Copy BDD (3 tasks: 1 test + 2 implementation)</li>
+        <li><strong>Section 5:</strong> Final Verification (7 tasks: detekt, unit tests, instrumented tests, coverage, on-device checks)</li>
+      </ul>
+    </section>
   </main>
 
 </body>

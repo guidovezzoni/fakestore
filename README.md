@@ -73,7 +73,7 @@ bundle exec fastlane deploy  # Upload to Play Store production track
 ## Technical Improvements
 
 1. kover currently excludes also by annotatedBy, however the annotatedBy filter excludes the entire annotated class, excluding code that genuinely might need unit test, this needs to be reviewed and replaced by a more accurate exclusion.
-2. Analytics events are currently implemented in a rough way, f.i. errors are not logged
+2. Analytics events are currently implemented in a rough way - error conditions are not logged, events are strings, parameters usage can be tailored further.
 
 ## SDD/SDLC Process Improvements
 
