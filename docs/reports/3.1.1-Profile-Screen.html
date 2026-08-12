@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report: 3.1.1 — Profile Screen</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .report-header {
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .report-header h1 { font-size: 1.75rem; color: #1e293b; }
+    .report-meta {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;
+    }
+    .report-meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.75rem; margin-bottom: 1rem;
+    }
+    .report-section header h2 { font-size: 1.25rem; color: #1e293b; }
+    .report-section header time { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+    .section-source { font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 0.75rem; }
+
+    h3 { font-size: 1.05rem; color: #334155; margin: 1rem 0 0.5rem; }
+    p { margin-bottom: 0.75rem; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+    li { margin-bottom: 0.25rem; }
+    code {
+      background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 3px;
+      font-size: 0.875em;
+      font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+    .badge {
+      display: inline-block; padding: 0.15rem 0.5rem;
+      border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef9c3; color: #854d0e; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+
+    .outcome { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; }
+    .outcome-passed { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+    .outcome-failed { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="report-header">
+    <h1>3.1.1 — Profile Screen</h1>
+    <div class="report-meta">
+      <span><strong>Story:</strong> 3.1.1</span>
+      <span><strong>Branch:</strong> feature/3.1.1-profile-screen</span>
+      <span><strong>Created:</strong> 2026-08-12</span>
+    </div>
+  </div>
+
+  <main id="report-sections">
+  <section class="report-section" data-source="open_user_story" data-timestamp="2026-08-12T00:00:00Z">
+    <header>
+      <h2>Story Opened</h2>
+      <time datetime="2026-08-12T00:00:00Z">12 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: open_user_story</p>
+
+    <h3>Setup</h3>
+    <ul>
+      <li>Story was auto-selected as the next New story</li>
+      <li>Branch <code>feature/3.1.1-profile-screen</code> was created from <code>main</code></li>
+      <li>Story file was renamed from <code>3.1.1-Profile-Screen.md</code> to <code>3.1.1-Profile-Screen-WIP.md</code></li>
+      <li>Index was updated to reflect the new filename</li>
+    </ul>
+
+    <h3>Refinement Summary</h3>
+    <ul>
+      <li>Documented the full API response shape for <code>GET /users/8</code>, marking included and excluded fields</li>
+      <li><span class="badge badge-warn">CRITICAL</span> security concern: API returns plaintext passwords — password field excluded from all DTOs and models</li>
+      <li>Corrected use case reference: <code>GetFavouritesUseCase</code> → <code>GetFavouriteIdsUseCase</code> (the existing use case)</li>
+      <li>Added Name as a domain value object per project guidelines (API returns name as nested object)</li>
+      <li>Added comprehensive file-to-modify list across all four modules with intent descriptions</li>
+      <li>Added detailed unit testing approach with GIVEN/WHEN/THEN test cases</li>
+      <li>Added accessibility and internationalisation criteria (English + Spanish strings)</li>
+      <li>Added GDPR analysis: data minimisation (exclude address/phone/password), PII not logged/persisted</li>
+      <li>Added performance analysis: caching to avoid re-fetch on screen revisit</li>
+      <li>Listed 6 assumptions for validation</li>
+    </ul>
+
+    <h3>Key Concerns</h3>
+    <ul>
+      <li><span class="badge badge-fail">CRITICAL</span> Password field in API response must never be deserialised</li>
+      <li><span class="badge badge-fail">CRITICAL</span> GDPR — geolocation and password data excluded by design</li>
+      <li><span class="badge badge-warn">HIGH</span> PII (name, email) must not appear in analytics or logs</li>
+      <li><span class="badge badge-warn">MEDIUM</span> Network call on every screen visit — caching recommended</li>
+    </ul>
+  </section>
+  <section class="report-section" data-source="propose_change" data-timestamp="2026-08-12T14:30:00Z">
+    <header>
+      <h2>Change Proposed</h2>
+      <time datetime="2026-08-12T14:30:00Z">12 Aug 2026, 14:30 UTC</time>
+    </header>
+    <p class="section-source">Source: propose_change</p>
+
+    <h3>Exploration Findings</h3>
+    <ul>
+      <li>Codebase uses MVI pattern with ViewModels holding <code>StateFlow&lt;UiState&gt;</code> + <code>SharedFlow&lt;UiEffect&gt;</code>, single <code>onIntent()</code> entry point</li>
+      <li>Dual-composable screen pattern (stateless for tests/previews, stateful with <code>hiltViewModel()</code>)</li>
+      <li>Private per-screen loading/error composables with test tag constants (no shared <code>:ui</code> module)</li>
+      <li><code>ignoreUnknownKeys = true</code> already configured in NetworkClient.kt — safe to exclude unwanted API fields by not declaring them in DTOs</li>
+      <li><code>ProfileScreen.kt</code> exists as a placeholder; <code>AppDestination.Profile</code> and NavHost wiring already present</li>
+      <li><code>GetFavouriteIdsUseCase</code> returns <code>Flow&lt;Set&lt;Int&gt;&gt;</code> — the source for reactive favourite count</li>
+      <li>Analytics uses <code>AnalyticsClient.logEvent(name, params)</code> with constants in companion objects</li>
+      <li>Testing: JUnit 4, MockK, UnconfinedTestDispatcher, <code>createViewModel()</code> factory pattern</li>
+    </ul>
+
+    <h3>Questions Asked and Answers Received</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Should <code>profile_screen_viewed</code> fire immediately or wait for Content state?</td>
+          <td><strong>Wait for Content state</strong> (follow FavouritesViewModel pattern)</td>
+        </tr>
+        <tr>
+          <td>Should ProfileViewModel skip re-fetching if already loaded?</td>
+          <td><strong>Skip if already loaded</strong> (follow FavouritesViewModel pattern)</td>
+        </tr>
+        <tr>
+          <td>Add to existing DataModule or create new UserModule?</td>
+          <td><strong>Add to existing DataModule</strong></td>
+        </tr>
+        <tr>
+          <td>Use <code>Name</code> or <code>UserName</code> for the domain value object?</td>
+          <td><strong>UserName</strong> (more specific, avoids ambiguity)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Artifacts Created</h3>
+    <ol>
+      <li><code>openspec/changes/profile-screen/proposal.md</code> — Change proposal</li>
+      <li><code>openspec/changes/profile-screen/design.md</code> — Design document with 6 key decisions</li>
+      <li><code>openspec/changes/profile-screen/specs/user-profile-data/spec.md</code> — Delta spec for domain/data layer (UserProfile, UserName, DTOs, mapper, repository, use case, field exclusion)</li>
+      <li><code>openspec/changes/profile-screen/specs/profile-screen/spec.md</code> — Delta spec for UI layer (MVI contract, ViewModel, screen composable, analytics, localisation)</li>
+      <li><code>openspec/changes/profile-screen/tasks.md</code> — 46 tasks in 10 sections (5 BDD sections with test-first pairs, 5 mechanical sections)</li>
+    </ol>
+
+    <div class="outcome outcome-passed">
+      Proposal approved. Design document and task list ready for implementation phase.
+    </div>
+  </section>
+  <section class="report-section" data-source="sdlc:sdlc_implement_change" data-timestamp="2026-08-12T16:30:00+02:00">
+    <header>
+      <h2>Implementation Applied</h2>
+      <time datetime="2026-08-12T16:30:00+02:00">12 August 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_implement_change</p>
+
+    <h3>Summary</h3>
+    <p>All 46 tasks across 10 sections were implemented and verified using sub-agent orchestration. Implementation completed in a single iteration cycle with no re-application needed.</p>
+
+    <h3>Sections Delivered</h3>
+    <table>
+      <thead><tr><th>Section</th><th>Tasks</th><th>Model</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>1. Domain &amp; Data Models</td><td>6</td><td>Haiku</td><td>UserName, UserProfile, UserRepository, UserDto, UserNameDto, ApiService extension</td></tr>
+        <tr><td>2. UserMapper (BDD)</td><td>4</td><td>Sonnet</td><td>RED→GREEN; reflection-based security test for excluded PII fields</td></tr>
+        <tr><td>3. UserRepositoryImpl (BDD)</td><td>3</td><td>Sonnet</td><td>RED→GREEN; IOException propagation test</td></tr>
+        <tr><td>4. GetUserProfileUseCase (BDD)</td><td>3</td><td>Sonnet</td><td>RED→GREEN; Flow&lt;Result&gt; wrapping pattern</td></tr>
+        <tr><td>5. Profile MVI Contract</td><td>3</td><td>Haiku</td><td>ProfileUiState, ProfileUiIntent, ProfileUiEffect</td></tr>
+        <tr><td>6. ProfileViewModel (BDD)</td><td>9</td><td>Sonnet</td><td>RED→GREEN; 8 tests covering caching, reactive count, analytics gating, no-PII assertion</td></tr>
+        <tr><td>7. ProfileScreen Composable (BDD)</td><td>7</td><td>Sonnet</td><td>Compile RED→GREEN; 6 Compose UI tests, dual overload, 3 previews</td></tr>
+        <tr><td>8. String Resources</td><td>3</td><td>Haiku</td><td>EN + ES translations; reused product_list_error/retry resources</td></tr>
+        <tr><td>9. DI Wiring</td><td>2</td><td>Haiku</td><td>DataModule @Provides for UserRepository + GetUserProfileUseCase; HiltDependencyGraphTest extended</td></tr>
+        <tr><td>10. Final Verification</td><td>6</td><td>—</td><td>See details below</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Verification Results</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> <code>./gradlew check</code> — 1 iteration (detekt parameter-ordering fixes applied before green)</li>
+      <li><span class="badge badge-pass">PASS</span> <code>./gradlew koverHtmlReportDebug</code> — coverage report generated successfully</li>
+      <li><span class="badge badge-pass">PASS</span> PII field search — <code>password</code>, <code>phone</code>, <code>address</code>, <code>__v</code> absent from all DTOs and domain models</li>
+      <li><span class="badge badge-pass">PASS</span> PII in analytics — <code>ProfileViewModel.logEvent()</code> sends only <code>favourite_count</code> (integer); no name or email</li>
+      <li><span class="badge badge-pass">PASS</span> <code>./gradlew connectedDebugAndroidTest</code> — 40 tests, 0 failures, 0 errors (XML report confirmed; console FAILED output was a configuration-cache artifact from a prior stale run)</li>
+      <li><span class="badge badge-pass">PASS</span> On-device manual verification — Profile screen for user ID 8 shows <em>william hopkins</em> / <em>william@gmail.com</em> / count 0; count updated reactively to 1 after toggling a favourite on Products screen; airplane mode triggered Error state; retry after network restore showed Content state</li>
+    </ul>
+
+    <h3>ACKNOWLEDGED TODOs</h3>
+    <p>No RESOLVE NOW TODOs were found. No existing TODO comments in the modified source files.</p>
+
+    <h3>Security Review</h3>
+    <div class="outcome outcome-passed">PASS — 0 findings</div>
+    <p style="margin-top:0.75rem">Review confirmed: DTO field exclusion enforced, PII absent from analytics, no local PII persistence, transport encryption unchanged. Three non-blocking future-hardening observations noted (ProfileUiState.Content toString(), UserRepository ID validation, DebugAnalyticsProvider release-build guard).</p>
+
+    <h3>Documentation Updates</h3>
+    <ul>
+      <li><strong>README.md</strong> — Updated <code>:domain</code> and <code>:data</code> module descriptions to include new User* types; updated Limitations section to document the DTO-exclusion mitigation for PII in the user API response.</li>
+      <li><strong>AGENTS.md</strong> — Updated module structure tree to include UserProfile, UserName, UserRepository, GetUserProfileUseCase, UserDto, UserNameDto, UserMapper, UserRepositoryImpl, ProfileViewModel, ProfileUiState, ProfileUiIntent, ProfileUiEffect.</li>
+    </ul>
+  </section>
+  <section class="report-section" data-source="verify_and_archive" data-timestamp="2026-08-12T18:00:00Z">
+    <header>
+      <h2>Verification & Archive</h2>
+      <time datetime="2026-08-12T18:00:00Z">12 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: verify_and_archive</p>
+
+    <h3>OpenSpec Verification</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> <code>openspec verify</code> — 46/46 tasks verified</li>
+      <li>3 non-blocking suggestions noted; 0 critical findings; 0 warning findings</li>
+    </ul>
+
+    <h3>Code Quality Checks</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> TODO scan — 1 unrelated boilerplate TODO in <code>data_extraction_rules.xml</code> (not in modified files)</li>
+      <li><span class="badge badge-pass">PASS</span> Clean build — <code>./gradlew clean</code> + <code>./gradlew build</code> successful (3m 33s; exit code 0)</li>
+      <li><span class="badge badge-pass">PASS</span> Unit &amp; instrumented tests — included in <code>./gradlew check</code></li>
+      <li><span class="badge badge-pass">PASS</span> Detekt static analysis — included in <code>./gradlew check</code></li>
+    </ul>
+
+    <h3>Code Coverage Report</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Coverage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Instructions</td>
+          <td>99.17%</td>
+        </tr>
+        <tr>
+          <td>Branches</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>Lines</td>
+          <td>98.04%</td>
+        </tr>
+        <tr>
+          <td>Methods</td>
+          <td>96.77%</td>
+        </tr>
+        <tr>
+          <td>Classes</td>
+          <td>96.67%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Test Suite Coverage</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> Unit test files present: <code>ProfileViewModelTest</code>, <code>UserMapperTest</code>, <code>UserRepositoryImplTest</code>, <code>GetUserProfileUseCaseTest</code></li>
+      <li><span class="badge badge-pass">PASS</span> Compose UI test file: <code>ProfileScreenTest</code> with 6 comprehensive tests</li>
+      <li><span class="badge badge-pass">PASS</span> Preview coverage: Loading, Content, Error states all present; FavouritesScreen 4/4 states covered</li>
+      <li><span class="badge badge-pass">PASS</span> Instrumented tests: 40 passed, 0 failures, 0 errors</li>
+    </ul>
+
+    <h3>Security Review</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> No critical findings; no high-severity findings</li>
+      <li>Password field excluded from all DTOs and domain models</li>
+      <li>PII (name, email) never logged or persisted locally</li>
+      <li>Analytics log only non-PII data (<code>favourite_count</code> as integer)</li>
+    </ul>
+
+    <h3>On-Device Verification</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> Profile screen displays correctly for user ID 8</li>
+      <li>Name: <em>william hopkins</em></li>
+      <li>Email: <em>william@gmail.com</em></li>
+      <li>Favourite count: 0 (reactive updates confirmed after toggling favourite on Products screen)</li>
+      <li><span class="badge badge-pass">PASS</span> Error state triggered by airplane mode; retry restored Content state after network restore</li>
+    </ul>
+
+    <h3>Definition of Done</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> All 11 DoD items confirmed:
+        <ul>
+          <li>User profile data fetched from API and displayed</li>
+          <li>Reactive favourite count integrated</li>
+          <li>Loading and error states with retry implemented</li>
+          <li>Analytics event sent when screen reaches Content state</li>
+          <li>Caching prevents re-fetch on screen revisit</li>
+          <li>PII excluded from analytics and local storage</li>
+          <li>Accessibility labels present</li>
+          <li>English and Spanish strings provided</li>
+          <li>Unit, ViewModel, and Compose UI tests all passing</li>
+          <li>Code coverage meets 95% minimum bound</li>
+          <li>On-device testing confirms feature works as expected</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Specification Sync</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> Delta specs synced to main specs:
+        <ul>
+          <li><code>openspec/specs/profile-screen/spec.md</code> — UI layer design</li>
+          <li><code>openspec/specs/user-profile-data/spec.md</code> — domain/data layer design</li>
+        </ul>
+      </li>
+      <li><span class="badge badge-pass">PASS</span> Project documentation in sync:
+        <ul>
+          <li>README.md — module descriptions and limitations updated</li>
+          <li>AGENTS.md — module structure tree updated with new types and components</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Archival</h3>
+    <ul>
+      <li><strong>Change archived:</strong> <code>openspec/changes/archive/2026-08-12-profile-screen/</code></li>
+      <li><strong>User story renamed:</strong> <code>docs/userstories/3.1.1-Profile-Screen-DONE.md</code></li>
+      <li><strong>Branch:</strong> <code>feature/3.1.1-profile-screen</code> ready for merge to <code>main</code></li>
+    </ul>
+
+    <div class="outcome outcome-passed">
+      VERIFICATION COMPLETE — All gates PASSED. Story ready for production. Archive complete.
+    </div>
+  </section>
+  </main>
+
+</body>
+</html>

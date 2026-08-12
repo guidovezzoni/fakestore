@@ -41,6 +41,9 @@ cd fakestore
 
 # Run all checks (tests + detekt + lint)
 ./gradlew check
+
+# Run Compose tests
+./gradlew connectedDebugAndroidTest
 ```
 
 ## Project Structure
@@ -49,32 +52,29 @@ The project uses a multi-module Clean Architecture with four Gradle modules:
 
 - **build-logic/** — Convention plugins (`fakestore.android.library`, `fakestore.kotlin.library`) centralising Detekt, Kover, and compile configuration
 - **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`; analytics abstraction (`AnalyticsProvider` interface, `AnalyticsClient` dispatcher, `DebugAnalyticsProvider`)
-- **:domain** — Domain models (`Product`, `Rating`), repository interfaces (`ProductRepository`, `FavouritesRepository`), use cases (`GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`) — pure Kotlin, no Android dependencies
-- **:data** — DTOs, mappers, `ApiService`, `ProductRepositoryImpl`; Room database (`FavouritesDatabase`, `FavouriteDao`, `FavouriteEntity`, `FavouritesRepositoryImpl`) — KSP annotation processing
+- **:domain** — Domain models (`Product`, `Rating`, `UserProfile`, `UserName`), repository interfaces (`ProductRepository`, `FavouritesRepository`, `UserRepository`), use cases (`GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`, `GetUserProfileUseCase`) — pure Kotlin, no Android dependencies
+- **:data** — DTOs, mappers, `ApiService`, `ProductRepositoryImpl`, `UserRepositoryImpl`; Room database (`FavouritesDatabase`, `FavouriteDao`, `FavouriteEntity`, `FavouritesRepositoryImpl`) — KSP annotation processing
 - **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation; Hilt DI modules (`NetworkModule`, `AnalyticsModule`, `DataModule`, `DatabaseModule`), `FakeStoreApplication` (`@HiltAndroidApp`)
 
-## Build & Release
+## Limitations and Assumptions
 
-Automated via Fastlane:
+### Assumptions
+1. Currently, the user selection is not possible, the current user is hardcoded in order to reduce the scope of the project and fit the deadline.
 
-```bash
-bundle exec fastlane test    # Run checks
-bundle exec fastlane build   # Build debug APK
-bundle exec fastlane beta    # Upload to Play Store internal track
-bundle exec fastlane deploy  # Upload to Play Store production track
-```
+### Limitations
+1. The current REST API does not support pagination, it should be added as  it currently limits the app scalability. The app implementation is based on the current API structure and the implied assumption that the number of products is limited (currently 20). Accordingly, the combination of products and favourites is based on the same assumption. All this structure will have to be re-viewed once pagination is made available.
+2. The Fake Store API returns `password`, `phone`, `address`, and `__v` in the user endpoint. The app mitigates this by declaring only the required fields in `UserDto` (relying on `ignoreUnknownKeys = true`), so sensitive fields never enter application memory.
 
-## Product Clarifications
+### Product Clarifications
 
-1. REST API does not support pagination, it should be added as  it currently limits the app scalability. The app implementation is based on the current API structure and the implied assumption that the number of products is limited (currently 20). Accordingly, the combination of products and favourites is based on the same assumption. All this structure will have to be re-viewed once pagination is made available. 
-2. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product.
-3. Currency for product prices is hardcoded to USD. Ideally the price should come with a currency field. 
+1. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product.
+2. Currency for product prices is hardcoded to USD. Ideally the price should come with a currency field. 
 
-## Technical Improvements
+### Technical Improvements
 
 1. kover currently excludes also by annotatedBy, however the annotatedBy filter excludes the entire annotated class, excluding code that genuinely might need unit test, this needs to be reviewed and replaced by a more accurate exclusion.
 2. Analytics events are currently implemented in a rough way - error conditions are not logged, events are strings, parameters usage can be tailored further.
 
-## SDD/SDLC Process Improvements
+### SDD/SDLC Process Improvements
 
 1. PRs are fairly big, this is a tradeoff due to the size of the project and the time available, in normal situations PRs should be sized in such a way that can be easily reviewed by peers.

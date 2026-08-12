@@ -60,15 +60,15 @@ fakestore/
 │       └── analytics/          # AnalyticsProvider (interface), AnalyticsClient (dispatcher), DebugAnalyticsProvider
 ├── domain/                     # Pure Kotlin — no Android dependencies
 │   └── src/main/kotlin/com/guidovezzoni/fakestore/domain/
-│       ├── model/              # Product, Rating
-│       ├── repository/         # ProductRepository, FavouritesRepository interfaces
-│       └── usecase/            # GetProductsUseCase, GetFavouriteIdsUseCase, ToggleFavouriteUseCase
+│       ├── model/              # Product, Rating, UserProfile, UserName
+│       ├── repository/         # ProductRepository, FavouritesRepository, UserRepository interfaces
+│       └── usecase/            # GetProductsUseCase, GetFavouriteIdsUseCase, ToggleFavouriteUseCase, GetUserProfileUseCase
 ├── data/                       # Data layer — implements domain contracts
 │   └── src/main/kotlin/com/guidovezzoni/fakestore/data/
-│       ├── model/              # ProductDto, RatingDto (@Serializable)
+│       ├── model/              # ProductDto, RatingDto, UserDto, UserNameDto (@Serializable)
 │       ├── network/            # ApiService (Retrofit)
-│       ├── mapper/             # ProductMapper (internal)
-│       ├── repository/         # ProductRepositoryImpl, FavouritesRepositoryImpl
+│       ├── mapper/             # ProductMapper, UserMapper (internal)
+│       ├── repository/         # ProductRepositoryImpl, FavouritesRepositoryImpl, UserRepositoryImpl
 │       └── database/           # FavouritesDatabase (Room), FavouriteDao, FavouriteEntity
 └── app/                        # Android application module
     └── src/main/java/com/guidovezzoni/fakestore/
@@ -76,10 +76,10 @@ fakestore/
         ├── ui/
         │   ├── navigation/     # AppDestination sealed interface (type-safe nav routes)
         │   ├── screens/        # Feature screen composables (MainScreen, BottomNavigationBar, ProductListScreen, ProductListItemCard, FavouritesScreen, ProfileScreen)
-        │   ├── viewmodel/      # MVI ViewModels (MainViewModel, ProductListViewModel, FavouritesViewModel)
-        │   ├── state/          # UiState data classes and sealed interfaces (MainUiState, ProductListUiState, FavouritesUiState, ProductListItem)
-        │   ├── intent/         # UiIntent sealed interfaces (MainUiIntent, ProductListUiIntent, FavouritesUiIntent)
-        │   ├── effect/         # UiEffect sealed interfaces (MainUiEffect, ProductListUiEffect, FavouritesUiEffect)
+        │   ├── viewmodel/      # MVI ViewModels (MainViewModel, ProductListViewModel, FavouritesViewModel, ProfileViewModel)
+        │   ├── state/          # UiState data classes and sealed interfaces (MainUiState, ProductListUiState, FavouritesUiState, ProfileUiState, ProductListItem)
+        │   ├── intent/         # UiIntent sealed interfaces (MainUiIntent, ProductListUiIntent, FavouritesUiIntent, ProfileUiIntent)
+        │   ├── effect/         # UiEffect sealed interfaces (MainUiEffect, ProductListUiEffect, FavouritesUiEffect, ProfileUiEffect)
         │   ├── util/           # Formatting and helper functions
         │   └── theme/          # Material 3 theme (Color, Theme, Type)
 ```

@@ -37,7 +37,7 @@
 ### Feature 3.1 — Profile Screen
 | # | Story | Role |
 |---|-------|------|
-| [3.1.1](3.1.1-Profile-Screen.md) | Profile Screen | User / Product Owner |
+| [3.1.1](3.1.1-Profile-Screen-DONE.md) | Profile Screen | User / Product Owner |
 
 ---
 

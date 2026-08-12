@@ -172,8 +172,8 @@ On `FavouritesUiIntent.ToggleFavourite(productId)`, `FavouritesViewModel` SHALL 
 - **WHEN** `FavouritesUiIntent.ToggleFavourite(productId = 7)` is dispatched and the write completes
 - **THEN** `uiState.value`'s `products` once again contains the product with `id = 7`, and `uiEffect` emits `FavouritesUiEffect.ShowFavouriteToggleError`
 
-### Requirement: FavouritesScreen renders state-specific UI with an empty-state message and a snackbar on toggle failure
-`:app` SHALL define a stateless `FavouritesScreen(uiState: FavouritesUiState, onIntent: (FavouritesUiIntent) -> Unit, uiEffect: Flow<FavouritesUiEffect> = emptyFlow(), modifier: Modifier = Modifier)` composable. It SHALL render a centred loading indicator for `Loading`; for `Content`, either a `LazyColumn` of `ProductListItemCard`s (keyed by `id`, each wired to dispatch `ToggleFavourite`) when `products` is non-empty, or a distinct empty-state message (`favourites_empty_message`) when empty; and a centred, user-facing error message for `Error`. It SHALL collect `uiEffect` and show a `Snackbar` with the localised `favourite_toggle_error_message` on `ShowFavouriteToggleError`. A stateful overload SHALL obtain `FavouritesViewModel` via `hiltViewModel()`, dispatch both `LoadFavourites` and `TrackScreenViewed` from the same `LaunchedEffect(Unit)` on first composition, and pass `viewModel.uiEffect` through.
+### Requirement: FavouritesScreen renders state-specific UI with an empty-state illustration and a snackbar on toggle failure
+`:app` SHALL define a stateless `FavouritesScreen(uiState: FavouritesUiState, onIntent: (FavouritesUiIntent) -> Unit, uiEffect: Flow<FavouritesUiEffect> = emptyFlow(), modifier: Modifier = Modifier)` composable. It SHALL render a centred loading indicator for `Loading`; for `Content`, either a `LazyColumn` of `ProductListItemCard`s (keyed by `id`, each wired to dispatch `ToggleFavourite`) when `products` is non-empty, or a centred empty-state illustration when empty (a heart icon, a `favourites_empty_title` headline, and a `favourites_empty_subtitle` supporting message); and a centred, user-facing error message for `Error`. It SHALL collect `uiEffect` and show a `Snackbar` with the localised `favourite_toggle_error_message` on `ShowFavouriteToggleError`. A stateful overload SHALL obtain `FavouritesViewModel` via `hiltViewModel()`, dispatch both `LoadFavourites` and `TrackScreenViewed` from the same `LaunchedEffect(Unit)` on first composition, and pass `viewModel.uiEffect` through.
 
 #### Scenario: Loading state shows only the loading indicator
 - **GIVEN** `uiState` is `FavouritesUiState.Loading`
@@ -185,10 +185,10 @@ On `FavouritesUiIntent.ToggleFavourite(productId)`, `FavouritesViewModel` SHALL 
 - **WHEN** `FavouritesScreen(uiState, onIntent)` is composed
 - **THEN** a `LazyColumn` is displayed containing one card per item in `products`, each keyed by the item's `id`
 
-#### Scenario: Content with no favourites shows the empty-state message
+#### Scenario: Content with no favourites shows the empty-state illustration
 - **GIVEN** `uiState` is `FavouritesUiState.Content(products = emptyList())`
 - **WHEN** `FavouritesScreen(uiState, onIntent)` is composed
-- **THEN** the localised `favourites_empty_message` text is displayed and no product cards are visible
+- **THEN** a heart icon, the localised `favourites_empty_title` text, and the localised `favourites_empty_subtitle` text are displayed, and no product cards are visible
 
 #### Scenario: Error state shows a centred error message
 - **GIVEN** `uiState` is `FavouritesUiState.Error`
@@ -211,12 +211,12 @@ On `FavouritesUiIntent.ToggleFavourite(productId)`, `FavouritesViewModel` SHALL 
 - **THEN** a `Snackbar` displaying the localised `favourite_toggle_error_message` text is shown
 
 ### Requirement: Favourite-related strings are localised in English and Spanish
-`app/src/main/res/values/strings.xml` SHALL define `favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, and `favourites_empty_message` as English (base) string resources, each with a corresponding translated entry in `app/src/main/res/values-es/strings.xml`, and none SHALL appear as a hardcoded literal in source code. Content description strings are resolved in composables via `stringResource()` based on `isFavourite`, not pre-computed in ViewModels. `favourites_empty_message` SHALL read "No favourites yet. Tap the heart on a product to save it." in `values/strings.xml`, giving first-time visitors actionable guidance rather than only stating absence.
+`app/src/main/res/values/strings.xml` SHALL define `favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, `favourites_empty_title`, and `favourites_empty_subtitle` as English (base) string resources, each with a corresponding translated entry in `app/src/main/res/values-es/strings.xml`, and none SHALL appear as a hardcoded literal in source code. Content description strings are resolved in composables via `stringResource()` based on `isFavourite`, not pre-computed in ViewModels. `favourites_empty_title` SHALL read "No favourites yet" and `favourites_empty_subtitle` SHALL read "Tap the heart on a product to save it here.", giving first-time visitors actionable guidance.
 
 #### Scenario: Every new string resource has a Spanish translation
 - **WHEN** `app/src/main/res/values/strings.xml` and `app/src/main/res/values-es/strings.xml` are compared
-- **THEN** `favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, and `favourites_empty_message` each exist in both files with a non-empty, distinct Spanish value in `values-es`
+- **THEN** `favourite_add_content_description`, `favourite_remove_content_description`, `favourite_toggle_error_message`, `favourites_empty_title`, and `favourites_empty_subtitle` each exist in both files with a non-empty, distinct Spanish value in `values-es`
 
-#### Scenario: The empty-state message includes instructional guidance
+#### Scenario: The empty-state illustration includes a title and instructional subtitle
 - **WHEN** `FavouritesUiState.Content(products = emptyList())` is rendered
-- **THEN** the displayed text is exactly "No favourites yet. Tap the heart on a product to save it." (English) or its Spanish equivalent in `values-es`, not merely "No favourites yet"
+- **THEN** the title "No favourites yet" and the subtitle "Tap the heart on a product to save it here." are both displayed (English), or their Spanish equivalents in `values-es`
