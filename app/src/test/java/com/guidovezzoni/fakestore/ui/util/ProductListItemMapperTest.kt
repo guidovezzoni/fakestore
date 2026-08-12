@@ -31,7 +31,7 @@ class ProductListItemMapperTest {
     fun `GIVEN a product WHEN mapToProductListItem is called THEN id is mapped correctly`() {
         val product = createProduct(id = PRODUCT_ID)
 
-        val result = mapToProductListItem(product, Locale.US)
+        val result = mapToProductListItem(product, Locale.US, isFavourite = false)
 
         assertEquals(PRODUCT_ID, result.id)
     }
@@ -40,7 +40,7 @@ class ProductListItemMapperTest {
     fun `GIVEN a product WHEN mapToProductListItem is called THEN imageUrl is mapped correctly`() {
         val product = createProduct(imageUrl = PRODUCT_IMAGE_URL)
 
-        val result = mapToProductListItem(product, Locale.US)
+        val result = mapToProductListItem(product, Locale.US, isFavourite = false)
 
         assertEquals(PRODUCT_IMAGE_URL, result.imageUrl)
     }
@@ -49,7 +49,7 @@ class ProductListItemMapperTest {
     fun `GIVEN a product WHEN mapToProductListItem is called THEN title is mapped correctly`() {
         val product = createProduct(title = PRODUCT_TITLE)
 
-        val result = mapToProductListItem(product, Locale.US)
+        val result = mapToProductListItem(product, Locale.US, isFavourite = false)
 
         assertEquals(PRODUCT_TITLE, result.title)
     }
@@ -59,7 +59,7 @@ class ProductListItemMapperTest {
         val product = createProduct(price = PRODUCT_PRICE)
         val expected = "$109.95"
 
-        val result = mapToProductListItem(product, Locale.US)
+        val result = mapToProductListItem(product, Locale.US, isFavourite = false)
 
         assertEquals(expected, result.formattedPrice)
     }
@@ -69,7 +69,7 @@ class ProductListItemMapperTest {
         val product = createProduct(ratingScore = PRODUCT_RATING_SCORE)
         val expected = "4.1"
 
-        val result = mapToProductListItem(product, Locale.US)
+        val result = mapToProductListItem(product, Locale.US, isFavourite = false)
 
         assertEquals(expected, result.formattedRatingScore)
     }
@@ -79,9 +79,29 @@ class ProductListItemMapperTest {
         val product = createProduct(ratingScore = PRODUCT_RATING_SCORE)
         val expected = "4,1"
 
-        val result = mapToProductListItem(product, Locale("es", "ES"))
+        val result = mapToProductListItem(product, Locale("es", "ES"), isFavourite = false)
 
         assertEquals(expected, result.formattedRatingScore)
+    }
+
+    @Test
+    fun `GIVEN a product and isFavourite true WHEN mapToProductListItem is called with isFavourite true THEN isFavourite is true`() {
+        val product = createProduct()
+        val expected = true
+
+        val result = mapToProductListItem(product, Locale.US, isFavourite = true)
+
+        assertEquals(expected, result.isFavourite)
+    }
+
+    @Test
+    fun `GIVEN a product and isFavourite false WHEN mapToProductListItem is called with isFavourite false THEN isFavourite is false`() {
+        val product = createProduct()
+        val expected = false
+
+        val result = mapToProductListItem(product, Locale.US, isFavourite = false)
+
+        assertEquals(expected, result.isFavourite)
     }
 
     private companion object {

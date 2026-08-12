@@ -3,17 +3,25 @@ package com.guidovezzoni.fakestore.ui.viewmodel
 import com.guidovezzoni.fakestore.core.analytics.AnalyticsClient
 import com.guidovezzoni.fakestore.domain.model.Product
 import com.guidovezzoni.fakestore.domain.model.Rating
+import com.guidovezzoni.fakestore.domain.usecase.GetFavouriteIdsUseCase
 import com.guidovezzoni.fakestore.domain.usecase.GetProductsUseCase
+import com.guidovezzoni.fakestore.domain.usecase.ToggleFavouriteUseCase
+import com.guidovezzoni.fakestore.ui.effect.ProductListUiEffect
 import com.guidovezzoni.fakestore.ui.intent.ProductListUiIntent
 import com.guidovezzoni.fakestore.ui.state.ProductListUiState
 import com.guidovezzoni.fakestore.ui.util.formatPrice
 import com.guidovezzoni.fakestore.ui.util.formatRatingScore
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.Locale
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -41,8 +49,14 @@ class ProductListViewModelTest {
 
     private fun createViewModel(
         getProductsUseCase: GetProductsUseCase = mockk(),
+        getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk<GetFavouriteIdsUseCase>().also { mock ->
+            every { mock() } returns flowOf(emptySet())
+        },
+        toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk<ToggleFavouriteUseCase>().also { mock ->
+            coEvery { mock(any(), any()) } returns Result.success(Unit)
+        },
         analyticsClient: AnalyticsClient = mockk(relaxed = true),
-    ) = ProductListViewModel(getProductsUseCase, analyticsClient)
+    ) = ProductListViewModel(getProductsUseCase, getFavouriteIdsUseCase, toggleFavouriteUseCase, analyticsClient)
 
     private fun createProduct(
         id: Int = PRODUCT_ID,
@@ -280,6 +294,160 @@ class ProductListViewModelTest {
         verify(exactly = 1) { analyticsClient.logEvent(name = "product_list_viewed", params = emptyMap()) }
     }
 
+    // Task 9.1 — combine: favourite ids applied to products on load
+    @Test
+    fun `GIVEN products with ids 1 and 2 and GetFavouriteIdsUseCase emitting setOf(2) WHEN LoadProducts is dispatched THEN item with id 2 has isFavourite true and item with id 1 has isFavourite false`() = runTest {
+        val products = listOf(
+            createProduct(id = FIRST_PRODUCT_ID),
+            createProduct(id = SECOND_PRODUCT_ID),
+        )
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns flowOf(setOf(SECOND_PRODUCT_ID))
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+        )
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        val content = viewModel.uiState.value as ProductListUiState.Content
+
+        val expectedFirstIsFavourite = false
+        val expectedSecondIsFavourite = true
+        assertEquals(expectedFirstIsFavourite, content.products.first { it.id == FIRST_PRODUCT_ID }.isFavourite)
+        assertEquals(expectedSecondIsFavourite, content.products.first { it.id == SECOND_PRODUCT_ID }.isFavourite)
+    }
+
+    // Task 9.2 — reactive: new favourites emission updates uiState without new intent
+    @Test
+    fun `GIVEN LoadProducts has succeeded WHEN GetFavouriteIdsUseCase emits a new set including a previously-unfavourited product THEN uiState item isFavourite becomes true`() = runTest {
+        val products = listOf(
+            createProduct(id = FIRST_PRODUCT_ID),
+            createProduct(id = SECOND_PRODUCT_ID),
+        )
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val favouriteIdsFlow = MutableStateFlow<Set<Int>>(emptySet())
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns favouriteIdsFlow
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+        )
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        favouriteIdsFlow.value = setOf(FIRST_PRODUCT_ID)
+        val content = viewModel.uiState.value as ProductListUiState.Content
+
+        val expectedIsFavourite = true
+        assertEquals(expectedIsFavourite, content.products.first { it.id == FIRST_PRODUCT_ID }.isFavourite)
+    }
+
+    // Task 9.3 — optimistic update: isFavourite flipped before write completes
+    @Test
+    fun `GIVEN Content with product id 7 and isFavourite false WHEN ToggleFavourite is dispatched before write completes THEN uiState item id 7 has isFavourite true`() = runTest {
+        val product = createProduct(id = TOGGLE_PRODUCT_ID)
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(listOf(product)))
+        val deferred = CompletableDeferred<Result<Unit>>()
+        val toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk()
+        coEvery { toggleFavouriteUseCase(TOGGLE_PRODUCT_ID, true) } coAnswers { deferred.await() }
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            toggleFavouriteUseCase = toggleFavouriteUseCase,
+        )
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.ToggleFavourite(productId = TOGGLE_PRODUCT_ID))
+        val content = viewModel.uiState.value as ProductListUiState.Content
+
+        val expectedIsFavourite = true
+        assertEquals(expectedIsFavourite, content.products.first { it.id == TOGGLE_PRODUCT_ID }.isFavourite)
+
+        deferred.cancel()
+    }
+
+    // Task 9.4 — analytics: favourite_added logged on successful add
+    @Test
+    fun givenProductId7IsFavouriteFalseAndSuccessfulToggle_whenToggleFavouriteDispatched_thenFavouriteAddedLoggedOnce() = runTest {
+        val product = createProduct(id = TOGGLE_PRODUCT_ID)
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(listOf(product)))
+        val toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk()
+        coEvery { toggleFavouriteUseCase(TOGGLE_PRODUCT_ID, true) } returns Result.success(Unit)
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            toggleFavouriteUseCase = toggleFavouriteUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.ToggleFavourite(productId = TOGGLE_PRODUCT_ID))
+
+        verify(exactly = 1) {
+            analyticsClient.logEvent(name = "favourite_added", params = mapOf("product_id" to TOGGLE_PRODUCT_ID))
+        }
+    }
+
+    // Task 9.5 — analytics: favourite_removed logged on successful remove
+    @Test
+    fun givenProductId7IsFavouriteTrueAndSuccessfulToggle_whenToggleFavouriteDispatched_thenFavouriteRemovedLoggedOnce() = runTest {
+        val product = createProduct(id = TOGGLE_PRODUCT_ID)
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(listOf(product)))
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns flowOf(setOf(TOGGLE_PRODUCT_ID))
+        val toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk()
+        coEvery { toggleFavouriteUseCase(TOGGLE_PRODUCT_ID, false) } returns Result.success(Unit)
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+            toggleFavouriteUseCase = toggleFavouriteUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.ToggleFavourite(productId = TOGGLE_PRODUCT_ID))
+
+        verify(exactly = 1) {
+            analyticsClient.logEvent(name = "favourite_removed", params = mapOf("product_id" to TOGGLE_PRODUCT_ID))
+        }
+    }
+
+    // Task 9.6 — failure: state reverts, effect emitted, no analytics
+    @Test
+    fun givenProductId7IsFavouriteFalseAndFailedToggle_whenToggleFavouriteDispatched_thenStateRevertsAndEffectEmittedAndNoAnalytics() = runTest {
+        val product = createProduct(id = TOGGLE_PRODUCT_ID)
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(listOf(product)))
+        val toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk()
+        coEvery { toggleFavouriteUseCase(TOGGLE_PRODUCT_ID, true) } returns Result.failure(RuntimeException("db error"))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            toggleFavouriteUseCase = toggleFavouriteUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        val effectDeferred = async(testDispatcher) { viewModel.uiEffect.first() }
+
+        viewModel.onIntent(ProductListUiIntent.LoadProducts)
+        viewModel.onIntent(ProductListUiIntent.ToggleFavourite(productId = TOGGLE_PRODUCT_ID))
+
+        val content = viewModel.uiState.value as ProductListUiState.Content
+        val expectedIsFavourite = false
+        assertEquals(expectedIsFavourite, content.products.first { it.id == TOGGLE_PRODUCT_ID }.isFavourite)
+
+        val expectedEffect = ProductListUiEffect.ShowFavouriteToggleError
+        assertEquals(expectedEffect, effectDeferred.await())
+
+        verify(exactly = 0) { analyticsClient.logEvent(name = "favourite_added", params = any()) }
+        verify(exactly = 0) { analyticsClient.logEvent(name = "favourite_removed", params = any()) }
+    }
+
     private companion object {
         const val PRODUCT_ID = 1
         const val PRODUCT_TITLE = "Test Product"
@@ -293,5 +461,6 @@ class ProductListViewModelTest {
         const val FIRST_PRODUCT_TITLE = "First"
         const val SECOND_PRODUCT_ID = 2
         const val SECOND_PRODUCT_TITLE = "Second"
+        const val TOGGLE_PRODUCT_ID = 7
     }
 }

@@ -167,6 +167,66 @@
       <li><strong>2 integration/verification sections</strong>: strings/localisation, final verification (detekt, unit tests, UI tests, coverage, on-device checks)</li>
     </ul>
   </section>
+  <section class="report-section" data-source="apply_changes" data-timestamp="2026-08-12T00:00:00Z">
+    <header>
+      <h2>Apply Changes</h2>
+      <time datetime="2026-08-12T00:00:00Z">12 August 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_implement_change</p>
+
+    <h3>Summary</h3>
+    <p>All 83 tasks across 16 sections applied successfully via sub-agent orchestration (15 implementation sections + 1 final verification section). Implementation proceeded in strict dependency order with no rollbacks required.</p>
+
+    <h3>Iteration Cycles</h3>
+    <table>
+      <tr><th>Section</th><th>Model</th><th>BDD Result</th><th>Notes</th></tr>
+      <tr><td>1 — Gradle/Version Catalog</td><td>Haiku</td><td>N/A (prerequisite)</td><td>Room 2.7.0, KSP plugin, schema export wired</td></tr>
+      <tr><td>2 — Domain Contract</td><td>Haiku</td><td>N/A (prerequisite)</td><td>FavouritesRepository interface</td></tr>
+      <tr><td>3 — Room Persistence Layer</td><td>Haiku</td><td>Compile ✅</td><td>FavouriteEntity, FavouriteDao, FavouritesDatabase; kspDebugKotlin BUILD SUCCESSFUL</td></tr>
+      <tr><td>4 — FavouritesRepositoryImpl</td><td>Sonnet</td><td>RED → GREEN</td><td>1 cycle; factory helper added</td></tr>
+      <tr><td>5 — ToggleFavouriteUseCase</td><td>Sonnet</td><td>RED → GREEN</td><td>1 cycle; test name shortened to avoid 255-char filename limit</td></tr>
+      <tr><td>6 — GetFavouriteIdsUseCase</td><td>Sonnet</td><td>RED → GREEN</td><td>1 cycle</td></tr>
+      <tr><td>7 — ProductListItem &amp; Mapper</td><td>Sonnet</td><td>GREEN (extended existing)</td><td>1 cycle; 6 existing tests updated + 2 new</td></tr>
+      <tr><td>8 — Intent/Effect Additions</td><td>Haiku</td><td>N/A (prerequisite)</td><td>FavouritesUiState/Intent/Effect sealed interfaces</td></tr>
+      <tr><td>9 — ProductListViewModel Combine</td><td>Sonnet</td><td>RED → GREEN</td><td>1 cycle; DatabaseModule created early to unblock Hilt compilation; 20 tests pass</td></tr>
+      <tr><td>10 — ProductListItemCard</td><td>Sonnet</td><td>RED → GREEN (device)</td><td>1 cycle; 24 instrumented tests pass on Pixel 6a</td></tr>
+      <tr><td>11 — ProductListScreen Snackbar</td><td>Sonnet</td><td>RED → GREEN (device)</td><td>1 cycle; 26 instrumented tests pass</td></tr>
+      <tr><td>12 — FavouritesViewModel</td><td>Sonnet</td><td>RED → GREEN</td><td>1 cycle; 7 unit tests pass</td></tr>
+      <tr><td>13 — FavouritesScreen</td><td>Sonnet</td><td>RED → GREEN (device)</td><td>1 cycle; 6 instrumented tests pass; LaunchedEffect tested via stateless overload</td></tr>
+      <tr><td>14 — DatabaseModule DI</td><td>Sonnet</td><td>GREEN (impl pre-existed)</td><td>DatabaseModule already created in §9; 4 direct-call tests added</td></tr>
+      <tr><td>15 — Strings &amp; Localisation</td><td>Haiku</td><td>N/A (integration)</td><td>English strings were already in place; Spanish translations added; favourites_placeholder removed</td></tr>
+      <tr><td>16 — Final Verification</td><td>Sonnet</td><td>All PASS</td><td>See below</td></tr>
+    </table>
+
+    <h3>Final Verification Results</h3>
+    <table>
+      <tr><th>Check</th><th>Result</th><th>Notes</th></tr>
+      <tr><td>Detekt</td><td><span class="badge badge-pass">PASS</span></td><td>No violations</td></tr>
+      <tr><td>Unit tests (<code>./gradlew test</code>)</td><td><span class="badge badge-pass">PASS</span></td><td>All 7 new/updated test classes pass</td></tr>
+      <tr><td>Instrumented tests (<code>connectedDebugAndroidTest</code>)</td><td><span class="badge badge-pass">PASS</span></td><td>31 tests pass on Pixel 6a (Android 16); 2 MainScreenTest tests updated for new FavouritesScreen</td></tr>
+      <tr><td>Coverage (<code>koverVerify</code>)</td><td><span class="badge badge-pass">PASS</span></td><td>≥95% on all modules; FavouritesDatabase excluded via <code>*.database.*Database*</code> pattern in AndroidLibraryConventionPlugin</td></tr>
+      <tr><td>On-device toggle (16.5)</td><td><span class="badge badge-pass">PASS</span></td><td>Optimistic toggle, cross-screen sync, empty-state all confirmed</td></tr>
+      <tr><td>Force-failure revert (16.6)</td><td><span class="badge badge-pass">PASS</span></td><td>Icon reverts, snackbar "Unable to update favourite" appears</td></tr>
+      <tr><td>Persistence across restart (16.7)</td><td><span class="badge badge-pass">PASS</span></td><td>Favourites survive force-stop and relaunch</td></tr>
+      <tr><td>Spanish locale (16.8)</td><td><span class="badge badge-pass">PASS</span></td><td>All new strings appear in Spanish via <code>adb shell cmd locale set-app-locales</code></td></tr>
+      <tr><td>Acceptance Criteria cross-check (16.9)</td><td><span class="badge badge-pass">PASS</span></td><td>All AC and DoD items confirmed met</td></tr>
+    </table>
+
+    <h3>Acknowledged TODOs</h3>
+    <p>No TODO comments remain in any source file. Zero RESOLVE NOW items found.</p>
+
+    <h3>Security Review</h3>
+    <p><span class="badge badge-pass">PASS</span> — No findings. Database stores only <code>productId: Int</code>; no PII; no raw SQL; no hardcoded secrets. 0 fix cycles required.</p>
+
+    <h3>Documentation</h3>
+    <p><strong>README.md</strong> updated: added Room to tech stack; updated module descriptions for <code>:domain</code>, <code>:data</code>, and <code>:app</code>.</p>
+    <p><strong>AGENTS.md</strong> updated: module structure tree updated to reflect new database directory, new use cases, new ViewModels, new MVI types, and <code>DatabaseModule</code>.</p>
+
+    <h3>Minor Deviation</h3>
+    <p>The English value of <code>favourite_toggle_error_message</code> is "Unable to update favourite" (set during Section 11) rather than the user story spec's suggested "Could not update favourite. Please try again." — cosmetic, functionally correct, all tests pass with the chosen string.</p>
+
+    <div class="outcome outcome-passed">All checks PASSED — story 2.1.1 implementation complete.</div>
+  </section>
   </main>
 
 </body>

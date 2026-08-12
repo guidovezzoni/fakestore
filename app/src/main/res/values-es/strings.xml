@@ -7,6 +7,9 @@
     <string name="global_tab_products">Productos</string>
     <string name="global_tab_favourites">Favoritos</string>
     <string name="global_tab_profile">Perfil</string>
-    <string name="favourites_placeholder">Favoritos disponibles próximamente…</string>
     <string name="profile_placeholder">Perfil disponible próximamente…</string>
+    <string name="favourite_add_content_description">Añadir a favoritos</string>
+    <string name="favourite_remove_content_description">Quitar de favoritos</string>
+    <string name="favourite_toggle_error_message">No se pudo actualizar el favorito</string>
+    <string name="favourites_empty_message">Sin favoritos aún</string>
 </resources>

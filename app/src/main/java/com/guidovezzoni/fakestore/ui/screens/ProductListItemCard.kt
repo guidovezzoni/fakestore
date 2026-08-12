@@ -6,8 +6,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +41,7 @@ const val PRODUCT_LIST_ITEM_CARD_TEST_TAG_PREFIX = "product_list_item_card_"
 fun ProductListItemCard(
     item: ProductListItem,
     modifier: Modifier = Modifier,
+    onToggleFavourite: (Int) -> Unit = {},
 ) {
     Card(
         modifier = modifier
@@ -76,6 +81,18 @@ fun ProductListItemCard(
                     modifier = Modifier.padding(top = TEXT_TOP_PADDING),
                 )
             }
+            IconButton(onClick = { onToggleFavourite(item.id) }) {
+                Icon(
+                    imageVector = if (item.isFavourite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = stringResource(
+                        if (item.isFavourite) {
+                            R.string.favourite_remove_content_description
+                        } else {
+                            R.string.favourite_add_content_description
+                        }
+                    ),
+                )
+            }
         }
     }
 }
@@ -91,6 +108,24 @@ private fun PreviewProductListItemCard() {
                 title = PREVIEW_TITLE,
                 formattedPrice = PREVIEW_FORMATTED_PRICE,
                 formattedRatingScore = PREVIEW_FORMATTED_RATING_SCORE,
+                isFavourite = false,
+            ),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewProductListItemCardFavourite() {
+    FakeStoreTheme {
+        ProductListItemCard(
+            item = ProductListItem(
+                id = PREVIEW_PRODUCT_ID,
+                imageUrl = PREVIEW_IMAGE_URL,
+                title = PREVIEW_TITLE,
+                formattedPrice = PREVIEW_FORMATTED_PRICE,
+                formattedRatingScore = PREVIEW_FORMATTED_RATING_SCORE,
+                isFavourite = true,
             ),
         )
     }

@@ -79,7 +79,7 @@ class MainScreenTest {
         composeTestRule.onNodeWithTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG).performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText(FAVOURITES_PLACEHOLDER_TEXT).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(FAVOURITES_LOADING_INDICATOR_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG).assertIsSelected()
     }
 
@@ -111,11 +111,11 @@ class MainScreenTest {
         composeTestRule.onNodeWithTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG).performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText(FAVOURITES_PLACEHOLDER_TEXT).assertIsDisplayed()
+        // Verify no crash has occurred and the Favourites tab is still selected
+        composeTestRule.onNodeWithTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG).assertIsSelected()
     }
 
     private companion object {
         const val PRODUCTS_TOP_APP_BAR_TITLE = "Products"
-        const val FAVOURITES_PLACEHOLDER_TEXT = "Favourites coming soon…"
     }
 }

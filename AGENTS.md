@@ -60,24 +60,25 @@ fakestore/
 ├── domain/                     # Pure Kotlin — no Android dependencies
 │   └── src/main/kotlin/com/guidovezzoni/fakestore/domain/
 │       ├── model/              # Product, Rating
-│       ├── repository/         # ProductRepository interface
-│       └── usecase/            # GetProductsUseCase
+│       ├── repository/         # ProductRepository, FavouritesRepository interfaces
+│       └── usecase/            # GetProductsUseCase, GetFavouriteIdsUseCase, ToggleFavouriteUseCase
 ├── data/                       # Data layer — implements domain contracts
 │   └── src/main/kotlin/com/guidovezzoni/fakestore/data/
 │       ├── model/              # ProductDto, RatingDto (@Serializable)
 │       ├── network/            # ApiService (Retrofit)
 │       ├── mapper/             # ProductMapper (internal)
-│       └── repository/         # ProductRepositoryImpl
+│       ├── repository/         # ProductRepositoryImpl, FavouritesRepositoryImpl
+│       └── database/           # FavouritesDatabase (Room), FavouriteDao, FavouriteEntity
 └── app/                        # Android application module
     └── src/main/java/com/guidovezzoni/fakestore/
-        ├── di/                 # Dependency injection modules
+        ├── di/                 # Dependency injection modules (NetworkModule, AnalyticsModule, DataModule, DatabaseModule)
         ├── ui/
         │   ├── navigation/     # AppDestination sealed interface (type-safe nav routes)
-        │   ├── screens/        # Feature screen composables (MainScreen, BottomNavigationBar, ProductListScreen, FavouritesScreen, ProfileScreen)
-        │   ├── viewmodel/      # MVI ViewModels (MainViewModel, ProductListViewModel)
-        │   ├── state/          # UiState data classes and sealed interfaces (MainUiState, ProductListUiState, ProductListItem)
-        │   ├── intent/         # UiIntent sealed interfaces (MainUiIntent, ProductListUiIntent)
-        │   ├── effect/         # UiEffect sealed interfaces (MainUiEffect, ProductListUiEffect)
+        │   ├── screens/        # Feature screen composables (MainScreen, BottomNavigationBar, ProductListScreen, ProductListItemCard, FavouritesScreen, ProfileScreen)
+        │   ├── viewmodel/      # MVI ViewModels (MainViewModel, ProductListViewModel, FavouritesViewModel)
+        │   ├── state/          # UiState data classes and sealed interfaces (MainUiState, ProductListUiState, FavouritesUiState, ProductListItem)
+        │   ├── intent/         # UiIntent sealed interfaces (MainUiIntent, ProductListUiIntent, FavouritesUiIntent)
+        │   ├── effect/         # UiEffect sealed interfaces (MainUiEffect, ProductListUiEffect, FavouritesUiEffect)
         │   ├── util/           # Formatting and helper functions
         │   └── theme/          # Material 3 theme (Color, Theme, Type)
 ```

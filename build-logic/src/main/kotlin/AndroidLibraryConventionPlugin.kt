@@ -51,6 +51,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                                 "*.di.*",
                                 "*.database.*Dao_Impl*",
                                 "*.database.AppDatabase*",
+                                "*.database.*Database*",
                                 "*.ui.theme.*",
                                 "*.ui.screens.*",
                                 "*.MainActivity",

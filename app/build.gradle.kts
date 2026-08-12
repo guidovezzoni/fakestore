@@ -109,6 +109,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":data"))
     implementation(project(":domain"))
+    implementation(libs.androidx.room.runtime)
     implementation(libs.hilt.android)
     implementation(libs.retrofit)
     ksp(libs.hilt.compiler)
