@@ -23,7 +23,7 @@
 ### Feature 2.1 — Favourite Toggle & Persistence
 | # | Story | Role |
 |---|-------|------|
-| [2.1.1](2.1.1-Favourite-Toggle-WIP.md) | Favourite Toggle & Persistence | User / Product Owner |
+| [2.1.1](2.1.1-Favourite-Toggle-DONE.md) | Favourite Toggle & Persistence | User / Product Owner |
 
 ### Feature 2.2 — Favourites Screen
 | # | Story | Role |

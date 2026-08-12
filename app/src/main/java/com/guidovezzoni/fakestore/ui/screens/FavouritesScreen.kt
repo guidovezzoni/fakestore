@@ -186,6 +186,17 @@ private fun PreviewFavouritesScreenEmpty() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun PreviewFavouritesScreenError() {
+    FakeStoreTheme {
+        FavouritesScreen(
+            uiState = FavouritesUiState.Error,
+            onIntent = {},
+        )
+    }
+}
+
 private const val FIRST_PREVIEW_PRODUCT_ID = 1
 private const val SECOND_PREVIEW_PRODUCT_ID = 2
 private const val FIRST_PREVIEW_TITLE = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops"

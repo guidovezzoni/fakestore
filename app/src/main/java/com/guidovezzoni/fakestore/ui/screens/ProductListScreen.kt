@@ -164,6 +164,7 @@ private fun PreviewProductListScreen() {
                         title = FIRST_PREVIEW_TITLE,
                         formattedPrice = PREVIEW_FORMATTED_PRICE,
                         formattedRatingScore = PREVIEW_FORMATTED_RATING_SCORE,
+                        isFavourite = true,
                     ),
                     ProductListItem(
                         id = SECOND_PREVIEW_PRODUCT_ID,

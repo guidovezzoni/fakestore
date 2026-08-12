@@ -227,6 +227,116 @@
 
     <div class="outcome outcome-passed">All checks PASSED — story 2.1.1 implementation complete.</div>
   </section>
+  <section class="report-section" data-source="sdlc:sdlc_verify_story" data-timestamp="2026-08-12T00:00:00Z">
+    <header>
+      <h2>Verification &amp; Archive</h2>
+      <time datetime="2026-08-12T00:00:00Z">12 August 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_verify_story</p>
+
+    <h3>Gate Status Summary</h3>
+
+    <h4>OpenSpec Verification</h4>
+    <p><span class="badge badge-pass">PASS</span> — 83/83 tasks marked complete; 0 unresolved issues in delta specs or tasks.</p>
+
+    <h4>TODO Scan</h4>
+    <p><span class="badge badge-pass">PASS</span> — No "RESOLVE NOW" TODOs found in story code. One acknowledged TODO exists in <code>app/src/main/res/xml/data_extraction_rules.xml</code> (Android boilerplate, unrelated to this story).</p>
+
+    <h4>Security Review</h4>
+    <p><span class="badge badge-pass">PASS</span> — No critical or high findings. Database stores only <code>productId: Int</code> (non-sensitive integer); no PII, no raw SQL, no hardcoded secrets. All Room DAO operations are parameterized.</p>
+
+    <h4>Clean Build</h4>
+    <p><span class="badge badge-pass">PASS</span> — <code>./gradlew clean check</code> completed successfully (exit code 0). No compilation errors or warnings.</p>
+
+    <h4>Unit Tests</h4>
+    <p><span class="badge badge-pass">PASS</span> — All test suites passed. Execution cached from implementation phase; 7 unit test files covering domain use cases, repository, and ViewModels.</p>
+
+    <h4>Coverage Report</h4>
+    <table>
+      <tr><th>Category</th><th>Coverage</th></tr>
+      <tr><td>Instructions</td><td>98.06%</td></tr>
+      <tr><td>Branches</td><td>N/A</td></tr>
+      <tr><td>Lines</td><td>95.00%</td></tr>
+      <tr><td>Methods</td><td>91.67%</td></tr>
+      <tr><td>Classes</td><td>91.30%</td></tr>
+    </table>
+
+    <h4>Test File Coverage</h4>
+    <p><span class="badge badge-pass">PASS</span> — All 7 unit test files present and passing:</p>
+    <ul>
+      <li><code>FavouritesRepositoryImplTest</code></li>
+      <li><code>ToggleFavouriteUseCaseTest</code></li>
+      <li><code>GetFavouriteIdsUseCaseTest</code></li>
+      <li><code>ProductListItemMapperTest</code></li>
+      <li><code>ProductListViewModelTest</code></li>
+      <li><code>FavouritesViewModelTest</code></li>
+      <li><code>DatabaseModuleTest</code></li>
+    </ul>
+    <p>All 3 Compose UI test files present and passing (31 instrumented tests on Pixel 6a, Android 16):</p>
+    <ul>
+      <li><code>ProductListScreenTest</code> (24 tests)</li>
+      <li><code>MainScreenTest</code> (2 tests, updated for new FavouritesScreen)</li>
+      <li><code>FavouritesScreenTest</code> (6 tests)</li>
+    </ul>
+
+    <h4>Compose Preview Coverage</h4>
+    <p><span class="badge badge-pass">PASS</span> — Fixed during implementation: added <code>PreviewFavouritesScreenError</code> and <code>isFavourite=true</code> state to <code>PreviewProductListScreen</code>. All state variants now covered in preview snapshots.</p>
+
+    <h4>On-Device Tests</h4>
+    <p><span class="badge badge-pass">PASS</span> — 31 instrumented tests passed on Pixel 6a (Android 16). Manual verification confirmed:</p>
+    <ul>
+      <li>Toggle behaviour in both directions (favourite/unfavourite)</li>
+      <li>Optimistic UI updates and server-side error recovery</li>
+      <li>Cross-screen synchronisation (Favourites screen and product list are in sync)</li>
+      <li>Persistence across app restart</li>
+      <li>Empty state display on Favourites screen</li>
+      <li>Spanish localisation strings appear correctly</li>
+    </ul>
+
+    <h4>Definition of Done</h4>
+    <p><span class="badge badge-pass">PASS</span> — All 20 criteria confirmed:</p>
+    <ol>
+      <li>Feature implemented per acceptance criteria ✓</li>
+      <li>Unit tests written and passing ✓</li>
+      <li>UI tests written and passing ✓</li>
+      <li>Code coverage ≥95% ✓</li>
+      <li>Detekt and lint clean ✓</li>
+      <li>Manual on-device testing completed ✓</li>
+      <li>Error handling integrated (snackbar, optimistic revert) ✓</li>
+      <li>MVI patterns followed (state, intent, effect) ✓</li>
+      <li>Room database implemented and tested ✓</li>
+      <li>Domain layer contracts defined ✓</li>
+      <li>Use cases implemented (Toggle + GetIds) ✓</li>
+      <li>Repository pattern applied ✓</li>
+      <li>Dependency injection configured ✓</li>
+      <li>Composables stateless and preview-covered ✓</li>
+      <li>Strings localised (English + Spanish) ✓</li>
+      <li>Content descriptions (accessibility) added ✓</li>
+      <li>Analytics events logged ✓</li>
+      <li>README updated ✓</li>
+      <li>AGENTS.md updated ✓</li>
+      <li>No unresolved TODOs in story code ✓</li>
+    </ol>
+
+    <h4>Spec Sync</h4>
+    <p><span class="badge badge-pass">PASS</span> — All delta specs updated and ready for sync to main specs:</p>
+    <ul>
+      <li><strong>favourite-toggle (new capability)</strong> — Full spec created, components and states documented</li>
+      <li><strong>product-list-screen</strong> — Updated with toggle icon, heart icon state, and snackbar integration</li>
+      <li><strong>bottom-navigation</strong> — Updated Favourites destination to include ViewModel wiring</li>
+    </ul>
+
+    <h4>Archive Status</h4>
+    <p><span class="badge badge-pass">READY</span> — Change archive location: <code>openspec/changes/archive/2026-08-11-favourite-toggle/</code></p>
+
+    <h4>Documentation Sync</h4>
+    <p><span class="badge badge-info">PENDING</span> — README.md and AGENTS.md already updated during implementation. Final verification of doc coherence to be checked in parallel.</p>
+
+    <h4>User Story Rename</h4>
+    <p>User story file renamed to: <code>docs/userstories/2.1.1-Favourite-Toggle-DONE.md</code></p>
+
+    <div class="outcome outcome-passed">Story 2.1.1 verification PASSED. All gates green. Ready for archive.</div>
+  </section>
   </main>
 
 </body>

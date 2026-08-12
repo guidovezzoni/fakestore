@@ -37,6 +37,7 @@ FakeStore is a native Android application built with Kotlin and Jetpack Compose.
 - **Multi-module:** `build-logic` composite build with `fakestore.android.library` and `fakestore.kotlin.library` convention plugins; modules `:core`, `:domain`, `:data`, `:app`
 - **Navigation:** Jetpack Navigation Compose 2.9.8 with type-safe (`@Serializable`) routes; `MainScreen` hosts a `NavHost` with `AppDestination` sealed-interface destinations
 - **Networking:** Retrofit + OkHttp + kotlinx-serialization (converter: `retrofit2-kotlinx-serialization-converter`)
+- **Local Persistence:** Room 2.7 with KSP annotation processing; favourites stored in `FavouritesDatabase`
 - **Image Loading:** Coil 3 (`coil-compose` + `coil-network-okhttp`)
 - **Dependency Injection:** Hilt 2.60 (Dagger-Hilt) + KSP 2.2.10-2.0.2; `@Provides` modules in `:app/di/`; entry points: `FakeStoreApplication` (`@HiltAndroidApp`), `MainActivity` (`@AndroidEntryPoint`)
 - **Build system:** Gradle (Kotlin DSL) with version catalog (`gradle/libs.versions.toml`)
