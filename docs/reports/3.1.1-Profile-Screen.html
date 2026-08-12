@@ -122,6 +122,66 @@
       <li><span class="badge badge-warn">MEDIUM</span> Network call on every screen visit — caching recommended</li>
     </ul>
   </section>
+  <section class="report-section" data-source="propose_change" data-timestamp="2026-08-12T14:30:00Z">
+    <header>
+      <h2>Change Proposed</h2>
+      <time datetime="2026-08-12T14:30:00Z">12 Aug 2026, 14:30 UTC</time>
+    </header>
+    <p class="section-source">Source: propose_change</p>
+
+    <h3>Exploration Findings</h3>
+    <ul>
+      <li>Codebase uses MVI pattern with ViewModels holding <code>StateFlow&lt;UiState&gt;</code> + <code>SharedFlow&lt;UiEffect&gt;</code>, single <code>onIntent()</code> entry point</li>
+      <li>Dual-composable screen pattern (stateless for tests/previews, stateful with <code>hiltViewModel()</code>)</li>
+      <li>Private per-screen loading/error composables with test tag constants (no shared <code>:ui</code> module)</li>
+      <li><code>ignoreUnknownKeys = true</code> already configured in NetworkClient.kt — safe to exclude unwanted API fields by not declaring them in DTOs</li>
+      <li><code>ProfileScreen.kt</code> exists as a placeholder; <code>AppDestination.Profile</code> and NavHost wiring already present</li>
+      <li><code>GetFavouriteIdsUseCase</code> returns <code>Flow&lt;Set&lt;Int&gt;&gt;</code> — the source for reactive favourite count</li>
+      <li>Analytics uses <code>AnalyticsClient.logEvent(name, params)</code> with constants in companion objects</li>
+      <li>Testing: JUnit 4, MockK, UnconfinedTestDispatcher, <code>createViewModel()</code> factory pattern</li>
+    </ul>
+
+    <h3>Questions Asked and Answers Received</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Should <code>profile_screen_viewed</code> fire immediately or wait for Content state?</td>
+          <td><strong>Wait for Content state</strong> (follow FavouritesViewModel pattern)</td>
+        </tr>
+        <tr>
+          <td>Should ProfileViewModel skip re-fetching if already loaded?</td>
+          <td><strong>Skip if already loaded</strong> (follow FavouritesViewModel pattern)</td>
+        </tr>
+        <tr>
+          <td>Add to existing DataModule or create new UserModule?</td>
+          <td><strong>Add to existing DataModule</strong></td>
+        </tr>
+        <tr>
+          <td>Use <code>Name</code> or <code>UserName</code> for the domain value object?</td>
+          <td><strong>UserName</strong> (more specific, avoids ambiguity)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Artifacts Created</h3>
+    <ol>
+      <li><code>openspec/changes/profile-screen/proposal.md</code> — Change proposal</li>
+      <li><code>openspec/changes/profile-screen/design.md</code> — Design document with 6 key decisions</li>
+      <li><code>openspec/changes/profile-screen/specs/user-profile-data/spec.md</code> — Delta spec for domain/data layer (UserProfile, UserName, DTOs, mapper, repository, use case, field exclusion)</li>
+      <li><code>openspec/changes/profile-screen/specs/profile-screen/spec.md</code> — Delta spec for UI layer (MVI contract, ViewModel, screen composable, analytics, localisation)</li>
+      <li><code>openspec/changes/profile-screen/tasks.md</code> — 46 tasks in 10 sections (5 BDD sections with test-first pairs, 5 mechanical sections)</li>
+    </ol>
+
+    <div class="outcome outcome-passed">
+      Proposal approved. Design document and task list ready for implementation phase.
+    </div>
+  </section>
   </main>
 
 </body>
