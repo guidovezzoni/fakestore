@@ -66,6 +66,7 @@ class FavouritesViewModel @Inject constructor(
     }
 
     private fun loadFavourites() {
+        if (_uiState.value is FavouritesUiState.Content) return
         _uiState.value = FavouritesUiState.Loading
         viewModelScope.launch {
             getProductsUseCase().collect { result ->

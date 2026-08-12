@@ -232,6 +232,30 @@ class FavouritesViewModelTest {
         }
     }
 
+    @Test
+    fun `GIVEN Content after first LoadFavourites WHEN LoadFavourites is dispatched again THEN uiState remains Content and does not reset to Loading`() = runTest {
+        val products = listOf(createProduct(id = FIRST_PRODUCT_ID))
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns flowOf(setOf(FIRST_PRODUCT_ID))
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+        )
+
+        viewModel.onIntent(FavouritesUiIntent.LoadFavourites)
+        val stateAfterFirstLoad = viewModel.uiState.value
+        val expectedIsContent = true
+        assertEquals(expectedIsContent, stateAfterFirstLoad is FavouritesUiState.Content)
+
+        viewModel.onIntent(FavouritesUiIntent.LoadFavourites)
+        val stateAfterSecondLoad = viewModel.uiState.value
+
+        val expectedIsStillContent = true
+        assertEquals(expectedIsStillContent, stateAfterSecondLoad is FavouritesUiState.Content)
+    }
+
     private companion object {
         const val PRODUCT_ID = 1
         const val PRODUCT_TITLE = "Test Product"
