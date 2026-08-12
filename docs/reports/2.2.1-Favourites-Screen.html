@@ -197,6 +197,61 @@
         <li><strong>Section 5:</strong> Final Verification (7 tasks: detekt, unit tests, instrumented tests, coverage, on-device checks)</li>
       </ul>
     </section>
+  <section class="report-section" data-source="apply_changes" data-timestamp="2026-08-12T12:36:00Z">
+    <header>
+      <h2>Apply Changes — Favourites Screen Analytics</h2>
+      <time datetime="2026-08-12T12:36:00Z">12 Aug 2026</time>
+    </header>
+    <p class="section-source">Source: apply_changes</p>
+
+    <h3>What Was Applied</h3>
+    <p>All 22 tasks across 5 sections implemented in a single session. One pre-existing bug in <code>MainScreenTest</code> was surfaced and fixed as part of this apply cycle.</p>
+    <ul>
+      <li><strong>Section 1</strong>: Added <code>data object TrackScreenViewed : FavouritesUiIntent</code>.</li>
+      <li><strong>Section 2 (BDD)</strong>: Added 5 unit tests for <code>TrackScreenViewed</code> in <code>FavouritesViewModelTest</code>. Confirmed RED (compilation error — exhaustive <code>when</code>). Implemented <code>trackScreenViewed()</code> using <code>uiState.filterIsInstance&lt;Content&gt;().first()</code>, wired it into <code>onIntent()</code>, extracted <code>EVENT_FAVOURITES_SCREEN_VIEWED</code> and <code>PARAM_FAVOURITE_COUNT</code> constants. Confirmed GREEN (all tests pass).</li>
+      <li><strong>Section 3 (BDD)</strong>: Added tests for <code>TrackScreenViewed</code> dispatch frequency and Error-state message display. Added <code>currentOnIntent(FavouritesUiIntent.TrackScreenViewed)</code> to <code>LaunchedEffect(Unit)</code> after <code>LoadFavourites</code>.</li>
+      <li><strong>Section 4 (BDD)</strong>: Added test for instructional empty-state message. Updated <code>favourites_empty_message</code> in <code>values/strings.xml</code> ("No favourites yet. Tap the heart on a product to save it.") and <code>values-es/strings.xml</code> ("Sin favoritos aún. Toca el corazón en un producto para guardarlo.").</li>
+      <li><strong>Bug fix (out of scope, pre-existing)</strong>: <code>MainScreenTest.givenMainScreen_whenFavouritesTabTapped</code> was consistently failing because it asserted the loading indicator was displayed, but the <code>fakestoreapi.com</code> API responded before <code>waitForIdle()</code> returned. Fixed by adding <code>FAVOURITES_SCREEN_ROOT_TEST_TAG</code> to <code>FavouritesScreen</code>'s Scaffold and updating the assertion to check the stable root tag instead of the timing-dependent loading indicator.</li>
+    </ul>
+
+    <h3>Iteration Cycles</h3>
+    <ul>
+      <li><strong>BDD cycles</strong>: 1 RED→GREEN cycle for each of Sections 2, 3, 4.</li>
+      <li><strong>Instrumented test fix</strong>: 1 cycle to diagnose and fix the pre-existing <code>MainScreenTest</code> flakiness.</li>
+      <li><strong>Total instrumented test runs</strong>: 3 (first run revealed the bug; second run confirmed the fix; all 34 tests passing).</li>
+    </ul>
+
+    <h3>Acknowledged TODOs</h3>
+    <p>No TODO comments found in source files. No RESOLVE NOW items.</p>
+
+    <h3>Security Review</h3>
+    <div class="outcome outcome-passed">PASS — No findings. Analytics event logs only an anonymous integer (<code>favourite_count</code>); no PII, no new attack surface.</div>
+
+    <h3>README.md and AGENTS.md</h3>
+    <p>No updates required. All changes are within the `:app` module's analytics and string layers, which are already described accurately in both files.</p>
+
+    <h3>On-Device Verification</h3>
+    <table>
+      <tr><th>Check</th><th>Result</th></tr>
+      <tr><td>Navigation to Favourites via bottom bar</td><td><span class="badge badge-pass">PASS</span> — verified via UIAutomator dump and screenshot</td></tr>
+      <tr><td>Error state renders "Something went wrong. Please try again."</td><td><span class="badge badge-pass">PASS</span> — confirmed on-device (device had no network)</td></tr>
+      <tr><td>Empty state instructional message</td><td><span class="badge badge-warn">COVERED BY TESTS</span> — device had no network; covered by <code>givenEmptyContentState_whenFavouritesScreenIsComposed_thenEmptyMessageContainsInstructionalText</code></td></tr>
+      <tr><td>Favourited products display and removal</td><td><span class="badge badge-warn">COVERED BY TESTS</span> — device had no network; covered by existing unit and Compose UI tests</td></tr>
+      <tr><td>Spanish locale empty-state message</td><td><span class="badge badge-warn">COVERED BY CODE</span> — locale change via adb was not effective on this device; translation verified in <code>values-es/strings.xml</code></td></tr>
+    </table>
+
+    <h3>Final Checklist</h3>
+    <table>
+      <tr><th>Check</th><th>Result</th></tr>
+      <tr><td><code>./gradlew detektDebug</code></td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td><code>./gradlew test</code> (all unit tests)</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td><code>./gradlew connectedDebugAndroidTest</code> (34/34)</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td><code>koverVerifyDebug</code> (≥95% coverage)</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td>Security review</td><td><span class="badge badge-pass">PASS — no findings</span></td></tr>
+      <tr><td>All 22 tasks complete</td><td><span class="badge badge-pass">22/22</span></td></tr>
+    </table>
+  </section>
+
   </main>
 
 </body>
