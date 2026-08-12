@@ -1,10 +1,10 @@
 ## ADDED Requirements
 
 ### Requirement: ProfileUiState models loading, content, and error
-`:app` SHALL define `ProfileUiState` as a sealed interface with `Loading`, `Content(val fullName: String, val email: String, val favouriteCount: Int)`, and `Error` states, representing the full state of the Profile screen at any point in time.
+`:app` SHALL define `ProfileUiState` as a sealed interface with `Loading`, `Content(val fullName: String, val email: String, val favouriteCount: Int, val initials: String)`, and `Error` states, representing the full state of the Profile screen at any point in time. `initials` is derived in `ProfileViewModel` as the uppercased first characters of `UserName.firstName` and `UserName.lastName`.
 
 #### Scenario: Loading, Content, and Error are distinct sealed entries
-- **WHEN** `ProfileUiState.Loading`, `ProfileUiState.Content(fullName = "William Hopkins", email = "william@gmail.com", favouriteCount = 3)`, and `ProfileUiState.Error` are referenced
+- **WHEN** `ProfileUiState.Loading`, `ProfileUiState.Content(fullName = "William Hopkins", email = "william@gmail.com", favouriteCount = 3, initials = "WH")`, and `ProfileUiState.Error` are referenced
 - **THEN** all three are members of the `ProfileUiState` sealed interface, usable in an exhaustive `when` block when rendering the screen
 
 ### Requirement: ProfileUiIntent models loading, retrying, and tracking a screen view
@@ -71,7 +71,7 @@ On `ProfileUiIntent.TrackScreenViewed`, `ProfileViewModel` SHALL suspend until `
 - **THEN** the call's parameters do not contain the user's name or email in any form
 
 ### Requirement: ProfileScreen renders state-specific UI with loading indicator, content, and retry
-`:app` SHALL define a stateless `ProfileScreen(uiState: ProfileUiState, onIntent: (ProfileUiIntent) -> Unit, modifier: Modifier = Modifier)` composable. It SHALL render a centred loading indicator (tagged for testing) for `Loading`; for `Content`, the full name, email, and a localised favourite-count label displaying `favouriteCount`, each with an accessible text semantics and a test tag; and for `Error`, a centred, localised error message (reusing `product_list_error_message`) plus a focusable, localised retry button (reusing `product_list_retry_button`) that dispatches `RetryClicked` when tapped. A stateful overload SHALL obtain `ProfileViewModel` via `hiltViewModel()` and dispatch both `LoadProfile` and `TrackScreenViewed` from the same `LaunchedEffect(Unit)` on first composition.
+`:app` SHALL define a stateless `ProfileScreen(uiState: ProfileUiState, onIntent: (ProfileUiIntent) -> Unit, modifier: Modifier = Modifier)` composable. It SHALL render a centred loading indicator (tagged for testing) for `Loading`; for `Content`, a hero section with a `primaryContainer` background containing a circular avatar displaying `initials`, the `fullName` in `headlineMedium` typography, and `email` in `bodyMedium` at reduced opacity, followed by an `ElevatedCard` row showing a heart icon, the localised `profile_favourite_count_label`, and `favouriteCount`; and for `Error`, a centred, localised error message (reusing `product_list_error_message`) plus a focusable, localised retry button (reusing `product_list_retry_button`) that dispatches `RetryClicked` when tapped. A stateful overload SHALL obtain `ProfileViewModel` via `hiltViewModel()` and dispatch both `LoadProfile` and `TrackScreenViewed` from the same `LaunchedEffect(Unit)` on first composition.
 
 #### Scenario: Loading state shows only the loading indicator
 - **GIVEN** `uiState` is `ProfileUiState.Loading`
@@ -79,9 +79,9 @@ On `ProfileUiIntent.TrackScreenViewed`, `ProfileViewModel` SHALL suspend until `
 - **THEN** a loading indicator is displayed and no name, email, favourite count, or error/retry UI is visible
 
 #### Scenario: Content state shows name, email, and favourite count
-- **GIVEN** `uiState` is `ProfileUiState.Content(fullName = "William Hopkins", email = "william@gmail.com", favouriteCount = 3)`
+- **GIVEN** `uiState` is `ProfileUiState.Content(fullName = "William Hopkins", email = "william@gmail.com", favouriteCount = 3, initials = "WH")`
 - **WHEN** `ProfileScreen(uiState, onIntent)` is composed
-- **THEN** the text "William Hopkins", the text "william@gmail.com", and a favourite-count display reflecting `3` are all displayed
+- **THEN** the text "WH" (avatar), the text "William Hopkins", the text "william@gmail.com", and a favourite-count display reflecting `3` are all displayed
 
 #### Scenario: Error state shows a centred error message and a retry button
 - **GIVEN** `uiState` is `ProfileUiState.Error`

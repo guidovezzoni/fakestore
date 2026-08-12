@@ -41,10 +41,13 @@ class ProfileViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             combine(rawProfile.filterNotNull(), getFavouriteIdsUseCase()) { profile, favIds ->
+                val firstInitial = profile.name.firstName.firstOrNull() ?: ""
+                val lastInitial = profile.name.lastName.firstOrNull() ?: ""
                 ProfileUiState.Content(
                     fullName = "${profile.name.firstName} ${profile.name.lastName}",
                     email = profile.email,
                     favouriteCount = favIds.size,
+                    initials = "$firstInitial$lastInitial".uppercase(),
                 )
             }.collect { _uiState.value = it }
         }

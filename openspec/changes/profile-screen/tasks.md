@@ -28,7 +28,7 @@
 
 ## 5. Prerequisites: Profile MVI Contract
 
-- [x] 5.1 Create `ProfileUiState` sealed interface (`:app` `ui/state/ProfileUiState.kt`) with `Loading`, `Content(fullName: String, email: String, favouriteCount: Int)`, `Error`
+- [x] 5.1 Create `ProfileUiState` sealed interface (`:app` `ui/state/ProfileUiState.kt`) with `Loading`, `Content(fullName: String, email: String, favouriteCount: Int, initials: String)`, `Error`
 - [x] 5.2 Create `ProfileUiIntent` sealed interface (`:app` `ui/intent/ProfileUiIntent.kt`) with `LoadProfile`, `RetryClicked`, `TrackScreenViewed`
 - [x] 5.3 Create `ProfileUiEffect` sealed interface (`:app` `ui/effect/ProfileUiEffect.kt`), empty/placeholder for future one-shot effects
 

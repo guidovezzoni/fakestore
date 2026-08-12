@@ -43,6 +43,7 @@ class ProfileScreenTest {
             fullName = FULL_NAME,
             email = EMAIL,
             favouriteCount = FAVOURITE_COUNT,
+            initials = INITIALS,
         )
 
         composeTestRule.setContent {
@@ -135,6 +136,7 @@ class ProfileScreenTest {
         const val FULL_NAME = "John Doe"
         const val EMAIL = "john.doe@example.com"
         const val FAVOURITE_COUNT = 7
+        const val INITIALS = "JD"
         const val ERROR_MESSAGE = "Something went wrong. Please try again."
         const val RETRY_BUTTON_TEXT = "Retry"
     }

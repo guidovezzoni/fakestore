@@ -80,9 +80,11 @@ class ProfileViewModelTest {
         val expectedFullName = "$USER_PROFILE_FIRST_NAME $USER_PROFILE_LAST_NAME"
         val expectedEmail = USER_PROFILE_EMAIL
         val expectedFavouriteCount = 3
+        val expectedInitials = "${USER_PROFILE_FIRST_NAME.first()}${USER_PROFILE_LAST_NAME.first()}"
         assertEquals(expectedFullName, result.fullName)
         assertEquals(expectedEmail, result.email)
         assertEquals(expectedFavouriteCount, result.favouriteCount)
+        assertEquals(expectedInitials, result.initials)
     }
 
     // Task 6.2

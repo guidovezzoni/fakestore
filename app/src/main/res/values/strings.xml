@@ -14,5 +14,6 @@
     <string name="favourite_add_content_description">Add to favourites</string>
     <string name="favourite_remove_content_description">Remove from favourites</string>
     <string name="favourite_toggle_error_message">Unable to update favourite</string>
-    <string name="favourites_empty_message">No favourites yet. Tap the heart on a product to save it.</string>
+    <string name="favourites_empty_title">No favourites yet</string>
+    <string name="favourites_empty_subtitle">Tap the heart on a product to save it here.</string>
 </resources>
