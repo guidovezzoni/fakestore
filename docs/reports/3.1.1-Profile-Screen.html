@@ -182,6 +182,56 @@
       Proposal approved. Design document and task list ready for implementation phase.
     </div>
   </section>
+  <section class="report-section" data-source="sdlc:sdlc_implement_change" data-timestamp="2026-08-12T16:30:00+02:00">
+    <header>
+      <h2>Implementation Applied</h2>
+      <time datetime="2026-08-12T16:30:00+02:00">12 August 2026</time>
+    </header>
+    <p class="section-source">Source: sdlc:sdlc_implement_change</p>
+
+    <h3>Summary</h3>
+    <p>All 46 tasks across 10 sections were implemented and verified using sub-agent orchestration. Implementation completed in a single iteration cycle with no re-application needed.</p>
+
+    <h3>Sections Delivered</h3>
+    <table>
+      <thead><tr><th>Section</th><th>Tasks</th><th>Model</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>1. Domain &amp; Data Models</td><td>6</td><td>Haiku</td><td>UserName, UserProfile, UserRepository, UserDto, UserNameDto, ApiService extension</td></tr>
+        <tr><td>2. UserMapper (BDD)</td><td>4</td><td>Sonnet</td><td>RED→GREEN; reflection-based security test for excluded PII fields</td></tr>
+        <tr><td>3. UserRepositoryImpl (BDD)</td><td>3</td><td>Sonnet</td><td>RED→GREEN; IOException propagation test</td></tr>
+        <tr><td>4. GetUserProfileUseCase (BDD)</td><td>3</td><td>Sonnet</td><td>RED→GREEN; Flow&lt;Result&gt; wrapping pattern</td></tr>
+        <tr><td>5. Profile MVI Contract</td><td>3</td><td>Haiku</td><td>ProfileUiState, ProfileUiIntent, ProfileUiEffect</td></tr>
+        <tr><td>6. ProfileViewModel (BDD)</td><td>9</td><td>Sonnet</td><td>RED→GREEN; 8 tests covering caching, reactive count, analytics gating, no-PII assertion</td></tr>
+        <tr><td>7. ProfileScreen Composable (BDD)</td><td>7</td><td>Sonnet</td><td>Compile RED→GREEN; 6 Compose UI tests, dual overload, 3 previews</td></tr>
+        <tr><td>8. String Resources</td><td>3</td><td>Haiku</td><td>EN + ES translations; reused product_list_error/retry resources</td></tr>
+        <tr><td>9. DI Wiring</td><td>2</td><td>Haiku</td><td>DataModule @Provides for UserRepository + GetUserProfileUseCase; HiltDependencyGraphTest extended</td></tr>
+        <tr><td>10. Final Verification</td><td>6</td><td>—</td><td>See details below</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Verification Results</h3>
+    <ul>
+      <li><span class="badge badge-pass">PASS</span> <code>./gradlew check</code> — 1 iteration (detekt parameter-ordering fixes applied before green)</li>
+      <li><span class="badge badge-pass">PASS</span> <code>./gradlew koverHtmlReportDebug</code> — coverage report generated successfully</li>
+      <li><span class="badge badge-pass">PASS</span> PII field search — <code>password</code>, <code>phone</code>, <code>address</code>, <code>__v</code> absent from all DTOs and domain models</li>
+      <li><span class="badge badge-pass">PASS</span> PII in analytics — <code>ProfileViewModel.logEvent()</code> sends only <code>favourite_count</code> (integer); no name or email</li>
+      <li><span class="badge badge-pass">PASS</span> <code>./gradlew connectedDebugAndroidTest</code> — 40 tests, 0 failures, 0 errors (XML report confirmed; console FAILED output was a configuration-cache artifact from a prior stale run)</li>
+      <li><span class="badge badge-pass">PASS</span> On-device manual verification — Profile screen for user ID 8 shows <em>william hopkins</em> / <em>william@gmail.com</em> / count 0; count updated reactively to 1 after toggling a favourite on Products screen; airplane mode triggered Error state; retry after network restore showed Content state</li>
+    </ul>
+
+    <h3>ACKNOWLEDGED TODOs</h3>
+    <p>No RESOLVE NOW TODOs were found. No existing TODO comments in the modified source files.</p>
+
+    <h3>Security Review</h3>
+    <div class="outcome outcome-passed">PASS — 0 findings</div>
+    <p style="margin-top:0.75rem">Review confirmed: DTO field exclusion enforced, PII absent from analytics, no local PII persistence, transport encryption unchanged. Three non-blocking future-hardening observations noted (ProfileUiState.Content toString(), UserRepository ID validation, DebugAnalyticsProvider release-build guard).</p>
+
+    <h3>Documentation Updates</h3>
+    <ul>
+      <li><strong>README.md</strong> — Updated <code>:domain</code> and <code>:data</code> module descriptions to include new User* types; updated Limitations section to document the DTO-exclusion mitigation for PII in the user API response.</li>
+      <li><strong>AGENTS.md</strong> — Updated module structure tree to include UserProfile, UserName, UserRepository, GetUserProfileUseCase, UserDto, UserNameDto, UserMapper, UserRepositoryImpl, ProfileViewModel, ProfileUiState, ProfileUiIntent, ProfileUiEffect.</li>
+    </ul>
+  </section>
   </main>
 
 </body>

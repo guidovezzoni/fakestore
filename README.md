@@ -49,8 +49,8 @@ The project uses a multi-module Clean Architecture with four Gradle modules:
 
 - **build-logic/** — Convention plugins (`fakestore.android.library`, `fakestore.kotlin.library`) centralising Detekt, Kover, and compile configuration
 - **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`; analytics abstraction (`AnalyticsProvider` interface, `AnalyticsClient` dispatcher, `DebugAnalyticsProvider`)
-- **:domain** — Domain models (`Product`, `Rating`), repository interfaces (`ProductRepository`, `FavouritesRepository`), use cases (`GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`) — pure Kotlin, no Android dependencies
-- **:data** — DTOs, mappers, `ApiService`, `ProductRepositoryImpl`; Room database (`FavouritesDatabase`, `FavouriteDao`, `FavouriteEntity`, `FavouritesRepositoryImpl`) — KSP annotation processing
+- **:domain** — Domain models (`Product`, `Rating`, `UserProfile`, `UserName`), repository interfaces (`ProductRepository`, `FavouritesRepository`, `UserRepository`), use cases (`GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`, `GetUserProfileUseCase`) — pure Kotlin, no Android dependencies
+- **:data** — DTOs, mappers, `ApiService`, `ProductRepositoryImpl`, `UserRepositoryImpl`; Room database (`FavouritesDatabase`, `FavouriteDao`, `FavouriteEntity`, `FavouritesRepositoryImpl`) — KSP annotation processing
 - **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation; Hilt DI modules (`NetworkModule`, `AnalyticsModule`, `DataModule`, `DatabaseModule`), `FakeStoreApplication` (`@HiltAndroidApp`)
 
 ## Build & Release
@@ -67,11 +67,11 @@ bundle exec fastlane deploy  # Upload to Play Store production track
 ## Limitations and Assumptions
 
 ### Assumptions
-1. Currently, the user selection is not possible, the current us is hardcoded in order to reduce the scope of the project and fit the deadline.
+1. Currently, the user selection is not possible, the current user is hardcoded in order to reduce the scope of the project and fit the deadline.
 
 ### Limitations
 1. The current REST API does not support pagination, it should be added as  it currently limits the app scalability. The app implementation is based on the current API structure and the implied assumption that the number of products is limited (currently 20). Accordingly, the combination of products and favourites is based on the same assumption. All this structure will have to be re-viewed once pagination is made available.
-2. User password is returned with the username, that is likely unsafe.
+2. The Fake Store API returns `password`, `phone`, `address`, and `__v` in the user endpoint. The app mitigates this by declaring only the required fields in `UserDto` (relying on `ignoreUnknownKeys = true`), so sensitive fields never enter application memory.
 
 
 ### Product Clarifications

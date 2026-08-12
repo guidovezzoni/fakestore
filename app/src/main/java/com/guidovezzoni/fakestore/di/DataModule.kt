@@ -2,8 +2,11 @@ package com.guidovezzoni.fakestore.di
 
 import com.guidovezzoni.fakestore.data.network.ApiService
 import com.guidovezzoni.fakestore.data.repository.ProductRepositoryImpl
+import com.guidovezzoni.fakestore.data.repository.UserRepositoryImpl
 import com.guidovezzoni.fakestore.domain.repository.ProductRepository
+import com.guidovezzoni.fakestore.domain.repository.UserRepository
 import com.guidovezzoni.fakestore.domain.usecase.GetProductsUseCase
+import com.guidovezzoni.fakestore.domain.usecase.GetUserProfileUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,4 +24,11 @@ object DataModule {
 
     @Provides
     fun provideGetProductsUseCase(repository: ProductRepository): GetProductsUseCase = GetProductsUseCase(repository)
+
+    @Provides
+    fun provideUserRepository(apiService: ApiService): UserRepository = UserRepositoryImpl(apiService)
+
+    @Provides
+    fun provideGetUserProfileUseCase(repository: UserRepository): GetUserProfileUseCase =
+        GetUserProfileUseCase(repository)
 }

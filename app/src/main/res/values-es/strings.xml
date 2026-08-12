@@ -8,6 +8,8 @@
     <string name="global_tab_favourites">Favoritos</string>
     <string name="global_tab_profile">Perfil</string>
     <string name="profile_placeholder">Perfil disponible próximamente…</string>
+    <string name="profile_screen_title">Perfil</string>
+    <string name="profile_favourite_count_label">Favoritos</string>
     <string name="favourite_add_content_description">Añadir a favoritos</string>
     <string name="favourite_remove_content_description">Quitar de favoritos</string>
     <string name="favourite_toggle_error_message">No se pudo actualizar el favorito</string>
