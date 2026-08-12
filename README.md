@@ -65,7 +65,6 @@ The project uses a multi-module Clean Architecture with four Gradle modules:
 1. The current REST API does not support pagination, it should be added as  it currently limits the app scalability. The app implementation is based on the current API structure and the implied assumption that the number of products is limited (currently 20). Accordingly, the combination of products and favourites is based on the same assumption. All this structure will have to be re-viewed once pagination is made available.
 2. The Fake Store API returns `password`, `phone`, `address`, and `__v` in the user endpoint. The app mitigates this by declaring only the required fields in `UserDto` (relying on `ignoreUnknownKeys = true`), so sensitive fields never enter application memory.
 
-
 ### Product Clarifications
 
 1. Requirements specify persistence for favourites but not for products, requirements do not mention caching or offline first approach. Accepted but should be clarified with Product.
