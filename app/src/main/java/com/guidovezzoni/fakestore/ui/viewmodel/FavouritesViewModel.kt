@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -61,7 +63,18 @@ class FavouritesViewModel @Inject constructor(
     fun onIntent(intent: FavouritesUiIntent) {
         when (intent) {
             is FavouritesUiIntent.LoadFavourites -> loadFavourites()
+            is FavouritesUiIntent.TrackScreenViewed -> trackScreenViewed()
             is FavouritesUiIntent.ToggleFavourite -> toggleFavourite(intent.productId)
+        }
+    }
+
+    private fun trackScreenViewed() {
+        viewModelScope.launch {
+            val content = uiState.filterIsInstance<FavouritesUiState.Content>().first()
+            analyticsClient.logEvent(
+                name = EVENT_FAVOURITES_SCREEN_VIEWED,
+                params = mapOf(PARAM_FAVOURITE_COUNT to content.products.size),
+            )
         }
     }
 
@@ -98,6 +111,8 @@ class FavouritesViewModel @Inject constructor(
     }
 
     private companion object {
+        const val EVENT_FAVOURITES_SCREEN_VIEWED = "favourites_screen_viewed"
+        const val PARAM_FAVOURITE_COUNT = "favourite_count"
         const val EVENT_FAVOURITE_REMOVED = "favourite_removed"
         const val PARAM_PRODUCT_ID = "product_id"
         const val SHOULD_BE_FAVOURITE = false

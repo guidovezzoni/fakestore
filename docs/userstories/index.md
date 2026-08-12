@@ -28,7 +28,7 @@
 ### Feature 2.2 — Favourites Screen
 | # | Story | Role |
 |---|-------|------|
-| [2.2.1](2.2.1-Favourites-Screen.md) | Favourites Screen | User / Product Owner |
+| [2.2.1](2.2.1-Favourites-Screen-DONE.md) | Favourites Screen | User / Product Owner |
 
 ---
 
@@ -37,10 +37,7 @@
 ### Feature 3.1 — Profile Screen
 | # | Story | Role |
 |---|-------|------|
-| [3.1.1](3.1.1-User-Profile-Data.md) | User Profile Data | User |
-| [3.1.2](3.1.2-Favourite-Count-On-Profile.md) | Favourite Count on Profile | User |
-| [3.1.3](3.1.3-Profile-Screen-States.md) | Profile Screen States | User |
-| [3.1.4](3.1.4-Profile-Screen-Analytics.md) | Profile Screen Analytics | Product Owner |
+| [3.1.1](3.1.1-Profile-Screen.md) | Profile Screen | User / Product Owner |
 
 ---
 
@@ -50,5 +47,5 @@
 |------|---------|---------|
 | 1 — Product Catalogue | 2 | 6 |
 | 2 — Favourites Management | 2 | 2 |
-| 3 — User Profile | 1 | 4 |
-| **Total** | **5** | **12** |
+| 3 — User Profile | 1 | 1 |
+| **Total** | **5** | **9** |

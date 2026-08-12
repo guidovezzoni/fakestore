@@ -127,6 +127,55 @@ class FavouritesScreenTest {
         assertEquals(expectedLoadFavouritesCount, result)
     }
 
+    // Task 4.1
+    @Test
+    fun givenEmptyContentState_whenFavouritesScreenIsComposed_thenEmptyMessageContainsInstructionalText() {
+        val uiState = FavouritesUiState.Content(products = emptyList())
+
+        composeTestRule.setContent {
+            FakeStoreTheme {
+                FavouritesScreen(uiState = uiState, onIntent = {})
+            }
+        }
+
+        composeTestRule.onNodeWithText(FAVOURITES_EMPTY_INSTRUCTIONAL_MESSAGE).assertIsDisplayed()
+    }
+
+    // Task 3.1
+    @Test
+    fun givenFavouritesScreen_whenComposed_thenTrackScreenViewedIntentIsFiredExactlyOnce() {
+        val capturedIntents = mutableListOf<FavouritesUiIntent>()
+        val uiState = FavouritesUiState.Loading
+
+        composeTestRule.setContent {
+            FakeStoreTheme {
+                FavouritesScreen(
+                    uiState = uiState,
+                    onIntent = { capturedIntents.add(it) },
+                )
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        val expectedTrackScreenViewedCount = 1
+        val result = capturedIntents.count { it == FavouritesUiIntent.TrackScreenViewed }
+        assertEquals(expectedTrackScreenViewedCount, result)
+    }
+
+    // Task 3.2
+    @Test
+    fun givenErrorState_whenFavouritesScreenIsComposed_thenErrorMessageIsDisplayed() {
+        val uiState = FavouritesUiState.Error
+
+        composeTestRule.setContent {
+            FakeStoreTheme {
+                FavouritesScreen(uiState = uiState, onIntent = {})
+            }
+        }
+
+        composeTestRule.onNodeWithText(PRODUCT_LIST_ERROR_MESSAGE).assertIsDisplayed()
+    }
+
     @Test
     fun givenShowFavouriteToggleErrorEffect_whenEffectIsCollected_thenSnackbarWithErrorMessageIsShown() {
         val uiEffect = MutableSharedFlow<FavouritesUiEffect>(extraBufferCapacity = 1)
@@ -158,6 +207,8 @@ class FavouritesScreenTest {
         const val FORMATTED_PRICE = "$109.95"
         const val FORMATTED_RATING_SCORE = "4.1"
         const val FAVOURITE_TOGGLE_ERROR_MESSAGE = "Unable to update favourite"
+        const val PRODUCT_LIST_ERROR_MESSAGE = "Something went wrong. Please try again."
+        const val FAVOURITES_EMPTY_INSTRUCTIONAL_MESSAGE = "No favourites yet. Tap the heart on a product to save it."
         const val REMOVE_FROM_FAVOURITES_CONTENT_DESCRIPTION = "Remove from favourites"
     }
 }

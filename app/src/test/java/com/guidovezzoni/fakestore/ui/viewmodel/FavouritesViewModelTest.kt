@@ -232,6 +232,109 @@ class FavouritesViewModelTest {
         }
     }
 
+    // Task 2.1
+    @Test
+    fun `GIVEN Content with 3 favourite products WHEN TrackScreenViewed is dispatched THEN favourites_screen_viewed is logged with favourite_count = 3`() = runTest {
+        val products = listOf(
+            createProduct(id = FIRST_PRODUCT_ID),
+            createProduct(id = SECOND_PRODUCT_ID),
+            createProduct(id = THIRD_PRODUCT_ID),
+        )
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns flowOf(setOf(FIRST_PRODUCT_ID, SECOND_PRODUCT_ID, THIRD_PRODUCT_ID))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        viewModel.onIntent(FavouritesUiIntent.LoadFavourites)
+        viewModel.onIntent(FavouritesUiIntent.TrackScreenViewed)
+
+        val expectedCount = 3
+        verify(exactly = 1) {
+            analyticsClient.logEvent(name = EVENT_FAVOURITES_SCREEN_VIEWED, params = mapOf(PARAM_FAVOURITE_COUNT to expectedCount))
+        }
+    }
+
+    // Task 2.2
+    @Test
+    fun `GIVEN Content with empty product list WHEN TrackScreenViewed is dispatched THEN favourites_screen_viewed is logged with favourite_count = 0`() = runTest {
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(listOf(createProduct())))
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns flowOf(emptySet())
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        viewModel.onIntent(FavouritesUiIntent.LoadFavourites)
+        viewModel.onIntent(FavouritesUiIntent.TrackScreenViewed)
+
+        val expectedCount = 0
+        verify(exactly = 1) {
+            analyticsClient.logEvent(name = EVENT_FAVOURITES_SCREEN_VIEWED, params = mapOf(PARAM_FAVOURITE_COUNT to expectedCount))
+        }
+    }
+
+    // Task 2.3
+    @Test
+    fun `GIVEN Loading state WHEN TrackScreenViewed is dispatched THEN no analytics event is logged`() = runTest {
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(analyticsClient = analyticsClient)
+
+        viewModel.onIntent(FavouritesUiIntent.TrackScreenViewed)
+
+        verify(exactly = 0) { analyticsClient.logEvent(any(), any()) }
+    }
+
+    // Task 2.4
+    @Test
+    fun `GIVEN Error state WHEN TrackScreenViewed is dispatched THEN no analytics event is logged`() = runTest {
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.failure(RuntimeException("network error")))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        viewModel.onIntent(FavouritesUiIntent.LoadFavourites)
+        viewModel.onIntent(FavouritesUiIntent.TrackScreenViewed)
+
+        verify(exactly = 0) { analyticsClient.logEvent(any(), any()) }
+    }
+
+    // Task 2.5
+    @Test
+    fun `GIVEN Content WHEN TrackScreenViewed is dispatched twice THEN favourites_screen_viewed is logged twice`() = runTest {
+        val products = listOf(createProduct(id = FIRST_PRODUCT_ID))
+        val getProductsUseCase: GetProductsUseCase = mockk()
+        every { getProductsUseCase() } returns flowOf(Result.success(products))
+        val getFavouriteIdsUseCase: GetFavouriteIdsUseCase = mockk()
+        every { getFavouriteIdsUseCase() } returns flowOf(setOf(FIRST_PRODUCT_ID))
+        val analyticsClient: AnalyticsClient = mockk(relaxed = true)
+        val viewModel = createViewModel(
+            getProductsUseCase = getProductsUseCase,
+            getFavouriteIdsUseCase = getFavouriteIdsUseCase,
+            analyticsClient = analyticsClient,
+        )
+
+        viewModel.onIntent(FavouritesUiIntent.LoadFavourites)
+        viewModel.onIntent(FavouritesUiIntent.TrackScreenViewed)
+        viewModel.onIntent(FavouritesUiIntent.TrackScreenViewed)
+
+        verify(exactly = 2) {
+            analyticsClient.logEvent(name = EVENT_FAVOURITES_SCREEN_VIEWED, params = mapOf(PARAM_FAVOURITE_COUNT to 1))
+        }
+    }
+
     @Test
     fun `GIVEN Content after first LoadFavourites WHEN LoadFavourites is dispatched again THEN uiState remains Content and does not reset to Loading`() = runTest {
         val products = listOf(createProduct(id = FIRST_PRODUCT_ID))
@@ -257,6 +360,8 @@ class FavouritesViewModelTest {
     }
 
     private companion object {
+        const val EVENT_FAVOURITES_SCREEN_VIEWED = "favourites_screen_viewed"
+        const val PARAM_FAVOURITE_COUNT = "favourite_count"
         const val PRODUCT_ID = 1
         const val PRODUCT_TITLE = "Test Product"
         const val PRODUCT_PRICE = 109.95

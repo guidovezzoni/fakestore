@@ -79,7 +79,7 @@ class MainScreenTest {
         composeTestRule.onNodeWithTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG).performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag(FAVOURITES_LOADING_INDICATOR_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(FAVOURITES_SCREEN_ROOT_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithTag(BOTTOM_NAVIGATION_FAVOURITES_TAB_TEST_TAG).assertIsSelected()
     }
 

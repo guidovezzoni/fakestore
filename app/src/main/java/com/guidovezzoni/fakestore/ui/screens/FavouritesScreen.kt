@@ -32,6 +32,7 @@ import com.guidovezzoni.fakestore.ui.viewmodel.FavouritesViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
+const val FAVOURITES_SCREEN_ROOT_TEST_TAG = "favourites_screen"
 const val FAVOURITES_LOADING_INDICATOR_TEST_TAG = "favourites_loading_indicator"
 const val FAVOURITES_EMPTY_MESSAGE_TEST_TAG = "favourites_empty_message"
 
@@ -48,6 +49,7 @@ fun FavouritesScreen(
 
     LaunchedEffect(Unit) {
         currentOnIntent(FavouritesUiIntent.LoadFavourites)
+        currentOnIntent(FavouritesUiIntent.TrackScreenViewed)
     }
 
     LaunchedEffect(snackbarHostState) {
@@ -59,7 +61,7 @@ fun FavouritesScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.testTag(FAVOURITES_SCREEN_ROOT_TEST_TAG),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         when (uiState) {
