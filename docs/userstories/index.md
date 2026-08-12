@@ -23,14 +23,12 @@
 ### Feature 2.1 — Favourite Toggle & Persistence
 | # | Story | Role |
 |---|-------|------|
-| [2.1.1](2.1.1-Favourite-Toggle.md) | Favourite Toggle & Persistence | User / Product Owner |
+| [2.1.1](2.1.1-Favourite-Toggle-DONE.md) | Favourite Toggle & Persistence | User / Product Owner |
 
 ### Feature 2.2 — Favourites Screen
 | # | Story | Role |
 |---|-------|------|
-| [2.2.1](2.2.1-Favourites-Screen.md) | Favourites Screen | User |
-| [2.2.2](2.2.2-Favourites-Empty-State.md) | Favourites Empty State | User |
-| [2.2.3](2.2.3-Favourites-Screen-Analytics.md) | Favourites Screen Analytics | Product Owner |
+| [2.2.1](2.2.1-Favourites-Screen.md) | Favourites Screen | User / Product Owner |
 
 ---
 
@@ -51,6 +49,6 @@
 | Epic | Features | Stories |
 |------|---------|---------|
 | 1 — Product Catalogue | 2 | 6 |
-| 2 — Favourites Management | 2 | 4 |
+| 2 — Favourites Management | 2 | 2 |
 | 3 — User Profile | 1 | 4 |
-| **Total** | **5** | **14** |
+| **Total** | **5** | **12** |

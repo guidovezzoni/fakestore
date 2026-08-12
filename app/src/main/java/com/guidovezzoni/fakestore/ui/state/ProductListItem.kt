@@ -6,4 +6,5 @@ data class ProductListItem(
     val title: String,
     val formattedPrice: String,
     val formattedRatingScore: String,
+    val isFavourite: Boolean = false,
 )

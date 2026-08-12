@@ -11,11 +11,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,11 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.guidovezzoni.fakestore.R
+import com.guidovezzoni.fakestore.ui.effect.ProductListUiEffect
 import com.guidovezzoni.fakestore.ui.intent.ProductListUiIntent
 import com.guidovezzoni.fakestore.ui.state.ProductListItem
 import com.guidovezzoni.fakestore.ui.state.ProductListUiState
 import com.guidovezzoni.fakestore.ui.theme.FakeStoreTheme
 import com.guidovezzoni.fakestore.ui.viewmodel.ProductListViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 const val PRODUCT_LIST_LOADING_INDICATOR_TEST_TAG = "product_list_loading_indicator"
 const val PRODUCT_LIST_ERROR_CONTAINER_TEST_TAG = "product_list_error_container"
@@ -42,10 +48,22 @@ fun ProductListScreen(
     uiState: ProductListUiState,
     onIntent: (ProductListUiIntent) -> Unit,
     modifier: Modifier = Modifier,
+    uiEffect: Flow<ProductListUiEffect> = emptyFlow(),
 ) {
     val currentOnIntent by rememberUpdatedState(onIntent)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val errorMessage = stringResource(R.string.favourite_toggle_error_message)
+
     LaunchedEffect(Unit) {
         currentOnIntent(ProductListUiIntent.LoadProducts)
+    }
+
+    LaunchedEffect(snackbarHostState) {
+        uiEffect.collect { effect ->
+            when (effect) {
+                is ProductListUiEffect.ShowFavouriteToggleError -> snackbarHostState.showSnackbar(errorMessage)
+            }
+        }
     }
 
     Scaffold(
@@ -53,6 +71,7 @@ fun ProductListScreen(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.product_list_screen_title)) })
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         when (uiState) {
             ProductListUiState.Loading -> ProductListLoadingContent(
@@ -63,7 +82,10 @@ fun ProductListScreen(
             } else {
                 LazyColumn(modifier = Modifier.padding(innerPadding)) {
                     items(uiState.products, key = { it.id }) { item ->
-                        ProductListItemCard(item = item)
+                        ProductListItemCard(
+                            item = item,
+                            onToggleFavourite = { currentOnIntent(ProductListUiIntent.ToggleFavourite(it)) },
+                        )
                     }
                 }
             }
@@ -125,6 +147,7 @@ fun ProductListScreen(
         uiState = uiState,
         onIntent = viewModel::onIntent,
         modifier = modifier,
+        uiEffect = viewModel.uiEffect,
     )
 }
 
@@ -141,6 +164,7 @@ private fun PreviewProductListScreen() {
                         title = FIRST_PREVIEW_TITLE,
                         formattedPrice = PREVIEW_FORMATTED_PRICE,
                         formattedRatingScore = PREVIEW_FORMATTED_RATING_SCORE,
+                        isFavourite = true,
                     ),
                     ProductListItem(
                         id = SECOND_PREVIEW_PRODUCT_ID,

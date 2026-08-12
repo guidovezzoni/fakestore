@@ -9,6 +9,7 @@ A native Android app built with Kotlin and Jetpack Compose that consumes the [Fa
 - **Navigation**: Jetpack Navigation Compose 2.9.8 with type-safe (`@Serializable`) routes and a 3-tab bottom navigation bar
 - **Multi-module**: `build-logic` (convention plugins), `:core`, `:domain`, `:data`, `:app`
 - **Networking**: Retrofit + OkHttp + kotlinx-serialization
+- **Local Persistence**: Room 2.7 with KSP annotation processing; favourites stored in `FavouritesDatabase`
 - **Image Loading**: Coil 3 (with OkHttp network engine)
 - **Dependency Injection**: Hilt (Dagger-Hilt 2.60) + KSP; modules in `:app/di/`
 - **Detekt** for static analysis (with Compose rules)
@@ -48,9 +49,9 @@ The project uses a multi-module Clean Architecture with four Gradle modules:
 
 - **build-logic/** — Convention plugins (`fakestore.android.library`, `fakestore.kotlin.library`) centralising Detekt, Kover, and compile configuration
 - **:core** — Network client (Retrofit + OkHttp), `BuildConfig.BASE_URL`; analytics abstraction (`AnalyticsProvider` interface, `AnalyticsClient` dispatcher, `DebugAnalyticsProvider`)
-- **:domain** — Domain models (`Product`, `Rating`), repository interface (`ProductRepository`), use cases (`GetProductsUseCase`) — pure Kotlin, no Android dependencies
-- **:data** — DTOs (`ProductDto`, `RatingDto`), mapper, `ApiService`, `ProductRepositoryImpl`
-- **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation; Hilt DI modules (`NetworkModule`, `AnalyticsModule`, `DataModule`), `FakeStoreApplication` (`@HiltAndroidApp`)
+- **:domain** — Domain models (`Product`, `Rating`), repository interfaces (`ProductRepository`, `FavouritesRepository`), use cases (`GetProductsUseCase`, `GetFavouriteIdsUseCase`, `ToggleFavouriteUseCase`) — pure Kotlin, no Android dependencies
+- **:data** — DTOs, mappers, `ApiService`, `ProductRepositoryImpl`; Room database (`FavouritesDatabase`, `FavouriteDao`, `FavouriteEntity`, `FavouritesRepositoryImpl`) — KSP annotation processing
+- **:app** — Jetpack Compose UI, ViewModels (MVI), theme, navigation; Hilt DI modules (`NetworkModule`, `AnalyticsModule`, `DataModule`, `DatabaseModule`), `FakeStoreApplication` (`@HiltAndroidApp`)
 
 ## Build & Release
 

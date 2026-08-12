@@ -5,14 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.guidovezzoni.fakestore.ui.effect.ProductListUiEffect
 import com.guidovezzoni.fakestore.ui.intent.ProductListUiIntent
 import com.guidovezzoni.fakestore.ui.state.ProductListItem
 import com.guidovezzoni.fakestore.ui.state.ProductListUiState
 import com.guidovezzoni.fakestore.ui.theme.FakeStoreTheme
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -141,6 +144,55 @@ class ProductListScreenTest {
     }
 
     @Test
+    fun givenShowFavouriteToggleErrorEffect_whenEffectIsCollected_thenSnackbarWithErrorMessageIsShown() {
+        val uiEffect = MutableSharedFlow<ProductListUiEffect>(extraBufferCapacity = 1)
+
+        composeTestRule.setContent {
+            FakeStoreTheme {
+                ProductListScreen(
+                    uiState = ProductListUiState.Loading,
+                    onIntent = {},
+                    uiEffect = uiEffect,
+                )
+            }
+        }
+
+        uiEffect.tryEmit(ProductListUiEffect.ShowFavouriteToggleError)
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText(FAVOURITE_TOGGLE_ERROR_MESSAGE).assertIsDisplayed()
+    }
+
+    @Test
+    fun givenContentStateWithProductId7_whenFavouriteIconIsTapped_thenToggleFavouriteIntentIsDispatched() {
+        val capturedIntents = mutableListOf<ProductListUiIntent>()
+        val item = ProductListItem(
+            id = PRODUCT_ID_7,
+            imageUrl = PRODUCT_IMAGE_URL,
+            title = "Test Product",
+            formattedPrice = FORMATTED_PRICE,
+            formattedRatingScore = FORMATTED_RATING_SCORE,
+            isFavourite = false,
+        )
+        val uiState = ProductListUiState.Content(products = listOf(item))
+
+        composeTestRule.setContent {
+            FakeStoreTheme {
+                ProductListScreen(
+                    uiState = uiState,
+                    onIntent = { capturedIntents.add(it) },
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription(ADD_TO_FAVOURITES_CONTENT_DESCRIPTION).performClick()
+        composeTestRule.waitForIdle()
+
+        val expectedIntent = ProductListUiIntent.ToggleFavourite(productId = PRODUCT_ID_7)
+        assertTrue(capturedIntents.contains(expectedIntent))
+    }
+
+    @Test
     fun givenScreenComposition_whenComposed_thenLoadProductsIntentIsFiredExactlyOnce() {
         val capturedIntents = mutableListOf<ProductListUiIntent>()
         val uiState = ProductListUiState.Loading
@@ -163,6 +215,7 @@ class ProductListScreenTest {
     private companion object {
         const val FIRST_PRODUCT_ID = 1
         const val SECOND_PRODUCT_ID = 2
+        const val PRODUCT_ID_7 = 7
         const val FIRST_PRODUCT_TITLE = "First Product"
         const val SECOND_PRODUCT_TITLE = "Second Product"
         const val PRODUCT_IMAGE_URL = "https://example.com/image.png"
@@ -170,5 +223,7 @@ class ProductListScreenTest {
         const val FORMATTED_RATING_SCORE = "4.1"
         const val ERROR_MESSAGE = "Something went wrong. Please try again."
         const val TOP_APP_BAR_TITLE = "Products"
+        const val FAVOURITE_TOGGLE_ERROR_MESSAGE = "Unable to update favourite"
+        const val ADD_TO_FAVOURITES_CONTENT_DESCRIPTION = "Add to favourites"
     }
 }
